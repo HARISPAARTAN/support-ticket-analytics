@@ -1,0 +1,500 @@
+/* Support Ticket Analytics replica: layout and the few components the kit does not have. Colours come only from the
+   kit tokens (web/kit/tokens.css). */
+
+:root {
+  --max: 1280px;
+}
+
+.app-loading,
+.app-error {
+  margin-top: var(--space-6);
+  color: var(--muted);
+}
+
+.app-error {
+  color: var(--danger);
+}
+
+/* ---------------------------------------------------------------- header and tabs */
+
+.pf-brand__name {
+  overflow-wrap: anywhere;
+}
+
+.pf-header__tools {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+/* The kit's tab strip wraps (flex-wrap), so every tab stays on screen at 390 px; nothing scrolls sideways. */
+.m-tabs .pf-tabs {
+  flex-wrap: wrap;
+}
+
+/* ---------------------------------------------------------------- filter bar */
+
+.filters {
+  position: sticky;
+  top: calc(var(--pf-banner-h) + env(safe-area-inset-top));
+  z-index: 20;
+  margin-top: var(--space-4);
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+/* Keyboard focus and anchors must not land under the sticky filter bar. The bar has no height token, so these are
+   its measured heights plus a little room: one row from 1200 px wide, two rows below that, the collapsed head under
+   600 px (the opened panel there is taller and is not covered). tools/checks/verify-site.mjs checks that a focused
+   control below the bar stays visible. */
+:root {
+  --filters-h: 96px;
+}
+
+@media (max-width: 1199.98px) {
+  :root {
+    --filters-h: 168px;
+  }
+}
+
+@media (max-width: 719.98px) {
+  :root {
+    --filters-h: 240px;
+  }
+}
+
+@media (max-width: 599.98px) {
+  :root {
+    --filters-h: 68px;
+  }
+}
+
+:root:has(body.pf-has-banner) {
+  scroll-padding-top: calc(var(--pf-banner-h) + env(safe-area-inset-top) + var(--filters-h) + 8px);
+}
+
+.filters__head {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.filters__summary {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.filters__body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px 16px;
+}
+
+.f-field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.f-field > .f-label {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.f-field .pf-select,
+.f-field .pf-chip {
+  min-height: 36px;
+  font-size: 14px;
+}
+
+.f-months {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.f-spacer {
+  flex: 1;
+}
+
+/* the chip of the active cross-filter */
+.xchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 6px 0 12px;
+  border: 1px dashed var(--accent);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.xchip--idle {
+  padding-right: 12px;
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+.xchip b {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.xchip__clear {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 20%, var(--surface));
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------------------- tiles, cards, charts */
+
+.kpis {
+  --min: 180px;
+  margin-top: var(--space-4);
+}
+
+.kpis--4 {
+  --min: 220px;
+}
+
+.snapshot {
+  margin-top: var(--space-4);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.snapshot b {
+  color: var(--text);
+  font-family: var(--font-mono);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.layout--even {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.layout .pf-card,
+.wide.pf-card {
+  padding: 18px 20px;
+}
+
+.wide {
+  margin-top: var(--space-4);
+}
+
+.ct {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 12px;
+  margin-bottom: var(--space-2);
+}
+
+.ct h2 {
+  font-size: 16px;
+  letter-spacing: 0;
+}
+
+.ct .sub {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.chart {
+  width: 100%;
+  height: 240px;
+}
+
+.chart--mid {
+  height: 300px;
+}
+
+.chart--tall {
+  height: 520px;
+}
+
+.hint {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.rank-pick {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.rank-pick .pf-select {
+  min-height: 36px;
+}
+
+/* ---------------------------------------------------------------- tables */
+
+.table-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.table-tools .pf-input {
+  flex: 1 1 16rem;
+  min-height: 40px;
+}
+
+.dbar {
+  position: relative;
+  display: block;
+  min-width: 96px;
+}
+
+.dbar i {
+  position: absolute;
+  inset: 2px auto 2px 0;
+  z-index: 0;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--accent) 35%, var(--surface));
+}
+
+.dbar span {
+  position: relative;
+  z-index: 1;
+  padding-left: 6px;
+}
+
+.tno {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: inherit;
+  text-decoration: underline var(--accent);
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.subject {
+  display: inline-block;
+  max-width: 36ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+
+/* Below 640 px a table becomes stacked row cards: each cell shows its column name (data-label of the cell content). */
+@media (max-width: 639.98px) {
+  .stack .pf-table-wrap {
+    overflow: visible;
+  }
+
+  .stack .pf-table thead {
+    display: none;
+  }
+
+  .stack .pf-table,
+  .stack .pf-table tbody,
+  .stack .pf-table tr,
+  .stack .pf-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .stack .pf-table tr {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stack .pf-table tbody tr:nth-child(even) td {
+    background: none;
+  }
+
+  .stack .pf-table td {
+    padding: 3px 12px;
+    border: 0;
+    white-space: normal;
+    text-align: right;
+  }
+
+  .stack .pf-table td > .cell {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .stack .pf-table td > .cell::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .stack .subject {
+    max-width: none;
+    white-space: normal;
+    text-align: right;
+  }
+}
+
+/* ---------------------------------------------------------------- dialogs and footer */
+
+.about {
+  width: min(640px, calc(100vw - 32px));
+  max-height: calc(100vh - 64px);
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.about::backdrop {
+  background: rgb(0 0 0 / 55%);
+}
+
+.about__body {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+}
+
+.about__body h2 {
+  font-size: var(--fs-lg);
+}
+
+.about__body h3 {
+  margin-top: var(--space-2);
+  font-size: var(--fs-md);
+}
+
+.about__body p,
+.about__body li {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+.about__body ul {
+  display: grid;
+  gap: 4px;
+  padding-left: 18px;
+}
+
+.about__close {
+  justify-self: end;
+}
+
+.detail__grid {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 16px;
+  font-size: var(--fs-sm);
+}
+
+.detail__grid dt {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.detail__grid dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.store-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-top: var(--space-4);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* ---------------------------------------------------------------- narrow screens */
+
+@media (max-width: 719.98px) {
+  .layout,
+  .layout--even {
+    grid-template-columns: 1fr;
+  }
+
+  .chart--tall {
+    height: 420px;
+  }
+}
+
+@media (max-width: 599.98px) {
+  .kpis,
+  .kpis--4 {
+    --min: 150px;
+  }
+
+  .pf-kpi {
+    padding: 12px 14px;
+  }
+
+  .pf-kpi__value {
+    font-size: 22px;
+  }
+
+  .filters {
+    padding: 10px 14px;
+  }
+
+  .filters__head {
+    display: flex;
+  }
+
+  .filters__body {
+    margin-top: var(--space-3);
+  }
+
+  .filters:not(.is-open) .filters__body {
+    display: none;
+  }
+
+  .detail__grid {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .detail__grid dd {
+    margin-bottom: 6px;
+  }
+}

@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Support Ticket Analytics · Quillstack Software (demo)</title>
+  <link rel="icon" href="data:,">
+  <meta name="description" content="HTML replica of a Power BI help-desk report for Quillstack Software, a fictional B2B software company. Invented data.">
+  <script src="kit/theme-boot.js"></script>
+  <link rel="stylesheet" href="kit/fonts/fonts.css">
+  <link rel="stylesheet" href="kit/tokens.css">
+  <link rel="stylesheet" href="kit/base.css">
+  <link rel="stylesheet" href="assets/css/app.css">
+  <script src="vendor/echarts.min.js" defer></script>
+  <script type="module" src="assets/js/app.js"></script>
+</head>
+<body>
+  <div class="pf-page" id="app" data-state="loading">
+    <header class="pf-header">
+      <a class="pf-brand" href="#overview"><span class="pf-brand__mark" aria-hidden="true">QS</span><span class="pf-brand__name">Quillstack Software · Support tickets</span></a>
+      <div class="pf-header__tools">
+        <span class="pf-pill pf-pill--muted" id="data-until">Data as of –</span>
+        <button type="button" class="pf-btn pf-btn--ghost pf-btn--sm" id="about-open" aria-haspopup="dialog">About</button>
+        <span id="theme-toggle"></span>
+      </div>
+    </header>
+
+    <nav class="m-tabs" aria-label="Report pages">
+      <div class="pf-tabs" role="tablist" aria-label="Report pages" id="tabs">
+        <button type="button" class="pf-tab" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true">Overview</button>
+        <button type="button" class="pf-tab" role="tab" id="tab-sla" aria-controls="panel-sla" aria-selected="false">SLA</button>
+        <button type="button" class="pf-tab" role="tab" id="tab-teams" aria-controls="panel-teams" aria-selected="false">Teams</button>
+        <button type="button" class="pf-tab" role="tab" id="tab-backlog" aria-controls="panel-backlog" aria-selected="false">Backlog</button>
+      </div>
+    </nav>
+
+    <section class="filters" id="filters" aria-label="Filters">
+      <div class="filters__head">
+        <span class="filters__summary" id="filter-summary"></span>
+        <button type="button" class="pf-btn pf-btn--sm" id="filters-toggle" aria-expanded="false" aria-controls="filters-body">Filters</button>
+      </div>
+      <div class="filters__body" id="filters-body">
+        <div class="f-field" role="group" aria-labelledby="f-months">
+          <span class="f-label" id="f-months">Months</span>
+          <div class="f-months">
+            <select class="pf-select" id="month-from" aria-label="First month"></select>
+            <span class="pf-label" aria-hidden="true">to</span>
+            <select class="pf-select" id="month-to" aria-label="Last month"></select>
+          </div>
+        </div>
+        <div class="f-field">
+          <label class="f-label" for="team">Team</label>
+          <select class="pf-select" id="team"></select>
+        </div>
+        <div class="f-field" role="group" aria-labelledby="f-priority">
+          <span class="f-label" id="f-priority">Priority</span>
+          <div class="pf-chips" id="priority-chips"></div>
+        </div>
+        <div class="f-field">
+          <label class="f-label" for="channel">Channel</label>
+          <select class="pf-select" id="channel"></select>
+        </div>
+        <div class="f-spacer"></div>
+        <div class="f-field">
+          <span class="f-label">Cross-filter</span>
+          <span id="cross-chip"></span>
+        </div>
+        <button type="button" class="pf-btn pf-btn--sm" id="reset">Reset</button>
+      </div>
+    </section>
+
+    <main>
+      <p class="app-loading" id="loading">Loading the data…</p>
+
+      <section class="pf-tabpanel" role="tabpanel" id="panel-overview" aria-labelledby="tab-overview">
+        <div class="pf-grid kpis" id="overview-tiles"></div>
+        <div class="layout layout--even">
+          <article class="pf-card">
+            <div class="ct"><h2>Created and resolved per month</h2><span class="sub">tickets</span></div>
+            <div class="chart" id="chart-flow" role="img" aria-label="Column chart: tickets created and resolved per month"></div>
+          </article>
+          <article class="pf-card">
+            <div class="ct"><h2>Backlog at month end</h2><span class="sub">open tickets</span></div>
+            <div class="chart" id="chart-backlog-months" role="img" aria-label="Line chart: open tickets at the end of each month"></div>
+          </article>
+        </div>
+        <div class="layout">
+          <article class="pf-card">
+            <div class="ct"><h2>Arrivals by weekday and hour</h2><span class="sub">created · Lisbon time</span></div>
+            <div class="chart chart--mid" id="chart-arrivals" role="img" aria-label="Heatmap: tickets created per weekday and hour of the day"></div>
+          </article>
+          <article class="pf-card">
+            <div class="ct"><h2>Created by category</h2><span class="sub">click a bar to cross-filter</span></div>
+            <div class="chart chart--mid" id="chart-categories" role="img" aria-label="Bar chart: tickets created per category"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="pf-tabpanel" role="tabpanel" id="panel-sla" aria-labelledby="tab-sla" hidden>
+        <div class="pf-grid kpis" id="sla-tiles"></div>
+        <div class="layout layout--even">
+          <article class="pf-card">
+            <div class="ct"><h2>SLA met % by priority</h2><span class="sub">click a priority to cross-filter</span></div>
+            <div class="chart" id="chart-priorities" role="img" aria-label="Column chart: first response and resolution SLA met per priority"></div>
+          </article>
+          <article class="pf-card">
+            <div class="ct"><h2>Resolution SLA by team and priority</h2><span class="sub">click a cell to cross-filter</span></div>
+            <div class="chart" id="chart-matrix" role="img" aria-label="Heatmap: resolution SLA met per team and priority"></div>
+          </article>
+        </div>
+        <article class="pf-card wide">
+          <div class="ct"><h2>SLA met % per month</h2><span class="sub">by creation month</span></div>
+          <div class="chart" id="chart-sla-months" role="img" aria-label="Line chart: first response and resolution SLA met per creation month"></div>
+        </article>
+        <article class="pf-card wide stack">
+          <div class="ct"><h2>Breach list</h2><span class="sub" id="breach-count"></span></div>
+          <div id="table-breaches"></div>
+        </article>
+      </section>
+
+      <section class="pf-tabpanel" role="tabpanel" id="panel-teams" aria-labelledby="tab-teams" hidden>
+        <div class="pf-grid kpis" id="teams-tiles"></div>
+        <div class="layout">
+          <article class="pf-card">
+            <div class="ct">
+              <h2 id="ranked-title">Agents ranked by Resolved</h2>
+              <label class="rank-pick">Rank by <select class="pf-select" id="rank-by"></select></label>
+            </div>
+            <div class="chart chart--tall" id="chart-agents" role="img" aria-label="Bar chart: agents ranked by the chosen measure"></div>
+            <p class="hint">Agents with fewer than 20 created tickets are not ranked · click a bar to filter the tables</p>
+          </article>
+          <article class="pf-card stack">
+            <div class="ct"><h2>Agent scorecard</h2><span class="sub">sortable</span></div>
+            <div id="table-agents"></div>
+          </article>
+        </div>
+        <div class="layout layout--even">
+          <article class="pf-card">
+            <div class="ct"><h2>Tickets per agent per month</h2><span class="sub">resolved ÷ active agents, by team</span></div>
+            <div class="chart" id="chart-per-agent" role="img" aria-label="Line chart: tickets per agent per month for each team"></div>
+          </article>
+          <article class="pf-card">
+            <div class="ct"><h2>CSAT scores</h2><span class="sub">responses per score</span></div>
+            <div class="chart" id="chart-csat" role="img" aria-label="Column chart: CSAT responses per score from 1 to 5"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="pf-tabpanel" role="tabpanel" id="panel-backlog" aria-labelledby="tab-backlog" hidden>
+        <p class="snapshot" id="snapshot"></p>
+        <div class="pf-grid kpis kpis--4" id="backlog-tiles"></div>
+        <article class="pf-card wide">
+          <div class="ct"><h2>Backlog per day</h2><span class="sub">open tickets at the end of each day</span></div>
+          <div class="chart" id="chart-backlog-days" role="img" aria-label="Line chart: open tickets at the end of each day of the range"></div>
+        </article>
+        <div class="layout layout--even">
+          <article class="pf-card">
+            <div class="ct"><h2>Age of open tickets at the snapshot</h2><span class="sub">click a bucket to cross-filter</span></div>
+            <div class="chart" id="chart-buckets" role="img" aria-label="Bar chart: open tickets per age bucket at the snapshot"></div>
+          </article>
+          <article class="pf-card">
+            <div class="ct"><h2>Open tickets by current status</h2><span class="sub">at the data cut-off</span></div>
+            <div class="chart" id="chart-statuses" role="img" aria-label="Bar chart: open tickets per current status at the data cut-off"></div>
+          </article>
+        </div>
+        <div class="layout layout--even">
+          <article class="pf-card stack">
+            <div class="ct"><h2>Open tickets by team and age</h2><span class="sub">at the snapshot</span></div>
+            <div id="table-team-buckets"></div>
+          </article>
+          <article class="pf-card stack">
+            <div class="ct"><h2>Oldest open tickets</h2><span class="sub">at the snapshot</span></div>
+            <div id="table-oldest"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="pf-card wide stack tickets" id="tickets" aria-labelledby="tickets-title" hidden>
+        <div class="ct"><h2 id="tickets-title">Tickets</h2><span class="sub" id="tickets-sub"></span></div>
+        <div class="table-tools">
+          <label class="pf-visually-hidden" for="ticket-search">Search tickets</label>
+          <input class="pf-input" type="search" id="ticket-search" placeholder="Search ticket number or subject" autocomplete="off">
+        </div>
+        <div id="table-tickets"></div>
+      </section>
+
+      <p class="store-note" id="store-note">The filters, the tab and Rank by are remembered in this browser only; Reset forgets them.</p>
+    </main>
+
+    <footer class="pf-footer">
+      <p>Rebuilt from memory as a demo. The original client's name and data are not used.</p>
+      <p>Support Ticket Analytics · MIT · ECharts Apache-2.0 · <a href="https://github.com/HARISPAARTAN/support-ticket-analytics">Source code</a></p>
+    </footer>
+  </div>
+
+  <dialog class="about detail" id="detail" aria-labelledby="detail-title">
+    <div class="about__body">
+      <h2 id="detail-title">Ticket</h2>
+      <dl class="detail__grid" id="detail-fields"></dl>
+      <p class="detail__note">The status history and the time in each status are on the Ticket explorer page of the Power BI report.</p>
+      <form method="dialog" class="about__close"><button class="pf-btn pf-btn--primary pf-btn--sm" value="close">Close</button></form>
+    </div>
+  </dialog>
+
+  <dialog class="about" id="about" aria-labelledby="about-title">
+    <div class="about__body">
+      <h2 id="about-title">About this replica</h2>
+      <p>Demo with invented data for a fictional company. Quillstack Software is a fictional B2B software company in Lisbon, Portugal, whose four support teams answer about 1,200 tickets a month from 600 customer accounts.</p>
+      <h3>Sources</h3>
+      <ul>
+        <li>Quarterly help-desk exports of tickets and status events (<code>data/tickets/</code> and <code>data/ticket_events/</code>, 1 January 2024 to 30 September 2025, cut off at 18:00), agents, teams, priorities with their SLA targets and the holidays (Portuguese national holidays and Lisbon's 13 June), all written by <code>tools/make_data.py</code> with seed 20240101.</li>
+      </ul>
+      <h3>Rules</h3>
+      <ul>
+        <li>Response and resolution times count business hours only: Monday to Friday 08:00 to 18:00 Lisbon time, without holidays; the clock stops while a ticket is Pending.</li>
+        <li>SLA results belong to the month a ticket was created; Resolved counts final resolutions by their date.</li>
+        <li>The backlog and the ages are in calendar days; on the Backlog tab the end of the month range is the snapshot.</li>
+        <li>A change against the previous year needs the same months a year earlier in the data, so it shows n/a before 2025.</li>
+        <li>This page computes the measures in JavaScript from <code>replica.json</code>, built by <code>tools/build_replica_data.py</code> through the Python reference; a parity test compares every tab with the reference.</li>
+      </ul>
+      <h3>Left out of the replica</h3>
+      <ul>
+        <li>The Ticket explorer's status history and time in status (the events are not shipped) and the backlog by status over time.</li>
+        <li>The tier split of created by category and the previous-year line of the backlog chart.</li>
+        <li>P90 times and CSAT satisfied %; YTD, PYTD, R12 and the current, PY and YoY matrix.</li>
+        <li>Day-level dates: the replica filters by months, and the end of the range is the backlog snapshot.</li>
+        <li>The Team lead role, the tooltip page (chart tooltips instead), the bookmarks (the Reset button instead) and the Info and Reconciliation pages (linked from the README).</li>
+      </ul>
+      <p>Rebuilt from memory as a demo. The original client's name and data are not used.</p>
+      <form method="dialog" class="about__close"><button class="pf-btn pf-btn--primary pf-btn--sm" value="close">Close</button></form>
+    </div>
+  </dialog>
+</body>
+</html>
