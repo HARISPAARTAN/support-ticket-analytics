@@ -1,0 +1,26 @@
+{
+  "name": "SupportTicketAnalytics",
+  "folder": "pbip",
+  "namespace": "sta",
+  "generated": "sta:generated",
+  "alt_prefix": {
+    "card": "Card",
+    "tableEx": "Table",
+    "pivotTable": "Matrix",
+    "slicer": "Slicer",
+    "actionButton": "Button",
+    "*": "Chart"
+  },
+  "theme": {
+    "name": "Quillstack Dark",
+    "file": "quillstack-dark.json",
+    "tokens": "web/kit/tokens.css",
+    "font": "Segoe UI",
+    "font_bold": "Segoe UI Semibold"
+  },
+  "diagram": [
+    ["DimDate", "DimPriority", "DimTeam", "DimAgent", "DimCustomer"],
+    ["DimCategory", "DimChannel", "FactTickets", "FactTicketEvents", "DimStatus"],
+    ["Security", "DimAgeBucket", "ExportInfo", "TestBusinessHours", "_Measures", "Time intelligence", "Rank agents by"]
+  ]
+}
