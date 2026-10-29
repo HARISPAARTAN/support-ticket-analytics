@@ -225,8 +225,9 @@ export function agentBars(rows, rankBy, c, { selected = null, motion = true } = 
   };
 }
 
-// Teams: tickets per agent per month, one line per team ([ym, [value per team]]).
-export function perAgent(months, teams, c, motion = true) {
+// Teams: tickets per agent per month, one line per team ([ym, [value per team]]); allTeams (the full team list) fixes the
+// colour per team, so a line keeps its colour under a team filter.
+export function perAgent(months, teams, c, motion = true, allTeams = teams) {
   return {
     ...base(c, motion),
     legend,
@@ -234,14 +235,18 @@ export function perAgent(months, teams, c, motion = true) {
     tooltip: { trigger: 'axis', confine: true, formatter: axisTooltip((v) => fmt.dec(v, 1)) },
     xAxis: { type: 'category', data: monthLabels(months.map((r) => r[0])), boundaryGap: false },
     yAxis: valueAxis((v) => fmt.int(v)),
-    series: teams.map((name, k) => ({
-      name,
-      type: 'line',
-      data: months.map((r) => r[1][k]),
-      lineStyle: { width: 2, color: c.chart[k] },
-      itemStyle: { color: c.chart[k] },
-      symbol: 'none',
-    })),
+    series: teams.map((name, k) => {
+      const idx = allTeams.indexOf(name);
+      const colour = c.chart[idx < 0 ? k : idx];
+      return {
+        name,
+        type: 'line',
+        data: months.map((r) => r[1][k]),
+        lineStyle: { width: 2, color: colour },
+        itemStyle: { color: colour },
+        symbol: 'none',
+      };
+    }),
   };
 }
 

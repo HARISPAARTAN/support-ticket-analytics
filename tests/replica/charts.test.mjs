@@ -87,6 +87,17 @@ test('teams: ranked bars use the scale of the measure, one line per team, CSAT i
   assert.deepEqual(scores.series[0].data.map((d) => d.itemStyle.color), [C.danger, C.danger, C.warn, C.ok, C.ok]);
 });
 
+test('teams: a line keeps the colour of its team under a team filter', () => {
+  const teams = model.data.dims.teams;
+  const months = [['2025-09', [2.5]]];
+  const billing = charts.perAgent(months, ['Billing & Accounts'], C, true, teams);
+  assert.equal(billing.series[0].lineStyle.color, C.chart[teams.indexOf('Billing & Accounts')]);
+  assert.equal(billing.series[0].itemStyle.color, C.chart[teams.indexOf('Billing & Accounts')]);
+  assert.deepEqual(billing.series[0].data, [2.5]);
+  const first = charts.perAgent(months, [teams[0]], C);
+  assert.equal(first.series[0].lineStyle.color, C.chart[0]);
+});
+
 test('backlog: one point per day, dates on the axis', () => {
   const days = [['2025-09-29', 141], ['2025-09-30', 140]];
   const option = charts.backlogDays(days, C);
