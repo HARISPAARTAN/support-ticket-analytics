@@ -507,5 +507,38 @@ def test_mutation_foreign_colour_is_caught(report):
     assert colour_problems(broken, set(tokens.values()))
 
 
+def test_generated_report_counts_sorts_and_literals(report):
+    """What the checks above leave open: the two sorts, the file counts, the Back button box, the NoFilter
+    interactions, the filter aliases and the literal forms of the generated files."""
+
+    def sort_of(v):
+        sort = v.raw["visual"]["query"]["sortDefinition"]["sort"]
+        return [s["direction"] for s in sort], list(iter_fields(sort))
+
+    oldest = visual(report, "Backlog and ageing", "Oldest open tickets")
+    assert '"type": "TopN"' not in json.dumps(oldest.raw["filterConfig"])  # the table lists every open ticket
+    assert sort_of(oldest) == (["Descending"], [("_Measures", "Age at end of period (days)", "Measure")])
+    ranked = visual(report, "Teams and agents", "Agents ranked")
+    assert sort_of(ranked) == (["Descending"], [("_Measures", "Resolved", "Measure")])
+
+    files = sorted(REPORT.rglob("visual.json"))
+    assert len(files) == 165  # 129 visuals and 36 buttons
+    with_aliases = 0
+    for f in files:
+        text = f.read_text(encoding="utf-8")
+        aliases = re.findall(r'"Name": "(f\d+)"', text)
+        assert len(aliases) == len(set(aliases)), f"{f.parent.name}: a filter alias is used twice"
+        assert not re.search(r"[0-9][eE][+-][0-9]", text), f"{f.parent.name}: a number in exponent form"
+        with_aliases += bool(aliases)
+    assert with_aliases == 21  # the alias check is not vacuous
+
+    back = buttons(page(report, "Ticket explorer"), "Back")[0].raw["position"]
+    assert (back["x"], back["y"], back["width"], back["height"]) == (16, 56, 100, 40)
+
+    pages = [json.loads(f.read_text(encoding="utf-8")) for f in REPORT.rglob("page.json")]
+    assert len(pages) == 8
+    assert sum(i["type"] == "NoFilter" for pg in pages for i in pg.get("visualInteractions", [])) == 93
+
+
 def test_stable_names_are_deterministic():
     assert stable_name("overview", "16") == stable_name("overview", "16")
