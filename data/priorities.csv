@@ -1,0 +1,5 @@
+priority,priority_name,sort_order,fr_target_bmin,res_target_bmin,fr_target_label,res_target_label
+P1,Urgent,1,60,240,1 h,4 h
+P2,High,2,240,600,4 h,1 d
+P3,Normal,3,480,1800,8 h,3 d
+P4,Low,4,1440,3000,24 h,5 d

@@ -1,0 +1,24 @@
+event_id,ticket_id,event_seq,event_at,from_status,to_status,actor,agent_id
+1,100001,1,2024-03-04 09:00,,New,Customer,
+2,100001,2,2024-03-04 10:00,New,Open,Agent,5
+3,100001,3,2024-03-04 11:30,Open,Pending,Agent,5
+4,100001,4,2024-03-05 09:00,Pending,Open,Customer,
+5,100001,5,2024-03-05 12:00,Open,Resolved,Agent,5
+6,100001,6,2024-03-12 12:00,Resolved,Closed,System,
+7,100002,1,2024-03-08 17:00,,New,Customer,
+8,100002,2,2024-03-11 09:00,New,Open,Agent,7
+9,100002,3,2024-03-11 12:00,Open,Resolved,Agent,7
+10,100002,4,2024-03-12 10:00,Resolved,Reopened,Customer,
+11,100002,5,2024-03-12 11:00,Reopened,Resolved,Agent,7
+12,100002,6,2024-03-19 11:00,Resolved,Closed,System,
+13,100003,1,2024-03-28 10:00,,New,Customer,
+14,100003,2,2024-03-28 12:00,New,Open,Agent,1
+15,100003,3,2024-04-01 10:00,Open,Resolved,Agent,1
+16,100003,4,2024-04-08 10:00,Resolved,Closed,System,
+17,100004,1,2024-03-20 09:00,,New,Customer,
+18,100005,1,2024-03-06 14:00,,New,Agent,6
+19,100005,2,2024-03-06 14:30,New,Pending,Agent,6
+20,100006,1,2024-03-07 08:00,,New,Customer,
+21,100006,2,2024-03-07 08:30,New,Open,Agent,2
+22,100006,3,2024-03-07 17:00,Open,Resolved,Agent,2
+23,100006,4,2024-03-14 17:00,Resolved,Closed,System,

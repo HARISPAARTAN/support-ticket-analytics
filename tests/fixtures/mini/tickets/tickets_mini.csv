@@ -1,0 +1,7 @@
+ticket_id,created_at,channel,category,priority,customer_id,customer_name,customer_tier,team_id,agent_id,subject,status,first_response_at,resolved_at,closed_at,reopen_count,csat_score
+100001,2024-03-04 09:00,E-mail,Bug,P2,C0001,Account C0001,Enterprise,2,5,Editor crashes when saving a document,Closed,2024-03-04 10:00,2024-03-05 12:00,2024-03-12 12:00,0,
+100002,2024-03-08 17:00,Portal,Integration,P1,C0002,Account C0002,Business,4,7,Webhook from API not delivered,Closed,2024-03-11 09:00,2024-03-12 11:00,2024-03-19 11:00,1,2
+100003,2024-03-28 10:00,Chat,How-to,P3,C0003,Account C0003,Starter,1,1,How do I add a new user to Admin console?,Closed,2024-03-28 12:00,2024-04-01 10:00,2024-04-08 10:00,0,5
+100004,2024-03-20 09:00,E-mail,Billing,P4,C0001,Account C0001,Enterprise,3,,Duplicate charge for Reports,New,,,,0,
+100005,2024-03-06 14:00,Phone,Access,P3,C0002,Account C0002,Business,2,6,Cannot sign in to Mobile app,Pending,2024-03-06 14:30,,,0,
+100006,2024-03-07 08:00,Portal,Feature request,P2,C0003,Account C0003,Starter,1,2,Bulk edit in Workflows,Closed,2024-03-07 08:30,2024-03-07 17:00,2024-03-14 17:00,0,4
