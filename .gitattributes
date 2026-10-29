@@ -1,0 +1,9 @@
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.woff2 binary
+*.dll binary
+web/kit/** -text
+web/vendor/** -text
+web/assets/data/** -text
+tests/replica/expected.json -text
