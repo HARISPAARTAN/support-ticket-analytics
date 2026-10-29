@@ -1,0 +1,85 @@
+/// Priorities P1 to P4 with their SLA targets in business minutes (data/priorities.csv).
+table DimPriority
+	lineageTag: cd345e05-2437-5511-b4c3-a0d058aa4d26
+
+	column Priority
+		dataType: string
+		isKey
+		lineageTag: 598af737-8cdf-5fd1-b849-cb48ae846b82
+		summarizeBy: none
+		sourceColumn: Priority
+		sortByColumn: 'Priority sort'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Priority name'
+		dataType: string
+		lineageTag: 430ea7ab-0c40-5471-b1d9-83c88f0f547e
+		summarizeBy: none
+		sourceColumn: Priority name
+		sortByColumn: 'Priority sort'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Priority sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 59aca690-8e57-5ea4-b1d5-51989388b3c4
+		summarizeBy: none
+		sourceColumn: Priority sort
+
+		annotation SummarizationSetBy = User
+
+	column 'FR target bmin'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 4df5d8c5-bf10-5bcd-b24e-13bf8a3d279b
+		summarizeBy: none
+		sourceColumn: FR target bmin
+
+		annotation SummarizationSetBy = User
+
+	column 'Res target bmin'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9a717e9d-2bba-5eb8-ac45-37864fb5c891
+		summarizeBy: none
+		sourceColumn: Res target bmin
+
+		annotation SummarizationSetBy = User
+
+	column 'FR target'
+		dataType: string
+		lineageTag: 12397161-85e0-53f5-a54e-692031fef31a
+		summarizeBy: none
+		sourceColumn: FR target
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Res target'
+		dataType: string
+		lineageTag: 23369c13-3a6e-54e1-96fa-828dc413b1fc
+		summarizeBy: none
+		sourceColumn: Res target
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimPriority = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "\priorities.csv"), [Delimiter = ",", Columns = 7, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"priority", type text}, {"priority_name", type text}, {"sort_order", Int64.Type},
+				        {"fr_target_bmin", Int64.Type}, {"res_target_bmin", Int64.Type}, {"fr_target_label", type text}, {"res_target_label", type text}},
+				        "en-US"),
+				    Renamed = Table.RenameColumns(Typed, {{"priority", "Priority"}, {"priority_name", "Priority name"}, {"sort_order", "Priority sort"},
+				        {"fr_target_bmin", "FR target bmin"}, {"res_target_bmin", "Res target bmin"}, {"fr_target_label", "FR target"},
+				        {"res_target_label", "Res target"}})
+				in
+				    Renamed
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table

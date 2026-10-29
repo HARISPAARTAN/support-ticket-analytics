@@ -1,0 +1,51 @@
+/// The four support teams with their team lead (data/teams.csv and data/agents.csv).
+table DimTeam
+	lineageTag: f5e8882a-e441-5c44-b909-cdd777c5a160
+
+	column 'Team ID'
+		dataType: int64
+		isHidden
+		isKey
+		formatString: 0
+		lineageTag: a0a5903e-57ad-5b18-90fa-8cf59aba7ac4
+		summarizeBy: none
+		sourceColumn: Team ID
+
+		annotation SummarizationSetBy = User
+
+	column 'Team name'
+		dataType: string
+		lineageTag: cafe0c5f-c7a7-5203-bb6d-322c4b2cbf91
+		summarizeBy: none
+		sourceColumn: Team name
+		sortByColumn: 'Team ID'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Team lead'
+		dataType: string
+		lineageTag: 71d2abae-d60b-5e1d-849b-738c980a5510
+		summarizeBy: none
+		sourceColumn: Team lead
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimTeam = m
+		mode: import
+		source =
+				let
+				    Teams = Table.TransformColumnTypes(Table.PromoteHeaders(Csv.Document(File.Contents(DataFolder & "\teams.csv"), [Delimiter = ",", Columns = 3, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]), [PromoteAllScalars = true]),
+				        {{"team_id", Int64.Type}, {"team_name", type text}, {"lead_agent_id", Int64.Type}}, "en-US"),
+				    Agents = Table.TransformColumnTypes(Table.PromoteHeaders(Csv.Document(File.Contents(DataFolder & "\agents.csv"), [Delimiter = ",", Columns = 7, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]), [PromoteAllScalars = true]),
+				        {{"agent_id", Int64.Type}, {"agent_name", type text}}, "en-US"),
+				    WithLead = Table.ExpandTableColumn(Table.NestedJoin(Teams, {"lead_agent_id"}, Agents, {"agent_id"}, "Lead", JoinKind.LeftOuter),
+				        "Lead", {"agent_name"}),
+				    Selected = Table.SelectColumns(WithLead, {"team_id", "team_name", "agent_name"}),
+				    Renamed = Table.RenameColumns(Selected, {{"team_id", "Team ID"}, {"team_name", "Team name"}, {"agent_name", "Team lead"}}),
+				    Sorted = Table.Sort(Renamed, {{"Team ID", Order.Ascending}})
+				in
+				    Sorted
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,40 @@
+relationship facttickets-dimdate
+	fromColumn: FactTickets.'Created date'
+	toColumn: DimDate.Date
+
+relationship facttickets-dimdate-resolved
+	isActive: false
+	fromColumn: FactTickets.'Resolved date'
+	toColumn: DimDate.Date
+
+relationship facttickets-dimpriority
+	fromColumn: FactTickets.Priority
+	toColumn: DimPriority.Priority
+
+relationship facttickets-dimteam
+	fromColumn: FactTickets.'Team ID'
+	toColumn: DimTeam.'Team ID'
+
+relationship facttickets-dimagent
+	fromColumn: FactTickets.'Agent ID'
+	toColumn: DimAgent.'Agent ID'
+
+relationship facttickets-dimcategory
+	fromColumn: FactTickets.Category
+	toColumn: DimCategory.Category
+
+relationship facttickets-dimchannel
+	fromColumn: FactTickets.Channel
+	toColumn: DimChannel.Channel
+
+relationship facttickets-dimcustomer
+	fromColumn: FactTickets.'Customer ID'
+	toColumn: DimCustomer.'Customer ID'
+
+relationship factticketevents-facttickets
+	fromColumn: FactTicketEvents.'Ticket ID'
+	toColumn: FactTickets.'Ticket ID'
+
+relationship factticketevents-dimstatus
+	fromColumn: FactTicketEvents.'To status'
+	toColumn: DimStatus.Status

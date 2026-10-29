@@ -1,0 +1,61 @@
+/// Calculation group: seven time calculations on DimDate (docs/measures.md).
+table 'Time intelligence'
+	lineageTag: 836ecdfb-bab9-54ca-b52d-9492acb90341
+
+	calculationGroup
+		precedence: 1
+
+		/// The measure as filtered.
+		calculationItem Current = SELECTEDMEASURE()
+
+		/// The same dates one year earlier; snapshot measures give the snapshot a year earlier.
+		calculationItem PY = CALCULATE(SELECTEDMEASURE(), SAMEPERIODLASTYEAR(DimDate[Date]))
+
+		/// Current minus PY when both exist; percentage points for measures whose name contains %.
+		calculationItem YoY =
+				VAR cur = SELECTEDMEASURE()
+				VAR py = CALCULATE(SELECTEDMEASURE(), SAMEPERIODLASTYEAR(DimDate[Date]))
+				RETURN
+				    IF(ISNUMERIC(cur) && NOT ISBLANK(cur) && NOT ISBLANK(py), cur - py)
+
+			formatStringDefinition = IF(CONTAINSSTRING(SELECTEDMEASURENAME(), "%"), "'" & FORMAT(SELECTEDMEASURE() * 100, "+0.0;-0.0;0.0") & " pp'", SELECTEDMEASUREFORMATSTRING())
+
+		/// Relative change against PY; blank for measures whose name contains %.
+		calculationItem 'YoY %' =
+				VAR cur = SELECTEDMEASURE()
+				VAR py = CALCULATE(SELECTEDMEASURE(), SAMEPERIODLASTYEAR(DimDate[Date]))
+				RETURN
+				    IF(
+				        ISNUMERIC(cur) && NOT ISBLANK(cur) && NOT ISBLANK(py) && NOT CONTAINSSTRING(SELECTEDMEASURENAME(), "%"),
+				        DIVIDE(cur - py, py)
+				    )
+
+			formatStringDefinition = "+0.0%;-0.0%;0.0%"
+
+		/// From 1 January to the last selected day.
+		calculationItem YTD = CALCULATE(SELECTEDMEASURE(), DATESYTD(DimDate[Date]))
+
+		/// YTD one year earlier.
+		calculationItem PYTD = CALCULATE(SELECTEDMEASURE(), SAMEPERIODLASTYEAR(DATESYTD(DimDate[Date])))
+
+		/// The twelve months up to the last selected day.
+		calculationItem R12 = CALCULATE(SELECTEDMEASURE(), DATESINPERIOD(DimDate[Date], MAX(DimDate[Date]), -12, MONTH))
+
+	column 'Time calculation'
+		dataType: string
+		lineageTag: 251d6432-2f23-56f0-a3b7-19d7b4022349
+		summarizeBy: none
+		sourceColumn: Name
+		sortByColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ordinal
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 039978c0-0ff3-5658-a818-bd4f51216c6e
+		summarizeBy: sum
+		sourceColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic

@@ -1,0 +1,65 @@
+/// The six statuses with the open and clock flags (tools/reference.py STATUSES); related to FactTicketEvents[To status].
+table DimStatus
+	lineageTag: 030bd1bb-11f3-5b6d-ba44-e6fcd0ff2e9e
+
+	column Status
+		dataType: string
+		isKey
+		lineageTag: 90d3f64a-3e3b-5ccd-a0ae-6e88c17758d6
+		summarizeBy: none
+		sourceColumn: Status
+		sortByColumn: 'Status sort'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Status sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 7c371c18-c21c-5a25-bbb2-2a188ff8c2ee
+		summarizeBy: none
+		sourceColumn: Status sort
+
+		annotation SummarizationSetBy = User
+
+	/// New, Open, Pending and Reopened count in the backlog.
+	column 'Is open'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 033da1fa-0b96-5f86-a184-405debee8bd8
+		summarizeBy: none
+		sourceColumn: Is open
+
+		annotation SummarizationSetBy = User
+
+	/// New, Open and Reopened count towards resolution time.
+	column 'Clock running'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: befe9a38-5689-5885-9599-1f52664226c0
+		summarizeBy: none
+		sourceColumn: Clock running
+
+		annotation SummarizationSetBy = User
+
+	partition DimStatus = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        type table [Status = text, #"Status sort" = Int64.Type, #"Is open" = logical, #"Clock running" = logical],
+				        {
+				        {"New", 1, true, true},
+				        {"Open", 2, true, true},
+				        {"Pending", 3, true, false},
+				        {"Resolved", 4, false, false},
+				        {"Closed", 5, false, false},
+				        {"Reopened", 6, true, true}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table

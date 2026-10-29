@@ -1,0 +1,154 @@
+/// Calendar, one row per day from StartDate to EndDate with the business days of Lisbon; the model's date table.
+table DimDate
+	lineageTag: 56d8834e-1880-558a-844a-6c6575062c8f
+	dataCategory: Time
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: yyyy-mm-dd
+		lineageTag: bd4a7004-a987-58c5-bf11-04bd71f7d10d
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = User
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: e59f664b-58a4-504d-b4d1-2e5606f050c6
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = User
+
+	column Quarter
+		dataType: string
+		lineageTag: 5f210f7c-1b62-559c-b858-7fb92aaa6608
+		summarizeBy: none
+		sourceColumn: Quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Year-quarter'
+		dataType: string
+		lineageTag: fc07ccda-64fe-5454-9b6d-68219d96548a
+		summarizeBy: none
+		sourceColumn: Year-quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: int64
+		formatString: 0
+		lineageTag: 16e8e451-c469-56ae-be21-db09c04661dd
+		summarizeBy: none
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = User
+
+	column 'Month name'
+		dataType: string
+		lineageTag: b7e339b4-6b8a-579b-b1f1-e25fd719d81a
+		summarizeBy: none
+		sourceColumn: Month name
+		sortByColumn: Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Year-month'
+		dataType: string
+		lineageTag: fc65d8bd-0098-5ce1-906f-318eaf26f72c
+		summarizeBy: none
+		sourceColumn: Year-month
+		sortByColumn: 'Month start'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month start'
+		dataType: dateTime
+		formatString: mmm yyyy
+		lineageTag: 48161126-0d8f-5ba5-9c12-83a689c285c3
+		summarizeBy: none
+		sourceColumn: Month start
+
+		annotation SummarizationSetBy = User
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'ISO week'
+		dataType: int64
+		formatString: 0
+		lineageTag: 7c7a2e80-1342-5a85-9ea9-f53205ed3333
+		summarizeBy: none
+		sourceColumn: ISO week
+
+		annotation SummarizationSetBy = User
+
+	/// 1 = Monday to 7 = Sunday.
+	column Weekday
+		dataType: int64
+		formatString: 0
+		lineageTag: b7b7ed48-fe28-545c-8e57-ce6f495da4fa
+		summarizeBy: none
+		sourceColumn: Weekday
+
+		annotation SummarizationSetBy = User
+
+	column 'Weekday name'
+		dataType: string
+		lineageTag: 086c3fc0-c868-5ffe-a24d-257f2f076b08
+		summarizeBy: none
+		sourceColumn: Weekday name
+		sortByColumn: Weekday
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Monday to Friday and not a holiday of data/holidays.csv.
+	column 'Is business day'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 58bb38c2-4c65-56d4-b94a-67572235affd
+		summarizeBy: none
+		sourceColumn: Is business day
+
+		annotation SummarizationSetBy = User
+
+	column Holiday
+		dataType: string
+		lineageTag: 2b99052f-f682-5579-a2e4-8becfa2a4973
+		summarizeBy: none
+		sourceColumn: Holiday
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimDate = m
+		mode: import
+		source =
+				let
+				    Days = Duration.Days(EndDate - StartDate) + 1,
+				    Dates = List.Dates(StartDate, Days, #duration(1, 0, 0, 0)),
+				    Base = Table.FromList(Dates, Splitter.SplitByNothing(), type table [Date = date]),
+				    Year = Table.AddColumn(Base, "Year", each Date.Year([Date]), Int64.Type),
+				    Quarter = Table.AddColumn(Year, "Quarter", each "Q" & Text.From(Date.QuarterOfYear([Date]), "en-US"), type text),
+				    YearQuarter = Table.AddColumn(Quarter, "Year-quarter", each Text.From([Year], "en-US") & "-" & [Quarter], type text),
+				    Month = Table.AddColumn(YearQuarter, "Month", each Date.Month([Date]), Int64.Type),
+				    MonthName = Table.AddColumn(Month, "Month name", each Date.ToText([Date], [Format = "MMM", Culture = "en-US"]), type text),
+				    YearMonth = Table.AddColumn(MonthName, "Year-month", each Date.ToText([Date], [Format = "yyyy-MM", Culture = "en-US"]), type text),
+				    MonthStart = Table.AddColumn(YearMonth, "Month start", each Date.StartOfMonth([Date]), type date),
+				    IsoWeek = Table.AddColumn(MonthStart, "ISO week", each
+				        Number.IntegerDivide(Date.DayOfYear(Date.AddDays([Date], 3 - Date.DayOfWeek([Date], Day.Monday))) - 1, 7) + 1, Int64.Type),
+				    Weekday = Table.AddColumn(IsoWeek, "Weekday", each Date.DayOfWeek([Date], Day.Monday) + 1, Int64.Type),
+				    WeekdayName = Table.AddColumn(Weekday, "Weekday name", each Date.ToText([Date], [Format = "ddd", Culture = "en-US"]), type text),
+				    WithHoliday = Table.ExpandTableColumn(Table.NestedJoin(WeekdayName, {"Date"}, Holidays, {"Date"}, "H", JoinKind.LeftOuter),
+				        "H", {"Holiday"}),
+				    BusinessDay = Table.AddColumn(WithHoliday, "Is business day", each [Weekday] <= 5 and [Holiday] = null, type logical),
+				    Sorted = Table.Sort(BusinessDay, {{"Date", Order.Ascending}})
+				in
+				    Sorted
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table

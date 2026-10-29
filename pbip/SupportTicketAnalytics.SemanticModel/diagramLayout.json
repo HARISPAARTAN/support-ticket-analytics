@@ -1,0 +1,243 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 294.0,
+            "y": 0
+          },
+          "nodeIndex": "DimDate",
+          "nodeLineageTag": "56d8834e-1880-558a-844a-6c6575062c8f",
+          "size": {
+            "height": 280,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 588.0,
+            "y": 0
+          },
+          "nodeIndex": "DimPriority",
+          "nodeLineageTag": "cd345e05-2437-5511-b4c3-a0d058aa4d26",
+          "size": {
+            "height": 280,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 882.0,
+            "y": 0
+          },
+          "nodeIndex": "DimTeam",
+          "nodeLineageTag": "f5e8882a-e441-5c44-b909-cdd777c5a160",
+          "size": {
+            "height": 280,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 1176.0,
+            "y": 0
+          },
+          "nodeIndex": "DimAgent",
+          "nodeLineageTag": "9acd510c-7d40-5ff6-9c6c-d534e95bfd63",
+          "size": {
+            "height": 280,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 1470.0,
+            "y": 0
+          },
+          "nodeIndex": "DimCustomer",
+          "nodeLineageTag": "e818cc4b-7c9d-5da7-932f-dbde45d29319",
+          "size": {
+            "height": 280,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 294.0,
+            "y": 430
+          },
+          "nodeIndex": "DimCategory",
+          "nodeLineageTag": "40e7ae41-b4eb-573f-8b8e-1e5a2ccb8717",
+          "size": {
+            "height": 280,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 588.0,
+            "y": 430
+          },
+          "nodeIndex": "DimChannel",
+          "nodeLineageTag": "8b8c9398-8de6-5bd8-b043-d4f439ff5d01",
+          "size": {
+            "height": 280,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 882.0,
+            "y": 430
+          },
+          "nodeIndex": "FactTickets",
+          "nodeLineageTag": "c8557614-9d3f-5637-9d07-60cf6458c4c3",
+          "size": {
+            "height": 280,
+            "width": 234
+          },
+          "zIndex": 7
+        },
+        {
+          "location": {
+            "x": 1176.0,
+            "y": 430
+          },
+          "nodeIndex": "FactTicketEvents",
+          "nodeLineageTag": "a577d61a-2d2c-56e9-9ee5-04732abf0df9",
+          "size": {
+            "height": 280,
+            "width": 234
+          },
+          "zIndex": 8
+        },
+        {
+          "location": {
+            "x": 1470.0,
+            "y": 430
+          },
+          "nodeIndex": "DimStatus",
+          "nodeLineageTag": "030bd1bb-11f3-5b6d-ba44-e6fcd0ff2e9e",
+          "size": {
+            "height": 280,
+            "width": 234
+          },
+          "zIndex": 9
+        },
+        {
+          "location": {
+            "x": 0.0,
+            "y": 860
+          },
+          "nodeIndex": "Security",
+          "nodeLineageTag": "6eb41da7-c70d-5bfa-8343-3535dc5f5e8a",
+          "size": {
+            "height": 280,
+            "width": 234
+          },
+          "zIndex": 10
+        },
+        {
+          "location": {
+            "x": 294.0,
+            "y": 860
+          },
+          "nodeIndex": "DimAgeBucket",
+          "nodeLineageTag": "8d296f2b-1aef-54fa-8a3a-363297f5118d",
+          "size": {
+            "height": 280,
+            "width": 234
+          },
+          "zIndex": 11
+        },
+        {
+          "location": {
+            "x": 588.0,
+            "y": 860
+          },
+          "nodeIndex": "ExportInfo",
+          "nodeLineageTag": "b1daa30e-8b01-5eef-be35-39b6385305fc",
+          "size": {
+            "height": 280,
+            "width": 234
+          },
+          "zIndex": 12
+        },
+        {
+          "location": {
+            "x": 882.0,
+            "y": 860
+          },
+          "nodeIndex": "TestBusinessHours",
+          "nodeLineageTag": "eab14fc5-8efc-5efa-9641-3148565590ec",
+          "size": {
+            "height": 280,
+            "width": 234
+          },
+          "zIndex": 13
+        },
+        {
+          "location": {
+            "x": 1176.0,
+            "y": 860
+          },
+          "nodeIndex": "_Measures",
+          "nodeLineageTag": "9fe8e943-4dc4-5c9b-b5ab-ca7596962ca1",
+          "size": {
+            "height": 280,
+            "width": 234
+          },
+          "zIndex": 14
+        },
+        {
+          "location": {
+            "x": 1470.0,
+            "y": 860
+          },
+          "nodeIndex": "Time intelligence",
+          "nodeLineageTag": "836ecdfb-bab9-54ca-b52d-9492acb90341",
+          "size": {
+            "height": 280,
+            "width": 234
+          },
+          "zIndex": 15
+        },
+        {
+          "location": {
+            "x": 1764.0,
+            "y": 860
+          },
+          "nodeIndex": "Rank agents by",
+          "nodeLineageTag": "b926a663-ed0c-584e-a3cc-c56153b047ae",
+          "size": {
+            "height": 280,
+            "width": 234
+          },
+          "zIndex": 16
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 70,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

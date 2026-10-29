@@ -1,0 +1,38 @@
+/// Row-level security: the team of each team lead's sign-in address (lead rows of data/agents.csv, lower case). Hidden, no relationship.
+table Security
+	isHidden
+	lineageTag: 6eb41da7-c70d-5bfa-8343-3535dc5f5e8a
+
+	column 'User e-mail'
+		dataType: string
+		lineageTag: 8b57e686-db17-53dc-8313-7e906c25d573
+		summarizeBy: none
+		sourceColumn: User e-mail
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Team ID'
+		dataType: int64
+		formatString: 0
+		lineageTag: 502f64fb-e301-5429-aa53-e76bc79834f9
+		summarizeBy: none
+		sourceColumn: Team ID
+
+		annotation SummarizationSetBy = User
+
+	partition Security = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "\agents.csv"), [Delimiter = ",", Columns = 7, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Leads = Table.SelectRows(Promoted, each [role] = "Team lead"),
+				    Lower = Table.AddColumn(Leads, "User e-mail", each Text.Lower([email]), type text),
+				    Team = Table.AddColumn(Lower, "Team ID", each Number.FromText([team_id], "en-US"), Int64.Type),
+				    Selected = Table.SelectColumns(Team, {"User e-mail", "Team ID"})
+				in
+				    Selected
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table

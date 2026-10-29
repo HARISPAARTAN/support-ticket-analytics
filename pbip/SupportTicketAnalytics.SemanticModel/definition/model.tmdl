@@ -1,0 +1,36 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["DataFolder","StartDate","EndDate","AsOf","Holidays","HolidayList","fnBusinessMinutes","TicketFiles","EventFiles","EventIntervals","DimDate","DimPriority","DimTeam","DimAgent","DimCategory","DimChannel","DimCustomer","DimStatus","DimAgeBucket","FactTickets","FactTicketEvents","Security","ExportInfo","TestBusinessHours"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table DimDate
+ref table DimPriority
+ref table DimTeam
+ref table DimAgent
+ref table DimCategory
+ref table DimChannel
+ref table DimCustomer
+ref table DimStatus
+ref table DimAgeBucket
+ref table FactTickets
+ref table FactTicketEvents
+ref table Security
+ref table ExportInfo
+ref table TestBusinessHours
+ref table _Measures
+ref table 'Time intelligence'
+ref table 'Rank agents by'
+
+ref role 'Team lead'
+
+ref cultureInfo en-US

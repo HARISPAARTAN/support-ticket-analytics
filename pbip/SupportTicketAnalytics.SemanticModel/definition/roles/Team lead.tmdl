@@ -1,0 +1,9 @@
+/// Team leads see their own team only: the team listed for their sign-in address in Security.
+role 'Team lead'
+	modelPermission: read
+
+	tablePermission DimTeam = DimTeam[Team ID] IN CALCULATETABLE(VALUES(Security[Team ID]), Security[User e-mail] = LOWER(USERPRINCIPALNAME()))
+
+	tablePermission DimAgent = DimAgent[Agent ID] = 0 || DimAgent[Team ID] IN CALCULATETABLE(VALUES(Security[Team ID]), Security[User e-mail] = LOWER(USERPRINCIPALNAME()))
+
+	tablePermission Security = Security[User e-mail] = LOWER(USERPRINCIPALNAME())

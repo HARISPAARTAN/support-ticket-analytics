@@ -1,0 +1,51 @@
+/// Field parameter: the measure of the Agents ranked chart; every entry is higher-is-better.
+table 'Rank agents by'
+	lineageTag: b926a663-ed0c-584e-a3cc-c56153b047ae
+
+	column 'Rank agents by'
+		dataType: string
+		lineageTag: f2a5efc9-5d31-5d75-b30d-941b56276650
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Rank agents by Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Rank agents by Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Rank agents by Fields'
+		dataType: string
+		isHidden
+		lineageTag: c207cbec-4847-5c84-a35d-166b9f06505c
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Rank agents by Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Rank agents by Order'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 5dc0d9f2-10a6-5246-8782-f2c2c101db20
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Rank agents by' = calculated
+		mode: import
+		source =
+				{
+				    ("Resolved", NAMEOF('_Measures'[Resolved]), 0),
+				    ("SLA resolution met %", NAMEOF('_Measures'[SLA resolution met %]), 1),
+				    ("SLA first response met %", NAMEOF('_Measures'[SLA first response met %]), 2),
+				    ("CSAT average", NAMEOF('_Measures'[CSAT average]), 3)
+				}

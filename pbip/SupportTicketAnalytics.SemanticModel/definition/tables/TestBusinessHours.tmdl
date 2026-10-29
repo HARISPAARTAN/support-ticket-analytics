@@ -1,0 +1,89 @@
+/// The 18 cases of data/business_hours_cases.csv evaluated with fnBusinessMinutes; Pass compares with the expected minutes (blank = blank passes).
+table TestBusinessHours
+	isHidden
+	lineageTag: eab14fc5-8efc-5efa-9641-3148565590ec
+
+	column 'Case ID'
+		dataType: int64
+		formatString: 0
+		lineageTag: 62317420-a506-51db-9763-f2f56258bd29
+		summarizeBy: none
+		sourceColumn: Case ID
+
+		annotation SummarizationSetBy = User
+
+	column Start
+		dataType: dateTime
+		formatString: yyyy-mm-dd hh:nn
+		lineageTag: ca1708ee-441c-5418-9c48-4d55dd0fd260
+		summarizeBy: none
+		sourceColumn: Start
+
+		annotation SummarizationSetBy = User
+
+	column End
+		dataType: dateTime
+		formatString: yyyy-mm-dd hh:nn
+		lineageTag: de958def-4b9f-5e22-92ea-c40396dd7fa9
+		summarizeBy: none
+		sourceColumn: End
+
+		annotation SummarizationSetBy = User
+
+	column 'Expected minutes'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 7892bbd1-4742-5b12-8657-390df7642932
+		summarizeBy: none
+		sourceColumn: Expected minutes
+
+		annotation SummarizationSetBy = User
+
+	column 'Actual minutes'
+		dataType: int64
+		formatString: #,0
+		lineageTag: f80d411a-da5c-5cdc-a015-21447a3742d6
+		summarizeBy: none
+		sourceColumn: Actual minutes
+
+		annotation SummarizationSetBy = User
+
+	column Pass
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 147ad413-09d1-505e-a707-17f4fcf3aff8
+		summarizeBy: none
+		sourceColumn: Pass
+
+		annotation SummarizationSetBy = User
+
+	column Note
+		dataType: string
+		lineageTag: 214177c7-2c19-5961-9be4-7b7402100a00
+		summarizeBy: none
+		sourceColumn: Note
+
+		annotation SummarizationSetBy = Automatic
+
+	partition TestBusinessHours = m
+		mode: import
+		source =
+				let
+				    Stamp = (x as nullable text) as nullable datetime =>
+				        if x = null or x = "" then null else DateTime.FromText(x, [Format = "yyyy-MM-dd HH:mm", Culture = "en-US"]),
+				    Whole = (x as nullable text) as nullable number => if x = null or x = "" then null else Number.FromText(x, "en-US"),
+				    Source = Csv.Document(File.Contents(DataFolder & "\business_hours_cases.csv"), [Delimiter = ",", Columns = 5, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumns(Promoted, {{"case_id", Whole, Int64.Type}, {"start", Stamp, type datetime},
+				        {"end", Stamp, type datetime}, {"expected_minutes", Whole, Int64.Type}}),
+				    Actual = Table.AddColumn(Typed, "actual_minutes", each fnBusinessMinutes([start], [end]), Int64.Type),
+				    Pass = Table.AddColumn(Actual, "pass", each [actual_minutes] = [expected_minutes], type logical),
+				    Selected = Table.SelectColumns(Pass, {"case_id", "start", "end", "expected_minutes", "actual_minutes", "pass", "note"}),
+				    Renamed = Table.RenameColumns(Selected, {{"case_id", "Case ID"}, {"start", "Start"}, {"end", "End"},
+				        {"expected_minutes", "Expected minutes"}, {"actual_minutes", "Actual minutes"}, {"pass", "Pass"}, {"note", "Note"}})
+				in
+				    Renamed
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table

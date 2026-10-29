@@ -1,0 +1,159 @@
+/// One row per status change, with the interval to the next event in business minutes; reaches the dimensions through FactTickets.
+table FactTicketEvents
+	lineageTag: a577d61a-2d2c-56e9-9ee5-04732abf0df9
+
+	column 'Event ID'
+		dataType: int64
+		formatString: 0
+		lineageTag: f9eb1a10-968e-5b17-a598-31eaf2b4c26d
+		summarizeBy: none
+		sourceColumn: Event ID
+
+		annotation SummarizationSetBy = User
+
+	column 'Ticket ID'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: bec71490-ada9-564b-b067-e7aebe97bea4
+		summarizeBy: none
+		sourceColumn: Ticket ID
+
+		annotation SummarizationSetBy = User
+
+	/// 1 = creation.
+	column 'Event seq'
+		dataType: int64
+		formatString: 0
+		lineageTag: c3c458cb-4858-5a2b-8bcd-03ca720bb75e
+		summarizeBy: none
+		sourceColumn: Event seq
+
+		annotation SummarizationSetBy = User
+
+	column 'Event at'
+		dataType: dateTime
+		formatString: yyyy-mm-dd hh:nn
+		lineageTag: ce568a32-4435-5246-8d65-476f4815e5a8
+		summarizeBy: none
+		sourceColumn: Event at
+
+		annotation SummarizationSetBy = User
+
+	/// No relationship to DimDate; the backlog measures filter it explicitly.
+	column 'Event date'
+		dataType: dateTime
+		isHidden
+		formatString: yyyy-mm-dd
+		lineageTag: be7cdb8b-6d34-5e5c-a8b5-0d59a7509f82
+		summarizeBy: none
+		sourceColumn: Event date
+
+		annotation SummarizationSetBy = User
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// The ticket's creation date, for the ageing measures.
+	column 'Ticket created date'
+		dataType: dateTime
+		isHidden
+		formatString: yyyy-mm-dd
+		lineageTag: 19daea68-dcb8-5ec7-acbf-e9c47264e4c1
+		summarizeBy: none
+		sourceColumn: Ticket created date
+
+		annotation SummarizationSetBy = User
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'From status'
+		dataType: string
+		lineageTag: dd86e79b-c2b6-5af1-b667-cd5cb504ab39
+		summarizeBy: none
+		sourceColumn: From status
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'To status'
+		dataType: string
+		lineageTag: 91e9729a-bf50-529a-b6d1-0dc355800b78
+		summarizeBy: none
+		sourceColumn: To status
+
+		annotation SummarizationSetBy = Automatic
+
+	column Actor
+		dataType: string
+		lineageTag: bfb4d85e-05f0-50f9-8dcd-33d871c48346
+		summarizeBy: none
+		sourceColumn: Actor
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The agent's name, or Customer or System.
+	column 'Actor name'
+		dataType: string
+		lineageTag: 270392cc-7d05-556b-9add-8f8fe21a57ac
+		summarizeBy: none
+		sourceColumn: Actor name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Next event at'
+		dataType: dateTime
+		isHidden
+		formatString: yyyy-mm-dd hh:nn
+		lineageTag: 2470ab7d-cc3b-52f4-8b98-47527cc090fe
+		summarizeBy: none
+		sourceColumn: Next event at
+
+		annotation SummarizationSetBy = User
+
+	/// Business minutes to the next event, or to AsOf for the last event; blank after Closed.
+	column 'Interval bmin'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 0a06d847-a7f1-5514-8c55-1f0c0caed058
+		summarizeBy: none
+		sourceColumn: Interval bmin
+
+		annotation SummarizationSetBy = User
+
+	column 'Clock running'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 054d3eb9-ec8b-5b4a-ad0e-3e2946396784
+		summarizeBy: none
+		sourceColumn: Clock running
+
+		annotation SummarizationSetBy = User
+
+	/// isOpen(to) - isOpen(from): +1 on creation and reopen, -1 on resolution.
+	column 'Backlog delta'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: f832ac5d-4b68-5d7d-9c5e-cbdf45ae964c
+		summarizeBy: none
+		sourceColumn: Backlog delta
+
+		annotation SummarizationSetBy = User
+
+	partition FactTicketEvents = m
+		mode: import
+		source =
+				let
+				    Source = EventIntervals,
+				    Selected = Table.SelectColumns(Source, {"event_id", "ticket_id", "event_seq", "event_at", "event_date", "ticket_created_date",
+				        "from_status", "to_status", "actor", "actor_name", "next_event_at", "interval_bmin", "clock_running", "backlog_delta"}),
+				    Renamed = Table.RenameColumns(Selected, {{"event_id", "Event ID"}, {"ticket_id", "Ticket ID"}, {"event_seq", "Event seq"},
+				        {"event_at", "Event at"}, {"event_date", "Event date"}, {"ticket_created_date", "Ticket created date"},
+				        {"from_status", "From status"}, {"to_status", "To status"}, {"actor", "Actor"}, {"actor_name", "Actor name"},
+				        {"next_event_at", "Next event at"}, {"interval_bmin", "Interval bmin"}, {"clock_running", "Clock running"},
+				        {"backlog_delta", "Backlog delta"}})
+				in
+				    Renamed
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table

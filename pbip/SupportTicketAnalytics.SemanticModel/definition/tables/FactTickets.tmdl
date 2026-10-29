@@ -1,0 +1,351 @@
+/// One row per ticket: the export's ticket columns plus the business-minute durations and SLA outcomes derived from the events (docs/data-model.md).
+table FactTickets
+	lineageTag: c8557614-9d3f-5637-9d07-60cf6458c4c3
+
+	column 'Ticket ID'
+		dataType: int64
+		isHidden
+		isKey
+		formatString: 0
+		lineageTag: 8a431fc3-6180-52ce-a737-0e377c56bc70
+		summarizeBy: none
+		sourceColumn: Ticket ID
+
+		annotation SummarizationSetBy = User
+
+	/// QS- and the ticket id, the number the client's help desk shows.
+	column 'Ticket number'
+		dataType: string
+		lineageTag: 093aadb6-75c2-558b-9493-58cdb8933160
+		summarizeBy: none
+		sourceColumn: Ticket number
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created at'
+		dataType: dateTime
+		formatString: yyyy-mm-dd hh:nn
+		lineageTag: e0b993ee-c7f1-5ef5-a59b-cb441dec7317
+		summarizeBy: none
+		sourceColumn: Created at
+
+		annotation SummarizationSetBy = User
+
+	/// The creation date: the active relationship to DimDate (ADR 0002).
+	column 'Created date'
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: a912491a-43c3-543f-a660-e57f0140e26f
+		summarizeBy: none
+		sourceColumn: Created date
+
+		annotation SummarizationSetBy = User
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Created hour'
+		dataType: int64
+		formatString: 0
+		lineageTag: 09b1e151-9c98-5181-a290-35b84c88bcf9
+		summarizeBy: none
+		sourceColumn: Created hour
+
+		annotation SummarizationSetBy = User
+
+	column Channel
+		dataType: string
+		isHidden
+		lineageTag: a3d206e6-a414-5347-8d19-c58ed95c4abb
+		summarizeBy: none
+		sourceColumn: Channel
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		isHidden
+		lineageTag: f8dbeda1-eac7-5569-bbb9-e2e5b5f70b94
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column Priority
+		dataType: string
+		isHidden
+		lineageTag: 625444db-542c-541f-b189-6508fa19be1a
+		summarizeBy: none
+		sourceColumn: Priority
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Customer ID'
+		dataType: string
+		isHidden
+		lineageTag: e34025c5-9b32-57e5-9141-c0b7a985fbe1
+		summarizeBy: none
+		sourceColumn: Customer ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Team ID'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 8f06d450-ee32-5d49-942b-4d8db48e81c0
+		summarizeBy: none
+		sourceColumn: Team ID
+
+		annotation SummarizationSetBy = User
+
+	/// The assigned agent; 0 = Unassigned (still New).
+	column 'Agent ID'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 5c0cc738-8ed3-5e28-ad19-76a13ad41fe0
+		summarizeBy: none
+		sourceColumn: Agent ID
+
+		annotation SummarizationSetBy = User
+
+	column Subject
+		dataType: string
+		lineageTag: 50c2dd0c-d6b5-5573-81e5-b419c33a64f1
+		summarizeBy: none
+		sourceColumn: Subject
+
+		annotation SummarizationSetBy = Automatic
+
+	/// The status at the as-of moment.
+	column 'Current status'
+		dataType: string
+		lineageTag: ac98d088-b1f7-5c0d-80e7-94d4af2dfa02
+		summarizeBy: none
+		sourceColumn: Current status
+		sortByColumn: 'Current status sort'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Current status sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: aa51bacb-90c0-51d7-b738-79cd6bac761a
+		summarizeBy: none
+		sourceColumn: Current status sort
+
+		annotation SummarizationSetBy = User
+
+	column 'First response at'
+		dataType: dateTime
+		formatString: yyyy-mm-dd hh:nn
+		lineageTag: f1e8354a-1f9d-5e38-ba2e-239a270ea62b
+		summarizeBy: none
+		sourceColumn: First response at
+
+		annotation SummarizationSetBy = User
+
+	/// The last Resolved event; set only for Resolved and Closed tickets.
+	column 'Resolved at'
+		dataType: dateTime
+		formatString: yyyy-mm-dd hh:nn
+		lineageTag: 61a72c87-3555-5bed-b081-d6ba5248806c
+		summarizeBy: none
+		sourceColumn: Resolved at
+
+		annotation SummarizationSetBy = User
+
+	/// The inactive relationship to DimDate, used by Resolved and Active agents.
+	column 'Resolved date'
+		dataType: dateTime
+		isHidden
+		formatString: yyyy-mm-dd
+		lineageTag: 90d21786-dfd3-5f74-a4d3-706f02f94c1c
+		summarizeBy: none
+		sourceColumn: Resolved date
+
+		annotation SummarizationSetBy = User
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Closed at'
+		dataType: dateTime
+		formatString: yyyy-mm-dd hh:nn
+		lineageTag: 9ec9ca4c-4abe-5dfd-a370-153ce62c717e
+		summarizeBy: none
+		sourceColumn: Closed at
+
+		annotation SummarizationSetBy = User
+
+	column 'Reopen count'
+		dataType: int64
+		formatString: 0
+		lineageTag: 68c913f1-5a31-5a2b-967d-17dd828e8f25
+		summarizeBy: none
+		sourceColumn: Reopen count
+
+		annotation SummarizationSetBy = User
+
+	/// 1 to 5; blank when the customer did not answer.
+	column 'CSAT score'
+		dataType: int64
+		formatString: 0
+		lineageTag: 20d5ee4b-c232-511a-9d0d-8872336daaed
+		summarizeBy: none
+		sourceColumn: CSAT score
+
+		annotation SummarizationSetBy = User
+
+	/// Business minutes of the New interval, when a first response exists.
+	column 'First response bmin'
+		dataType: int64
+		formatString: #,0
+		lineageTag: e1de385f-65ca-59a3-85ef-c2fbe34d1d09
+		summarizeBy: none
+		sourceColumn: First response bmin
+
+		annotation SummarizationSetBy = User
+
+	/// Business minutes in New, Open and Reopened (up to AsOf for open tickets).
+	column 'Clock bmin'
+		dataType: int64
+		formatString: #,0
+		lineageTag: febde185-0bd3-52ce-8022-81d542690d8b
+		summarizeBy: none
+		sourceColumn: Clock bmin
+
+		annotation SummarizationSetBy = User
+
+	/// Business minutes in Pending (the clock is paused).
+	column 'Pending bmin'
+		dataType: int64
+		formatString: #,0
+		lineageTag: cd308aea-379c-53d8-bef5-3b55b5038319
+		summarizeBy: none
+		sourceColumn: Pending bmin
+
+		annotation SummarizationSetBy = User
+
+	/// Clock bmin of Resolved and Closed tickets, else blank.
+	column 'Resolution bmin'
+		dataType: int64
+		formatString: #,0
+		lineageTag: de81132f-e9e2-52ff-9fbd-ffc48744b0ec
+		summarizeBy: none
+		sourceColumn: Resolution bmin
+
+		annotation SummarizationSetBy = User
+
+	/// Met, Breached or Pending against the priority's first-response target.
+	column 'FR SLA status'
+		dataType: string
+		lineageTag: 10618b35-7662-539e-9ee7-a811e448afa3
+		summarizeBy: none
+		sourceColumn: FR SLA status
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Met, Breached or Pending against the priority's resolution target.
+	column 'Res SLA status'
+		dataType: string
+		lineageTag: 87e12ef8-87a1-54cd-8c01-b9c426b69ec5
+		summarizeBy: none
+		sourceColumn: Res SLA status
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Any SLA breach'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 9f042592-b50b-5b74-82cb-79216da0e0f9
+		summarizeBy: none
+		sourceColumn: Any SLA breach
+
+		annotation SummarizationSetBy = User
+
+	column 'Ever resolved'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 0ebfc74e-54e8-5712-ac7e-d9fe4f6709e4
+		summarizeBy: none
+		sourceColumn: Ever resolved
+
+		annotation SummarizationSetBy = User
+
+	column 'Is resolved'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 84174e41-40f1-572d-b6f3-980f3dab1704
+		summarizeBy: none
+		sourceColumn: Is resolved
+
+		annotation SummarizationSetBy = User
+
+	column 'Is open at as-of'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 7e4b4af6-cb3f-5710-828d-88e71e2f164b
+		summarizeBy: none
+		sourceColumn: Is open at as-of
+
+		annotation SummarizationSetBy = User
+
+	partition FactTickets = m
+		mode: import
+		source =
+				let
+				    OpenStates = {"New", "Open", "Pending", "Reopened"},
+				    StatusOrder = {"New", "Open", "Pending", "Resolved", "Closed", "Reopened"},
+				    PerTicket = Table.Group(EventIntervals, {"ticket_id"}, {
+				        {"events", each Table.RowCount(_), Int64.Type},
+				        {"new_bmin", each Table.SelectRows(_, each [event_seq] = 1){0}[interval_bmin], Int64.Type},
+				        {"clock_bmin", each List.Sum({0} & Table.SelectRows(_, each [clock_running])[interval_bmin]), Int64.Type},
+				        {"pending_bmin", each List.Sum({0} & Table.SelectRows(_, each [to_status] = "Pending")[interval_bmin]), Int64.Type},
+				        {"ever_resolved", each List.Contains([to_status], "Resolved"), type logical}}),
+				    Priorities = Table.TransformColumns(Table.PromoteHeaders(Csv.Document(File.Contents(DataFolder & "\priorities.csv"), [Delimiter = ",", Columns = 7, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]), [PromoteAllScalars = true]),
+				        {{"fr_target_bmin", each Number.FromText(_, "en-US"), Int64.Type}, {"res_target_bmin", each Number.FromText(_, "en-US"), Int64.Type}}),
+				    Joined = Table.ExpandTableColumn(Table.NestedJoin(TicketFiles, {"ticket_id"}, PerTicket, {"ticket_id"}, "Intervals",
+				        JoinKind.LeftOuter), "Intervals", {"events", "new_bmin", "clock_bmin", "pending_bmin", "ever_resolved"}),
+				    WithTargets = Table.ExpandTableColumn(Table.NestedJoin(Joined, {"priority"}, Priorities, {"priority"}, "Targets",
+				        JoinKind.LeftOuter), "Targets", {"fr_target_bmin", "res_target_bmin"}),
+				    FirstResponse = Table.AddColumn(WithTargets, "first_response_bmin", each if [events] > 1 then [new_bmin] else null, Int64.Type),
+				    IsResolved = Table.AddColumn(FirstResponse, "is_resolved", each List.Contains({"Resolved", "Closed"}, [status]), type logical),
+				    Resolution = Table.AddColumn(IsResolved, "resolution_bmin", each if [is_resolved] then [clock_bmin] else null, Int64.Type),
+				    FrStatus = Table.AddColumn(Resolution, "fr_sla_status", each
+				        if [first_response_bmin] <> null then (if [first_response_bmin] <= [fr_target_bmin] then "Met" else "Breached")
+				        else if [new_bmin] <> null and [new_bmin] > [fr_target_bmin] then "Breached" else "Pending", type text),
+				    ResStatus = Table.AddColumn(FrStatus, "res_sla_status", each
+				        if [is_resolved] then (if [resolution_bmin] <= [res_target_bmin] then "Met" else "Breached")
+				        else if [clock_bmin] > [res_target_bmin] then "Breached" else "Pending", type text),
+				    AnyBreach = Table.AddColumn(ResStatus, "any_sla_breach", each [fr_sla_status] = "Breached" or [res_sla_status] = "Breached",
+				        type logical),
+				    IsOpen = Table.AddColumn(AnyBreach, "is_open", each List.Contains(OpenStates, [status]), type logical),
+				    Number = Table.AddColumn(IsOpen, "ticket_number", each "QS-" & Text.From([ticket_id], "en-US"), type text),
+				    CreatedDate = Table.AddColumn(Number, "created_date", each DateTime.Date([created_at]), type date),
+				    CreatedHour = Table.AddColumn(CreatedDate, "created_hour", each Time.Hour([created_at]), Int64.Type),
+				    ResolvedDate = Table.AddColumn(CreatedHour, "resolved_date", each if [resolved_at] = null then null else DateTime.Date([resolved_at]),
+				        type nullable date),
+				    Unassigned = Table.TransformColumns(ResolvedDate, {{"agent_id", each if _ = null then 0 else _, Int64.Type}}),
+				    StatusSort = Table.AddColumn(Unassigned, "status_sort", each List.PositionOf(StatusOrder, [status]) + 1, Int64.Type),
+				    Selected = Table.SelectColumns(StatusSort, {"ticket_id", "ticket_number", "created_at", "created_date", "created_hour", "channel",
+				        "category", "priority", "customer_id", "team_id", "agent_id", "subject", "status", "status_sort", "first_response_at",
+				        "resolved_at", "resolved_date", "closed_at", "reopen_count", "csat_score", "first_response_bmin", "clock_bmin",
+				        "pending_bmin", "resolution_bmin", "fr_sla_status", "res_sla_status", "any_sla_breach", "ever_resolved", "is_resolved",
+				        "is_open"}),
+				    Renamed = Table.RenameColumns(Selected, {{"ticket_id", "Ticket ID"}, {"ticket_number", "Ticket number"},
+				        {"created_at", "Created at"}, {"created_date", "Created date"}, {"created_hour", "Created hour"}, {"channel", "Channel"},
+				        {"category", "Category"}, {"priority", "Priority"}, {"customer_id", "Customer ID"}, {"team_id", "Team ID"},
+				        {"agent_id", "Agent ID"}, {"subject", "Subject"}, {"status", "Current status"}, {"status_sort", "Current status sort"},
+				        {"first_response_at", "First response at"}, {"resolved_at", "Resolved at"}, {"resolved_date", "Resolved date"},
+				        {"closed_at", "Closed at"}, {"reopen_count", "Reopen count"}, {"csat_score", "CSAT score"},
+				        {"first_response_bmin", "First response bmin"}, {"clock_bmin", "Clock bmin"}, {"pending_bmin", "Pending bmin"},
+				        {"resolution_bmin", "Resolution bmin"}, {"fr_sla_status", "FR SLA status"}, {"res_sla_status", "Res SLA status"},
+				        {"any_sla_breach", "Any SLA breach"}, {"ever_resolved", "Ever resolved"}, {"is_resolved", "Is resolved"},
+				        {"is_open", "Is open at as-of"}})
+				in
+				    Renamed
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table

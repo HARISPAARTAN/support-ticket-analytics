@@ -1,0 +1,46 @@
+/// One row: the export moment and the number of quarterly files read (Info page).
+table ExportInfo
+	isHidden
+	lineageTag: b1daa30e-8b01-5eef-be35-39b6385305fc
+
+	column 'As of'
+		dataType: dateTime
+		formatString: yyyy-mm-dd hh:nn
+		lineageTag: d37e7765-7f15-5fe6-add9-5a99709b9702
+		summarizeBy: none
+		sourceColumn: As of
+
+		annotation SummarizationSetBy = User
+
+	column 'Ticket files'
+		dataType: int64
+		formatString: 0
+		lineageTag: 11c94331-573b-5516-8fef-fece40ca77e2
+		summarizeBy: none
+		sourceColumn: Ticket files
+
+		annotation SummarizationSetBy = User
+
+	column 'Event files'
+		dataType: int64
+		formatString: 0
+		lineageTag: 8b6a2027-5902-56e3-aa99-7289c9bda355
+		summarizeBy: none
+		sourceColumn: Event files
+
+		annotation SummarizationSetBy = User
+
+	partition ExportInfo = m
+		mode: import
+		source =
+				let
+				    Count = (folder as text) as number =>
+				        Table.RowCount(Table.SelectRows(Folder.Files(DataFolder & "\" & folder), each [Extension] = ".csv")),
+				    Source = #table(type table [#"As of" = datetime, #"Ticket files" = Int64.Type, #"Event files" = Int64.Type],
+				        {{AsOf, Count("tickets"), Count("ticket_events")}})
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table

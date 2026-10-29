@@ -1,0 +1,43 @@
+/// The four channels in report order (tools/reference.py CHANNELS).
+table DimChannel
+	lineageTag: 8b8c9398-8de6-5bd8-b043-d4f439ff5d01
+
+	column Channel
+		dataType: string
+		isKey
+		lineageTag: 73c5beeb-0f7f-52ba-b5a7-0fd7c14c86c1
+		summarizeBy: none
+		sourceColumn: Channel
+		sortByColumn: 'Channel sort'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Channel sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 40cf8afd-ff75-5d41-9a45-d30c31b99c7e
+		summarizeBy: none
+		sourceColumn: Channel sort
+
+		annotation SummarizationSetBy = User
+
+	partition DimChannel = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        type table [Channel = text, #"Channel sort" = Int64.Type],
+				        {
+				        {"E-mail", 1},
+				        {"Portal", 2},
+				        {"Chat", 3},
+				        {"Phone", 4}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table

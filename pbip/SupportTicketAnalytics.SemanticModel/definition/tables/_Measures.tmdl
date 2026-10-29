@@ -1,0 +1,428 @@
+/// Measure table: every report measure lives here; the single hidden column only anchors the table.
+table _Measures
+	lineageTag: 9fe8e943-4dc4-5c9b-b5ab-ca7596962ca1
+
+	/// Tickets created in the period (creation date).
+	measure Created = COUNTROWS(FactTickets)
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: 59bb3169-62d3-5b73-82da-8e32672359f0
+
+	/// Tickets whose final resolution falls in the period (resolution date, the inactive relationship).
+	measure Resolved =
+			CALCULATE(
+			    COUNTROWS(FactTickets),
+			    USERELATIONSHIP(FactTickets[Resolved date], DimDate[Date]),
+			    FactTickets[Is resolved] = TRUE()
+			)
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: 1b3d4243-1042-59af-a90f-0a6197265f55
+
+	/// Created minus Resolved: positive when the backlog grows.
+	measure 'Net flow' = [Created] - [Resolved]
+		formatString: +#,0;-#,0;0
+		displayFolder: Volume
+		lineageTag: 4e112059-8922-5e7e-b65b-9a22276458a7
+
+	/// Open tickets at the end of the period: the backlog deltas of all events up to the last selected day.
+	measure Backlog =
+			VAR d = MAX(DimDate[Date])
+			RETURN
+			    CALCULATE(
+			        SUM(FactTicketEvents[Backlog delta]),
+			        REMOVEFILTERS(DimDate),
+			        FactTicketEvents[Event date] <= d
+			    )
+		formatString: #,0
+		displayFolder: Backlog
+		lineageTag: fdf41618-d2f6-5084-ba2e-5645ea23ede9
+
+	/// Backlog at the end of the period minus the backlog 30 calendar days earlier.
+	measure 'Backlog change 30 d' =
+			VAR d = MAX(DimDate[Date])
+			RETURN
+			    [Backlog]
+			        - CALCULATE(
+			            SUM(FactTicketEvents[Backlog delta]),
+			            REMOVEFILTERS(DimDate),
+			            FactTicketEvents[Event date] <= d - 30
+			        )
+		formatString: +#,0;-#,0;0
+		displayFolder: Backlog
+		lineageTag: 15fe140b-41c9-55b2-becb-fd661a913251
+
+	/// Backlog on the same day one year earlier; blank in 2024.
+	measure 'Backlog PY' = CALCULATE([Backlog], 'Time intelligence'[Time calculation] = "PY")
+		formatString: #,0
+		displayFolder: Backlog
+		lineageTag: 2605d282-55d0-51f0-9f1b-9787822c0d06
+
+	/// Tickets in the selected status at the end of the period: events into it minus events out of it.
+	measure 'Tickets in status' =
+			VAR d = MAX(DimDate[Date])
+			VAR s = VALUES(DimStatus[Status])
+			VAR entered = CALCULATE(COUNTROWS(FactTicketEvents), REMOVEFILTERS(DimDate), FactTicketEvents[Event date] <= d)
+			VAR left =
+			    CALCULATE(
+			        COUNTROWS(FactTicketEvents),
+			        REMOVEFILTERS(DimDate),
+			        REMOVEFILTERS(DimStatus),
+			        FactTicketEvents[Event date] <= d,
+			        TREATAS(s, FactTicketEvents[From status])
+			    )
+			RETURN
+			    entered - left
+		formatString: #,0
+		displayFolder: Backlog
+		lineageTag: d9718baf-7f7d-5fdb-91ae-8f0e6be6916c
+
+	/// Open tickets at the end of the period whose age in calendar days lies in the selected buckets.
+	measure 'Backlog in age bucket' =
+			VAR d = MAX(DimDate[Date])
+			VAR lo = MIN(DimAgeBucket[Min days])
+			VAR hi = MAX(DimAgeBucket[Max days])
+			VAR ev = CALCULATETABLE(FactTicketEvents, REMOVEFILTERS(DimDate), FactTicketEvents[Event date] <= d)
+			VAR perTicket =
+			    GROUPBY(
+			        ev,
+			        FactTicketEvents[Ticket ID],
+			        FactTicketEvents[Ticket created date],
+			        "@open", SUMX(CURRENTGROUP(), FactTicketEvents[Backlog delta])
+			    )
+			RETURN
+			    COUNTROWS(
+			        FILTER(
+			            perTicket,
+			            [@open] = 1
+			                && DATEDIFF(FactTicketEvents[Ticket created date], d, DAY) >= lo
+			                && DATEDIFF(FactTicketEvents[Ticket created date], d, DAY) <= hi
+			        )
+			    )
+		formatString: #,0
+		displayFolder: Backlog
+		lineageTag: 83df8b23-27a2-5f5c-bd92-6fc86a80c9be
+
+	/// Open tickets at the end of the period created at least 8 calendar days earlier.
+	measure 'Open over 7 days' = CALCULATE([Backlog in age bucket], DimAgeBucket[Min days] >= 8)
+		formatString: #,0
+		displayFolder: Backlog
+		lineageTag: e235133b-6b0e-5e59-8154-7e909c1ff964
+
+	/// Age in calendar days of the oldest ticket open at the end of the period.
+	measure 'Oldest open ticket (days)' =
+			VAR d = MAX(DimDate[Date])
+			VAR ev = CALCULATETABLE(FactTicketEvents, REMOVEFILTERS(DimDate), FactTicketEvents[Event date] <= d)
+			VAR perTicket =
+			    GROUPBY(
+			        ev,
+			        FactTicketEvents[Ticket ID],
+			        FactTicketEvents[Ticket created date],
+			        "@open", SUMX(CURRENTGROUP(), FactTicketEvents[Backlog delta])
+			    )
+			RETURN
+			    MAXX(FILTER(perTicket, [@open] = 1), DATEDIFF(FactTicketEvents[Ticket created date], d, DAY))
+		formatString: #,0
+		displayFolder: Backlog
+		lineageTag: fde14b6f-4979-5b93-bce7-9b92baefb8a1
+
+	/// 1 for a ticket open at the end of the period, 0 otherwise (a visual filter of the oldest-tickets table).
+	measure 'Open at end of period' = [Backlog]
+		formatString: 0
+		displayFolder: Backlog
+		lineageTag: 7010c162-dd5d-5bd6-b1d3-8485f5988ec0
+
+	/// Calendar days from the ticket's creation date to the end of the period.
+	measure 'Age at end of period (days)' = DATEDIFF(MIN(FactTickets[Created date]), MAX(DimDate[Date]), DAY)
+		formatString: #,0
+		displayFolder: Backlog
+		lineageTag: 81d8dbd9-0753-5da7-811a-ce71fff413c7
+
+	/// Median business hours to the first response; tickets without one are skipped.
+	measure 'Median first response (h)' = DIVIDE(MEDIAN(FactTickets[First response bmin]), 60)
+		displayFolder: Response time
+		lineageTag: b956edcc-87c0-5651-8d6d-df5c3150fc06
+
+		formatStringDefinition = VAR h = SELECTEDMEASURE() RETURN IF(NOT ISBLANK(h) && h < 1, "'" & FORMAT(h * 60, "0") & " min'", "#,0.00 \h")
+
+	/// Average business hours to the first response.
+	measure 'Average first response (h)' = DIVIDE(AVERAGE(FactTickets[First response bmin]), 60)
+		displayFolder: Response time
+		lineageTag: e75fc669-f222-5b46-b57f-56f3edb20e8c
+
+		formatStringDefinition = VAR h = SELECTEDMEASURE() RETURN IF(NOT ISBLANK(h) && h < 1, "'" & FORMAT(h * 60, "0") & " min'", "#,0.00 \h")
+
+	/// 90th percentile (inclusive, interpolated) of the business hours to the first response.
+	measure 'P90 first response (h)' =
+			VAR t = FILTER(FactTickets, NOT ISBLANK(FactTickets[First response bmin]))
+			RETURN
+			    IF(NOT ISEMPTY(t), DIVIDE(PERCENTILEX.INC(t, FactTickets[First response bmin], 0.9), 60))
+		displayFolder: Response time
+		lineageTag: 19128512-f092-56d3-b880-652b631c2196
+
+		formatStringDefinition = VAR h = SELECTEDMEASURE() RETURN IF(NOT ISBLANK(h) && h < 1, "'" & FORMAT(h * 60, "0") & " min'", "#,0.00 \h")
+
+	/// Median business hours on the clock of resolved tickets (New, Open and Reopened).
+	measure 'Median resolution (h)' = DIVIDE(MEDIAN(FactTickets[Resolution bmin]), 60)
+		displayFolder: Resolution time
+		lineageTag: 6e9d325e-a512-50b1-ad0d-324d9b9c7754
+
+		formatStringDefinition = VAR h = SELECTEDMEASURE() RETURN IF(NOT ISBLANK(h) && h < 1, "'" & FORMAT(h * 60, "0") & " min'", "#,0.00 \h")
+
+	/// Average business hours on the clock of resolved tickets.
+	measure 'Average resolution (h)' = DIVIDE(AVERAGE(FactTickets[Resolution bmin]), 60)
+		displayFolder: Resolution time
+		lineageTag: 5b0448d6-ebef-5d1c-8267-b1b4f31d783f
+
+		formatStringDefinition = VAR h = SELECTEDMEASURE() RETURN IF(NOT ISBLANK(h) && h < 1, "'" & FORMAT(h * 60, "0") & " min'", "#,0.00 \h")
+
+	/// 90th percentile (inclusive, interpolated) of the business hours on the clock of resolved tickets.
+	measure 'P90 resolution (h)' =
+			VAR t = FILTER(FactTickets, NOT ISBLANK(FactTickets[Resolution bmin]))
+			RETURN
+			    IF(NOT ISEMPTY(t), DIVIDE(PERCENTILEX.INC(t, FactTickets[Resolution bmin], 0.9), 60))
+		displayFolder: Resolution time
+		lineageTag: e1e2ed2c-6341-5cf4-a035-b0c395918080
+
+		formatStringDefinition = VAR h = SELECTEDMEASURE() RETURN IF(NOT ISBLANK(h) && h < 1, "'" & FORMAT(h * 60, "0") & " min'", "#,0.00 \h")
+
+	/// Business hours spent in the status of the events in context (Ticket explorer).
+	measure 'Time in status (h)' = DIVIDE(SUM(FactTicketEvents[Interval bmin]), 60)
+		formatString: #,0.00
+		displayFolder: Resolution time
+		lineageTag: 21ad0e95-801a-58f1-b905-77137139cdb6
+
+	/// Tickets whose first response met the priority's target.
+	measure 'FR SLA met' = CALCULATE([Created], FactTickets[FR SLA status] = "Met")
+		formatString: #,0
+		displayFolder: SLA
+		lineageTag: 7b6a3a62-2015-5846-81a6-db5d1c01d286
+
+	/// Tickets whose first response missed the target, or still lack one past it.
+	measure 'FR SLA breached' = CALCULATE([Created], FactTickets[FR SLA status] = "Breached")
+		formatString: #,0
+		displayFolder: SLA
+		lineageTag: 15a4eaef-534e-5f2f-aba2-2d6553fdbce7
+
+	/// FR SLA met / (met + breached); pending tickets are left out.
+	measure 'SLA first response met %' = DIVIDE([FR SLA met], [FR SLA met] + [FR SLA breached])
+		formatString: 0.0%
+		displayFolder: SLA
+		lineageTag: cec3a813-a658-509b-b2e5-c2742e69d7fb
+
+	/// Tickets resolved within the priority's resolution target.
+	measure 'Res SLA met' = CALCULATE([Created], FactTickets[Res SLA status] = "Met")
+		formatString: #,0
+		displayFolder: SLA
+		lineageTag: d7469cef-97ae-5a35-a618-2fa216f9f79f
+
+	/// Tickets resolved after the target, or open with the clock past it.
+	measure 'Res SLA breached' = CALCULATE([Created], FactTickets[Res SLA status] = "Breached")
+		formatString: #,0
+		displayFolder: SLA
+		lineageTag: e2580b7e-e040-5bd5-a1a1-411954e6ac02
+
+	/// Res SLA met / (met + breached); pending tickets are left out.
+	measure 'SLA resolution met %' = DIVIDE([Res SLA met], [Res SLA met] + [Res SLA breached])
+		formatString: 0.0%
+		displayFolder: SLA
+		lineageTag: 8c75ac43-c7b8-5ed5-ac9c-53c15f3aa4fa
+
+	/// Tickets with at least one breached target.
+	measure Breaches = CALCULATE([Created], FactTickets[Any SLA breach] = TRUE())
+		formatString: #,0
+		displayFolder: SLA
+		lineageTag: 7f7afe05-29a1-5e1b-88fb-ac876332ace6
+
+	/// Breached tickets still open at the as-of moment.
+	measure 'Open breaches now' = CALCULATE([Breaches], FactTickets[Is open at as-of] = TRUE())
+		formatString: #,0
+		displayFolder: SLA
+		lineageTag: 42fd599e-e7ca-5f84-8d6c-1f6f760aa052
+
+	/// Tickets reopened at least once.
+	measure 'Reopened tickets' = CALCULATE([Created], FactTickets[Reopen count] > 0)
+		formatString: #,0
+		displayFolder: Quality
+		lineageTag: f9e82f7f-8c3d-5fa8-a489-54308777eecd
+
+	/// Reopened tickets / tickets resolved at least once.
+	measure 'Reopen rate' = DIVIDE([Reopened tickets], CALCULATE([Created], FactTickets[Ever resolved] = TRUE()))
+		formatString: 0.0%
+		displayFolder: Quality
+		lineageTag: 29c00931-590b-523d-954f-92cb81c6171a
+
+	/// Answered satisfaction surveys.
+	measure 'CSAT responses' = COUNT(FactTickets[CSAT score])
+		formatString: #,0
+		displayFolder: Quality
+		lineageTag: b9484522-75b9-5da8-a20f-c4383c1e9907
+
+	/// Average satisfaction score, 1 to 5.
+	measure 'CSAT average' = AVERAGE(FactTickets[CSAT score])
+		formatString: 0.00
+		displayFolder: Quality
+		lineageTag: 997e095a-16b3-5562-9cad-212d620ead18
+
+	/// Answered surveys / resolved tickets.
+	measure 'CSAT response rate' = DIVIDE([CSAT responses], CALCULATE([Created], FactTickets[Is resolved] = TRUE()))
+		formatString: 0.0%
+		displayFolder: Quality
+		lineageTag: 1fda4cdc-c11c-5a66-ace1-61f44c134897
+
+	/// Share of answers with a score of 4 or 5.
+	measure 'CSAT satisfied %' = DIVIDE(CALCULATE([CSAT responses], FactTickets[CSAT score] >= 4), [CSAT responses])
+		formatString: 0.0%
+		displayFolder: Quality
+		lineageTag: 39ad99da-fd32-5024-9802-378e0963ac0d
+
+	/// Agents with at least one final resolution in the period.
+	measure 'Active agents' =
+			CALCULATE(
+			    DISTINCTCOUNT(FactTickets[Agent ID]),
+			    USERELATIONSHIP(FactTickets[Resolved date], DimDate[Date]),
+			    FactTickets[Is resolved] = TRUE()
+			)
+		formatString: #,0
+		displayFolder: Agents
+		lineageTag: a2ec1e89-9bac-57de-9ac5-9788532c44bc
+
+	/// Resolved tickets per active agent.
+	measure 'Tickets per agent' = DIVIDE([Resolved], [Active agents])
+		formatString: #,0.0
+		displayFolder: Agents
+		lineageTag: 5c85ff85-63d6-5b2e-aefa-62641382912c
+
+	/// The measure picked in Rank agents by, for agents with at least 20 created tickets.
+	measure 'Ranking value' =
+			VAR c = SELECTEDVALUE('Rank agents by'[Rank agents by Order], 0)
+			RETURN
+			    IF([Created] >= 20, SWITCH(c, 0, [Resolved], 1, [SLA resolution met %], 2, [SLA first response met %], 3, [CSAT average]))
+		displayFolder: Agents
+		lineageTag: 746c5cd5-e52e-55a8-9dad-aacfefb48157
+
+		formatStringDefinition = SWITCH(SELECTEDVALUE('Rank agents by'[Rank agents by Order], 0), 1, "0.0%", 2, "0.0%", 3, "0.00", "#,0")
+
+	/// Dense rank of the agent by Ranking value, 1 = best.
+	measure 'Agent rank' =
+			IF(
+			    HASONEVALUE(DimAgent[Agent name]) && NOT ISBLANK([Ranking value]),
+			    RANKX(FILTER(ALLSELECTED(DimAgent[Agent name]), NOT ISBLANK([Ranking value])), [Ranking value], , DESC, DENSE)
+			)
+		formatString: 0
+		displayFolder: Agents
+		lineageTag: 618c0784-dc1a-5310-b9c7-33f600b4ef6b
+
+	/// Change of Created against the same period a year earlier.
+	measure 'Δ PY Created' =
+			VAR edge = MIN(DimDate[Date])
+			VAR first = CALCULATE(MIN(DimDate[Date]), REMOVEFILTERS(DimDate))
+			VAR c = [Created]
+			VAR p = IF(EDATE(edge, -12) >= first, CALCULATE([Created], 'Time intelligence'[Time calculation] = "PY"))
+			RETURN
+			    IF(ISBLANK(p), "vs PY: n/a", "vs PY: " & FORMAT(DIVIDE(c - p, p), "+0.0%;-0.0%;0.0%"))
+		displayFolder: KPI deltas
+		lineageTag: eaf7f10c-88b5-5a00-ba2f-7bc3f12cc7a5
+
+	/// Change of Resolved against the same period a year earlier.
+	measure 'Δ PY Resolved' =
+			VAR edge = MIN(DimDate[Date])
+			VAR first = CALCULATE(MIN(DimDate[Date]), REMOVEFILTERS(DimDate))
+			VAR c = [Resolved]
+			VAR p = IF(EDATE(edge, -12) >= first, CALCULATE([Resolved], 'Time intelligence'[Time calculation] = "PY"))
+			RETURN
+			    IF(ISBLANK(p), "vs PY: n/a", "vs PY: " & FORMAT(DIVIDE(c - p, p), "+0.0%;-0.0%;0.0%"))
+		displayFolder: KPI deltas
+		lineageTag: 03bf8b28-3613-508b-a094-4bc0d620aad9
+
+	/// Change of Backlog against the same day a year earlier.
+	measure 'Δ PY Backlog' =
+			VAR edge = MAX(DimDate[Date])
+			VAR first = CALCULATE(MIN(DimDate[Date]), REMOVEFILTERS(DimDate))
+			VAR c = [Backlog]
+			VAR p = IF(EDATE(edge, -12) >= first, CALCULATE([Backlog], 'Time intelligence'[Time calculation] = "PY"))
+			RETURN
+			    IF(ISBLANK(p), "vs PY: n/a", "vs PY: " & FORMAT(DIVIDE(c - p, p), "+0.0%;-0.0%;0.0%"))
+		displayFolder: KPI deltas
+		lineageTag: b2078659-9f74-5248-9fe7-698648430298
+
+	/// Difference of the median first response in hours against a year earlier.
+	measure 'Δ PY Median first response' =
+			VAR edge = MIN(DimDate[Date])
+			VAR first = CALCULATE(MIN(DimDate[Date]), REMOVEFILTERS(DimDate))
+			VAR c = [Median first response (h)]
+			VAR p = IF(EDATE(edge, -12) >= first, CALCULATE([Median first response (h)], 'Time intelligence'[Time calculation] = "PY"))
+			RETURN
+			    IF(ISBLANK(p), "vs PY: n/a", "vs PY: " & FORMAT(c - p, "+0.00;-0.00;0.00") & " h")
+		displayFolder: KPI deltas
+		lineageTag: ea158fe9-be40-55ca-8670-d3cf815cb415
+
+	/// Difference of SLA resolution met % in percentage points against a year earlier.
+	measure 'Δ PY SLA resolution met %' =
+			VAR edge = MIN(DimDate[Date])
+			VAR first = CALCULATE(MIN(DimDate[Date]), REMOVEFILTERS(DimDate))
+			VAR c = [SLA resolution met %]
+			VAR p = IF(EDATE(edge, -12) >= first, CALCULATE([SLA resolution met %], 'Time intelligence'[Time calculation] = "PY"))
+			RETURN
+			    IF(ISBLANK(p), "vs PY: n/a", "vs PY: " & FORMAT((c - p) * 100, "+0.0;-0.0;0.0") & " pp")
+		displayFolder: KPI deltas
+		lineageTag: c3abe1e5-4a7e-5b4f-8e14-ef3f0f45d2a7
+
+	/// Difference of the CSAT average against a year earlier.
+	measure 'Δ PY CSAT average' =
+			VAR edge = MIN(DimDate[Date])
+			VAR first = CALCULATE(MIN(DimDate[Date]), REMOVEFILTERS(DimDate))
+			VAR c = [CSAT average]
+			VAR p = IF(EDATE(edge, -12) >= first, CALCULATE([CSAT average], 'Time intelligence'[Time calculation] = "PY"))
+			RETURN
+			    IF(ISBLANK(p), "vs PY: n/a", "vs PY: " & FORMAT(c - p, "+0.00;-0.00;0.00"))
+		displayFolder: KPI deltas
+		lineageTag: 756e7d22-c5a6-5856-8cf1-5a63059043f0
+
+	/// The export moment as text for the page header.
+	measure 'Data as of' = "Data as of " & FORMAT(MAX(ExportInfo[As of]), "yyyy-mm-dd hh:nn")
+		displayFolder: Info
+		lineageTag: 328f12d7-c95e-5f6d-8bde-0d80ad627b84
+
+	/// Business-hours test cases where fnBusinessMinutes returns the expected minutes.
+	measure 'BH tests passed' = COUNTROWS(FILTER(TestBusinessHours, TestBusinessHours[Pass]))
+		formatString: #,0
+		displayFolder: Info
+		lineageTag: 008acf2c-f2a6-5aa9-8724-3089eb1ad9ab
+
+	/// Business-hours test cases in data/business_hours_cases.csv.
+	measure 'BH tests total' = COUNTROWS(TestBusinessHours)
+		formatString: #,0
+		displayFolder: Info
+		lineageTag: 263957b4-e5af-5e85-bfbe-43a6f6ca2f4f
+
+	/// BH tests passed of BH tests total as text (Info page).
+	measure 'BH tests result' = FORMAT([BH tests passed], "0") & " of " & FORMAT([BH tests total], "0")
+		displayFolder: Info
+		lineageTag: 21b381ca-1fbf-5be9-88e2-5e6dfb481986
+
+	/// Quarterly ticket files read from data/tickets.
+	measure 'Ticket files' = MAX(ExportInfo[Ticket files])
+		formatString: #,0
+		displayFolder: Info
+		lineageTag: 8f10e139-ac3e-5464-be32-2c1c6dddc910
+
+	/// Quarterly event files read from data/ticket_events.
+	measure 'Event files' = MAX(ExportInfo[Event files])
+		formatString: #,0
+		displayFolder: Info
+		lineageTag: e0a66db2-eb8a-5143-8189-bbd1c248f22e
+
+	column Anchor
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: eee6144c-4519-573b-b590-4871c8400756
+		summarizeBy: none
+		sourceColumn: [Value]
+
+		annotation SummarizationSetBy = User
+
+	partition _Measures = calculated
+		mode: import
+		source = {BLANK()}

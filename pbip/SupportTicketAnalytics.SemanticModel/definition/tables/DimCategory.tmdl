@@ -1,0 +1,45 @@
+/// The six ticket categories in report order (tools/reference.py CATEGORIES).
+table DimCategory
+	lineageTag: 40e7ae41-b4eb-573f-8b8e-1e5a2ccb8717
+
+	column Category
+		dataType: string
+		isKey
+		lineageTag: ca6c870e-26a8-5084-a7f1-b721118e3ed5
+		summarizeBy: none
+		sourceColumn: Category
+		sortByColumn: 'Category sort'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Category sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 7b3e6635-002b-52ed-9d22-de4d13be62da
+		summarizeBy: none
+		sourceColumn: Category sort
+
+		annotation SummarizationSetBy = User
+
+	partition DimCategory = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        type table [Category = text, #"Category sort" = Int64.Type],
+				        {
+				        {"Bug", 1},
+				        {"How-to", 2},
+				        {"Billing", 3},
+				        {"Feature request", 4},
+				        {"Access", 5},
+				        {"Integration", 6}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table

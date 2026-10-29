@@ -1,0 +1,58 @@
+/// The customer accounts that raised tickets, taken from the ticket files (Account Cnnnn codes).
+table DimCustomer
+	lineageTag: e818cc4b-7c9d-5da7-932f-dbde45d29319
+
+	column 'Customer ID'
+		dataType: string
+		isHidden
+		isKey
+		lineageTag: 45047a65-a4cd-5577-9460-0f5fc5dc6ea4
+		summarizeBy: none
+		sourceColumn: Customer ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Customer name'
+		dataType: string
+		lineageTag: e4cb474f-9f7e-5253-b857-25d6ecc0b4de
+		summarizeBy: none
+		sourceColumn: Customer name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tier
+		dataType: string
+		lineageTag: 3df86184-b623-505a-8e96-f2ea15288b7b
+		summarizeBy: none
+		sourceColumn: Tier
+		sortByColumn: 'Tier sort'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Tier sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 61594369-d9f2-5e0a-8096-312b3fc680fc
+		summarizeBy: none
+		sourceColumn: Tier sort
+
+		annotation SummarizationSetBy = User
+
+	partition DimCustomer = m
+		mode: import
+		source =
+				let
+				    Tiers = #table(type table [customer_tier = text, tier_sort = Int64.Type], {{"Enterprise", 1}, {"Business", 2}, {"Starter", 3}}),
+				    Source = Table.Distinct(Table.SelectColumns(TicketFiles, {"customer_id", "customer_name", "customer_tier"}), {"customer_id"}),
+				    WithSort = Table.ExpandTableColumn(Table.NestedJoin(Source, {"customer_tier"}, Tiers, {"customer_tier"}, "Tier", JoinKind.LeftOuter),
+				        "Tier", {"tier_sort"}),
+				    Renamed = Table.RenameColumns(WithSort, {{"customer_id", "Customer ID"}, {"customer_name", "Customer name"},
+				        {"customer_tier", "Tier"}, {"tier_sort", "Tier sort"}}),
+				    Sorted = Table.Sort(Renamed, {{"Customer ID", Order.Ascending}})
+				in
+				    Sorted
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
