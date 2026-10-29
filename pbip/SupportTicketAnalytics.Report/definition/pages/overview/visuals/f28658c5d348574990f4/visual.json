@@ -1,0 +1,197 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "f28658c5d348574990f4",
+  "position": {
+    "height": 244,
+    "tabOrder": 28,
+    "width": 624,
+    "x": 640,
+    "y": 460,
+    "z": 28
+  },
+  "visual": {
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "values": [
+        {
+          "properties": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "FillRule": {
+                      "FillRule": {
+                        "linearGradient3": {
+                          "max": {
+                            "color": {
+                              "Literal": {
+                                "Value": "'#F2A93B'"
+                              }
+                            },
+                            "value": {
+                              "Literal": {
+                                "Value": "600D"
+                              }
+                            }
+                          },
+                          "mid": {
+                            "color": {
+                              "Literal": {
+                                "Value": "'#E6EDF3'"
+                              }
+                            },
+                            "value": {
+                              "Literal": {
+                                "Value": "300D"
+                              }
+                            }
+                          },
+                          "min": {
+                            "color": {
+                              "Literal": {
+                                "Value": "'#93A1B0'"
+                              }
+                            },
+                            "value": {
+                              "Literal": {
+                                "Value": "0D"
+                              }
+                            }
+                          },
+                          "nullColoringStrategy": {
+                            "strategy": {
+                              "Literal": {
+                                "Value": "'noColor'"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "Input": {
+                        "Measure": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Entity": "_Measures"
+                            }
+                          },
+                          "Property": "Created"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ],
+            "metadata": "_Measures.Created"
+          }
+        }
+      ]
+    },
+    "query": {
+      "queryState": {
+        "Columns": {
+          "projections": [
+            {
+              "active": true,
+              "displayName": "Hour",
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactTickets"
+                    }
+                  },
+                  "Property": "Created hour"
+                }
+              },
+              "nativeQueryRef": "Created hour",
+              "queryRef": "FactTickets.Created hour"
+            }
+          ]
+        },
+        "Rows": {
+          "projections": [
+            {
+              "active": true,
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimDate"
+                    }
+                  },
+                  "Property": "Weekday name"
+                }
+              },
+              "nativeQueryRef": "Weekday name",
+              "queryRef": "DimDate.Weekday name"
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Created"
+                }
+              },
+              "nativeQueryRef": "Created",
+              "queryRef": "_Measures.Created"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Matrix: Arrivals by weekday and hour'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Arrivals by weekday and hour'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualType": "pivotTable"
+  }
+}

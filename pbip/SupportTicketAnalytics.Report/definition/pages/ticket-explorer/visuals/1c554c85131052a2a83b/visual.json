@@ -1,0 +1,222 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "1c554c85131052a2a83b",
+  "position": {
+    "height": 396,
+    "tabOrder": 12,
+    "width": 820,
+    "x": 16,
+    "y": 308,
+    "z": 12
+  },
+  "visual": {
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {}
+        }
+      ]
+    },
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "displayName": "Seq",
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactTicketEvents"
+                    }
+                  },
+                  "Property": "Event seq"
+                }
+              },
+              "nativeQueryRef": "Event seq",
+              "queryRef": "FactTicketEvents.Event seq"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactTicketEvents"
+                    }
+                  },
+                  "Property": "Event at"
+                }
+              },
+              "nativeQueryRef": "Event at",
+              "queryRef": "FactTicketEvents.Event at"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactTicketEvents"
+                    }
+                  },
+                  "Property": "From status"
+                }
+              },
+              "nativeQueryRef": "From status",
+              "queryRef": "FactTicketEvents.From status"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactTicketEvents"
+                    }
+                  },
+                  "Property": "To status"
+                }
+              },
+              "nativeQueryRef": "To status",
+              "queryRef": "FactTicketEvents.To status"
+            },
+            {
+              "displayName": "Actor",
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactTicketEvents"
+                    }
+                  },
+                  "Property": "Actor name"
+                }
+              },
+              "nativeQueryRef": "Actor name",
+              "queryRef": "FactTicketEvents.Actor name"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Time in status (h)"
+                }
+              },
+              "nativeQueryRef": "Time in status (h)",
+              "queryRef": "_Measures.Time in status (h)"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactTicketEvents"
+                    }
+                  },
+                  "Property": "Clock running"
+                }
+              },
+              "nativeQueryRef": "Clock running",
+              "queryRef": "FactTicketEvents.Clock running"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "direction": "Ascending",
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "FactTicketEvents"
+                  }
+                },
+                "Property": "Event seq"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "visualContainerObjects": {
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Table: Status history'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "lockAspect": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "stylePreset": [
+        {
+          "properties": {
+            "name": {
+              "expr": {
+                "Literal": {
+                  "Value": "'None'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Status history'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualHeader": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualType": "tableEx"
+  }
+}

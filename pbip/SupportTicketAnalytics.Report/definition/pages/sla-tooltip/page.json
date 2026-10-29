@@ -1,0 +1,20 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "annotations": [
+    {
+      "name": "sta:generated",
+      "value": "tools/pbi/pages.json"
+    }
+  ],
+  "displayName": "SLA tooltip",
+  "displayOption": "FitToPage",
+  "height": 240,
+  "name": "sla-tooltip",
+  "pageBinding": {
+    "name": "ac06f9e57fa55f14ab89",
+    "type": "Tooltip"
+  },
+  "type": "Tooltip",
+  "visibility": "HiddenInViewMode",
+  "width": 320
+}

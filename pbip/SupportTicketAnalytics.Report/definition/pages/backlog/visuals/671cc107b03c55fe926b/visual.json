@@ -1,0 +1,113 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "671cc107b03c55fe926b",
+  "position": {
+    "height": 244,
+    "tabOrder": 18,
+    "width": 520,
+    "x": 16,
+    "y": 460,
+    "z": 18
+  },
+  "visual": {
+    "drillFilterOtherVisuals": true,
+    "objects": {},
+    "query": {
+      "queryState": {
+        "Columns": {
+          "projections": [
+            {
+              "active": true,
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimAgeBucket"
+                    }
+                  },
+                  "Property": "Bucket"
+                }
+              },
+              "nativeQueryRef": "Bucket",
+              "queryRef": "DimAgeBucket.Bucket"
+            }
+          ]
+        },
+        "Rows": {
+          "projections": [
+            {
+              "active": true,
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimTeam"
+                    }
+                  },
+                  "Property": "Team name"
+                }
+              },
+              "nativeQueryRef": "Team name",
+              "queryRef": "DimTeam.Team name"
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "displayName": "Open tickets",
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Backlog in age bucket"
+                }
+              },
+              "nativeQueryRef": "Backlog in age bucket",
+              "queryRef": "_Measures.Backlog in age bucket"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Matrix: Open tickets by team and age'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Open tickets by team and age'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualType": "pivotTable"
+  }
+}

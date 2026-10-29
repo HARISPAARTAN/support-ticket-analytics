@@ -1,0 +1,96 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "annotations": [
+    {
+      "name": "sta:generated",
+      "value": "tools/pbi/pages.json"
+    }
+  ],
+  "displayName": "Backlog and ageing",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "name": "backlog",
+  "visualInteractions": [
+    {
+      "source": "639cee1608b852edb5fe",
+      "target": "231e78303a465396ba50",
+      "type": "NoFilter"
+    },
+    {
+      "source": "639cee1608b852edb5fe",
+      "target": "3061853c16fe59af8aa8",
+      "type": "NoFilter"
+    },
+    {
+      "source": "639cee1608b852edb5fe",
+      "target": "ef39393931885869aaa6",
+      "type": "NoFilter"
+    },
+    {
+      "source": "639cee1608b852edb5fe",
+      "target": "f8555ba0296d581fb3c1",
+      "type": "NoFilter"
+    },
+    {
+      "source": "671cc107b03c55fe926b",
+      "target": "231e78303a465396ba50",
+      "type": "NoFilter"
+    },
+    {
+      "source": "671cc107b03c55fe926b",
+      "target": "3061853c16fe59af8aa8",
+      "type": "NoFilter"
+    },
+    {
+      "source": "671cc107b03c55fe926b",
+      "target": "ef39393931885869aaa6",
+      "type": "NoFilter"
+    },
+    {
+      "source": "671cc107b03c55fe926b",
+      "target": "f8555ba0296d581fb3c1",
+      "type": "NoFilter"
+    },
+    {
+      "source": "81030722a754572fa196",
+      "target": "231e78303a465396ba50",
+      "type": "NoFilter"
+    },
+    {
+      "source": "81030722a754572fa196",
+      "target": "3061853c16fe59af8aa8",
+      "type": "NoFilter"
+    },
+    {
+      "source": "81030722a754572fa196",
+      "target": "ef39393931885869aaa6",
+      "type": "NoFilter"
+    },
+    {
+      "source": "81030722a754572fa196",
+      "target": "f8555ba0296d581fb3c1",
+      "type": "NoFilter"
+    },
+    {
+      "source": "e35e3b1dc1725633a2bc",
+      "target": "231e78303a465396ba50",
+      "type": "NoFilter"
+    },
+    {
+      "source": "e35e3b1dc1725633a2bc",
+      "target": "3061853c16fe59af8aa8",
+      "type": "NoFilter"
+    },
+    {
+      "source": "e35e3b1dc1725633a2bc",
+      "target": "ef39393931885869aaa6",
+      "type": "NoFilter"
+    },
+    {
+      "source": "e35e3b1dc1725633a2bc",
+      "target": "f8555ba0296d581fb3c1",
+      "type": "NoFilter"
+    }
+  ],
+  "width": 1280
+}

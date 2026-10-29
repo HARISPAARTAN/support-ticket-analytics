@@ -1,0 +1,54 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "annotations": [
+    {
+      "name": "sta:generated",
+      "value": "tools/pbi/pages.json"
+    }
+  ],
+  "displayName": "Ticket explorer",
+  "displayOption": "FitToPage",
+  "filterConfig": {
+    "filters": [
+      {
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "FactTickets"
+              }
+            },
+            "Property": "Ticket number"
+          }
+        },
+        "howCreated": "Drillthrough",
+        "name": "422a7c065c1855e48bb4",
+        "type": "Categorical"
+      }
+    ]
+  },
+  "height": 720,
+  "name": "ticket-explorer",
+  "pageBinding": {
+    "name": "03a65b27424657158dee",
+    "parameters": [
+      {
+        "boundFilter": "422a7c065c1855e48bb4",
+        "fieldExpr": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "FactTickets"
+              }
+            },
+            "Property": "Ticket number"
+          }
+        },
+        "name": "95971eb671455fc8b38b"
+      }
+    ],
+    "type": "Drillthrough"
+  },
+  "type": "Drillthrough",
+  "width": 1280
+}

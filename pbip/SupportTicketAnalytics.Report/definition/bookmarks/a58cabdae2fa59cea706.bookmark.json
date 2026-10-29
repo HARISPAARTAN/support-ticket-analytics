@@ -1,0 +1,77 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Reset Backlog and ageing",
+  "explorationState": {
+    "activeSection": "backlog",
+    "objects": {},
+    "sections": {
+      "backlog": {
+        "visualContainers": {
+          "231e78303a465396ba50": {
+            "singleVisual": {
+              "objects": {
+                "remove": [
+                  {
+                    "object": "general",
+                    "property": "filter"
+                  }
+                ]
+              },
+              "visualType": "slicer"
+            }
+          },
+          "3061853c16fe59af8aa8": {
+            "singleVisual": {
+              "objects": {
+                "remove": [
+                  {
+                    "object": "general",
+                    "property": "filter"
+                  }
+                ]
+              },
+              "visualType": "slicer"
+            }
+          },
+          "ef39393931885869aaa6": {
+            "singleVisual": {
+              "objects": {
+                "remove": [
+                  {
+                    "object": "general",
+                    "property": "filter"
+                  }
+                ]
+              },
+              "visualType": "slicer"
+            }
+          },
+          "f8555ba0296d581fb3c1": {
+            "singleVisual": {
+              "objects": {
+                "remove": [
+                  {
+                    "object": "general",
+                    "property": "filter"
+                  }
+                ]
+              },
+              "visualType": "slicer"
+            }
+          }
+        }
+      }
+    },
+    "version": "1.3"
+  },
+  "name": "a58cabdae2fa59cea706",
+  "options": {
+    "applyOnlyToTargetVisuals": true,
+    "targetVisualNames": [
+      "231e78303a465396ba50",
+      "3061853c16fe59af8aa8",
+      "ef39393931885869aaa6",
+      "f8555ba0296d581fb3c1"
+    ]
+  }
+}

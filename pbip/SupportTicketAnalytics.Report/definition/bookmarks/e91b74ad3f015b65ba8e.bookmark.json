@@ -1,0 +1,91 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Reset Teams and agents",
+  "explorationState": {
+    "activeSection": "teams",
+    "objects": {},
+    "sections": {
+      "teams": {
+        "visualContainers": {
+          "231f3a68475956e3a190": {
+            "singleVisual": {
+              "objects": {
+                "remove": [
+                  {
+                    "object": "general",
+                    "property": "filter"
+                  }
+                ]
+              },
+              "visualType": "slicer"
+            }
+          },
+          "4b0127adc9965744a4a9": {
+            "singleVisual": {
+              "objects": {
+                "remove": [
+                  {
+                    "object": "general",
+                    "property": "filter"
+                  }
+                ]
+              },
+              "visualType": "slicer"
+            }
+          },
+          "544090854427516cb391": {
+            "singleVisual": {
+              "objects": {
+                "remove": [
+                  {
+                    "object": "general",
+                    "property": "filter"
+                  }
+                ]
+              },
+              "visualType": "slicer"
+            }
+          },
+          "a668c46d5cbc58639004": {
+            "singleVisual": {
+              "objects": {
+                "remove": [
+                  {
+                    "object": "general",
+                    "property": "filter"
+                  }
+                ]
+              },
+              "visualType": "slicer"
+            }
+          },
+          "f5424130c44e52f18986": {
+            "singleVisual": {
+              "objects": {
+                "remove": [
+                  {
+                    "object": "general",
+                    "property": "filter"
+                  }
+                ]
+              },
+              "visualType": "slicer"
+            }
+          }
+        }
+      }
+    },
+    "version": "1.3"
+  },
+  "name": "e91b74ad3f015b65ba8e",
+  "options": {
+    "applyOnlyToTargetVisuals": true,
+    "targetVisualNames": [
+      "231f3a68475956e3a190",
+      "4b0127adc9965744a4a9",
+      "544090854427516cb391",
+      "a668c46d5cbc58639004",
+      "f5424130c44e52f18986"
+    ]
+  }
+}
