@@ -1,7 +1,9 @@
 // Screenshots and browser checks of the replica (umbrella section 12): every tab at 1440 x 900 and 390 x 844, in the
 // dark and the light theme, plus the interactions of docs/screenshots/SHOTLIST.md. A built-in static server serves
 // web/ on 127.0.0.1; the run fails on any request that leaves that server, on a console error or page error, on
-// horizontal scrolling of the page, and when a focused control ends up under the sticky filter bar. With
+// horizontal scrolling of the page, when a table scrolls sideways inside its card at 1440 px, when a tab button lies
+// outside the viewport at 390 px, when the banner is not at the top before a full-page capture, and when a focused
+// control ends up under the sticky filter bar. With
 // URL=<address of the published page> it checks that page instead of the local copy (requests must then stay on it).
 // Usage (from the repository root, Node 22; Playwright is not a dependency of this repository):
 //   PLAYWRIGHT_FROM=<package.json of a folder that has playwright installed> OUT=<folder outside the repository> \
@@ -91,9 +93,33 @@ async function shot(page, where, name, options = {}) {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   if (overflow > 1) problems.push(`${where}: ${name} scrolls sideways by ${overflow} px`);
   // A full-page capture is taken from the top: after a scroll the fixed banner and the sticky filter bar would be drawn mid-page.
-  if (options.fullPage !== false) await page.evaluate(() => window.scrollTo(0, 0));
+  if (options.fullPage !== false) {
+    await page.evaluate(() => window.scrollTo(0, 0));
+    const top = await page.evaluate(() => document.querySelector('.pf-banner')?.getBoundingClientRect().top);
+    if (top === undefined || Math.abs(top) > 0.5) problems.push(`${where}: ${name}: the banner is at y = ${top} before the capture, not at the top`);
+  }
   await page.screenshot({ path: path.join(OUT, `${name}.png`), fullPage: true, ...options });
   shots += 1;
+}
+
+// At 1440 px every table of the open tab, the ticket table first, must fit its card: no scrolling inside the wrapper.
+async function tablesFit(page, where, tab) {
+  const wrappers = await page.evaluate(() => [...document.querySelectorAll('.pf-table-wrap')]
+    .filter((w) => w.offsetParent !== null)
+    .map((w) => ({ label: w.getAttribute('aria-label'), id: w.parentElement.id, scroll: w.scrollWidth, client: w.clientWidth })));
+  if (!wrappers.some((w) => w.id === 'table-tickets')) problems.push(`${where}: ${tab}: the ticket table is missing`);
+  for (const w of wrappers) {
+    if (w.scroll > w.client + 1) problems.push(`${where}: ${tab}: the table "${w.label}" scrolls inside its card (${w.scroll} > ${w.client} px)`);
+  }
+}
+
+// At 390 px the four tab buttons must all lie inside the viewport.
+async function tabsInside(page, where, tab) {
+  const outside = await page.evaluate((ids) => ids.filter((id) => {
+    const box = document.getElementById(`tab-${id}`).getBoundingClientRect();
+    return box.left < 0 || box.top < 0 || box.right > window.innerWidth || box.bottom > window.innerHeight;
+  }), TABS);
+  for (const id of outside) problems.push(`${where}: ${tab}: the tab button ${id} lies outside the viewport`);
 }
 
 // A control that receives keyboard focus must not sit under the sticky filter bar (scroll-padding-top in app.css).
@@ -132,6 +158,8 @@ try {
       const { context, page, where } = await open(browser, theme, size);
       for (const tab of TABS) {
         await load(page, tab);
+        if (size[0] === 1440) await tablesFit(page, where, tab);
+        if (size[0] === 390) await tabsInside(page, where, tab);
         await shot(page, where, `${theme}-${size[0]}-${tab}`);
       }
       await load(page, 'overview');

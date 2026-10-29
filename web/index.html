@@ -17,7 +17,7 @@
 <body>
   <div class="pf-page" id="app" data-state="loading">
     <header class="pf-header">
-      <a class="pf-brand" href="#overview"><span class="pf-brand__mark" aria-hidden="true">QS</span><span class="pf-brand__name">Quillstack Software · Support tickets</span></a>
+      <a class="pf-brand" href="#overview"><span class="pf-brand__mark" aria-hidden="true">QS</span><h1 class="pf-brand__name">Quillstack Software · Support tickets</h1></a>
       <div class="pf-header__tools">
         <span class="pf-pill pf-pill--muted" id="data-until">Data as of –</span>
         <button type="button" class="pf-btn pf-btn--ghost pf-btn--sm" id="about-open" aria-haspopup="dialog">About</button>
@@ -25,7 +25,7 @@
       </div>
     </header>
 
-    <nav class="m-tabs" aria-label="Report pages">
+    <nav class="m-tabs">
       <div class="pf-tabs" role="tablist" aria-label="Report pages" id="tabs">
         <button type="button" class="pf-tab" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true">Overview</button>
         <button type="button" class="pf-tab" role="tab" id="tab-sla" aria-controls="panel-sla" aria-selected="false">SLA</button>
@@ -63,7 +63,7 @@
         <div class="f-spacer"></div>
         <div class="f-field">
           <span class="f-label">Cross-filter</span>
-          <span id="cross-chip"></span>
+          <span id="cross-chip" tabindex="-1"></span>
         </div>
         <button type="button" class="pf-btn pf-btn--sm" id="reset">Reset</button>
       </div>
@@ -120,7 +120,7 @@
 
       <section class="pf-tabpanel" role="tabpanel" id="panel-teams" aria-labelledby="tab-teams" hidden>
         <div class="pf-grid kpis" id="teams-tiles"></div>
-        <div class="layout">
+        <div class="layout layout--even">
           <article class="pf-card">
             <div class="ct">
               <h2 id="ranked-title">Agents ranked by Resolved</h2>
@@ -129,21 +129,21 @@
             <div class="chart chart--tall" id="chart-agents" role="img" aria-label="Bar chart: agents ranked by the chosen measure"></div>
             <p class="hint">Agents with fewer than 20 created tickets are not ranked · click a bar to filter the tables</p>
           </article>
-          <article class="pf-card stack">
-            <div class="ct"><h2>Agent scorecard</h2><span class="sub">sortable</span></div>
-            <div id="table-agents"></div>
-          </article>
+          <div class="layout__col">
+            <article class="pf-card">
+              <div class="ct"><h2>Tickets per agent per month</h2><span class="sub">resolved ÷ active agents, by team</span></div>
+              <div class="chart" id="chart-per-agent" role="img" aria-label="Line chart: tickets per agent per month for each team"></div>
+            </article>
+            <article class="pf-card">
+              <div class="ct"><h2>CSAT scores</h2><span class="sub">responses per score</span></div>
+              <div class="chart" id="chart-csat" role="img" aria-label="Column chart: CSAT responses per score from 1 to 5"></div>
+            </article>
+          </div>
         </div>
-        <div class="layout layout--even">
-          <article class="pf-card">
-            <div class="ct"><h2>Tickets per agent per month</h2><span class="sub">resolved ÷ active agents, by team</span></div>
-            <div class="chart" id="chart-per-agent" role="img" aria-label="Line chart: tickets per agent per month for each team"></div>
-          </article>
-          <article class="pf-card">
-            <div class="ct"><h2>CSAT scores</h2><span class="sub">responses per score</span></div>
-            <div class="chart" id="chart-csat" role="img" aria-label="Column chart: CSAT responses per score from 1 to 5"></div>
-          </article>
-        </div>
+        <article class="pf-card wide stack">
+          <div class="ct"><h2>Agent scorecard</h2><span class="sub sub--sort">sortable</span></div>
+          <div id="table-agents"></div>
+        </article>
       </section>
 
       <section class="pf-tabpanel" role="tabpanel" id="panel-backlog" aria-labelledby="tab-backlog" hidden>
@@ -163,16 +163,14 @@
             <div class="chart" id="chart-statuses" role="img" aria-label="Bar chart: open tickets per current status at the data cut-off"></div>
           </article>
         </div>
-        <div class="layout layout--even">
-          <article class="pf-card stack">
-            <div class="ct"><h2>Open tickets by team and age</h2><span class="sub">at the snapshot</span></div>
-            <div id="table-team-buckets"></div>
-          </article>
-          <article class="pf-card stack">
-            <div class="ct"><h2>Oldest open tickets</h2><span class="sub">at the snapshot</span></div>
-            <div id="table-oldest"></div>
-          </article>
-        </div>
+        <article class="pf-card wide stack">
+          <div class="ct"><h2>Open tickets by team and age</h2><span class="sub">at the snapshot</span></div>
+          <div id="table-team-buckets"></div>
+        </article>
+        <article class="pf-card wide stack">
+          <div class="ct"><h2>Oldest open tickets</h2><span class="sub">at the snapshot</span></div>
+          <div id="table-oldest"></div>
+        </article>
       </section>
 
       <section class="pf-card wide stack tickets" id="tickets" aria-labelledby="tickets-title" hidden>

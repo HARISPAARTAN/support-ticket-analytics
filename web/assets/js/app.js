@@ -167,7 +167,11 @@ function syncFilters() {
   clear.className = 'xchip__clear';
   clear.textContent = '×';
   clear.setAttribute('aria-label', `Clear the cross-filter ${value}`);
-  clear.addEventListener('click', () => bus.clear('cross'));
+  // The button is replaced by the re-render, so focus moves to the chip's container, which stays in the page.
+  clear.addEventListener('click', () => {
+    bus.clear('cross');
+    box.focus();
+  });
   box.replaceChildren(text, clear);
 }
 
@@ -261,7 +265,7 @@ function showDetail(index) {
     ['First response', `${hours(t.frHours)} · SLA ${t.frOutcome}`],
     ['Resolution', `${hours(t.resHours)} · SLA ${t.resOutcome}`],
     ['Resolved on', t.resolved ? fmt.date(t.resolved) : 'not resolved'],
-    ['Reopened', `${int(t.reopens)} times`],
+    ['Reopened', `${int(t.reopens)} ${t.reopens === 1 ? 'time' : 'times'}`],
     ['CSAT', t.csat === null ? 'no response' : `${t.csat} of 5`],
   ];
   $('detail-title').textContent = `Ticket ${t.number}`;

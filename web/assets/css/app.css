@@ -18,6 +18,8 @@
 /* ---------------------------------------------------------------- header and tabs */
 
 .pf-brand__name {
+  font: inherit;
+  letter-spacing: inherit;
   overflow-wrap: anywhere;
 }
 
@@ -196,6 +198,14 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
 
+/* two cards stacked in one grid cell, so a tall chart beside them leaves no blank area */
+.layout__col {
+  display: grid;
+  grid-auto-rows: 1fr;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
 .layout .pf-card,
 .wide.pf-card {
   padding: 18px 20px;
@@ -303,12 +313,18 @@
   cursor: pointer;
 }
 
+/* The Subject column takes the width the other columns leave (width 100 % with max-width 0 is the table's way to say
+   "the rest") and is cut with an ellipsis, so the ticket table stays inside its card; the full text is the title. */
+.pf-table td:has(> .cell > .subject) {
+  width: 100%;
+  min-width: 16ch;
+  max-width: 0;
+}
+
 .subject {
-  display: inline-block;
-  max-width: 36ch;
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
-  vertical-align: bottom;
 }
 
 /* Below 640 px a table becomes stacked row cards: each cell shows its column name (data-label of the cell content). */
@@ -322,11 +338,22 @@
   }
 
   .stack .pf-table,
+  .stack .pf-table caption,
   .stack .pf-table tbody,
   .stack .pf-table tr,
   .stack .pf-table td {
     display: block;
     width: 100%;
+  }
+
+  .stack .pf-table td:has(> .cell > .subject) {
+    min-width: 0;
+    max-width: none;
+  }
+
+  /* the header row is hidden here, so there is nothing to sort by */
+  .stack .sub--sort {
+    display: none;
   }
 
   .stack .pf-table tr {
@@ -452,6 +479,10 @@
   .layout,
   .layout--even {
     grid-template-columns: 1fr;
+  }
+
+  .layout__col {
+    grid-auto-rows: auto;
   }
 
   .chart--tall {

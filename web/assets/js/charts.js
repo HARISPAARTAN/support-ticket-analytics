@@ -94,7 +94,8 @@ export function countBars(rows, c, { name = 'Created', selected = null, motion =
 }
 
 // Overview: tickets created per weekday and hour of the day (Lisbon time) on the kit's sequential ramp; the cells
-// carry no labels, so no text sits on a coloured cell (the tooltip gives the count).
+// carry no labels, so no text sits on a coloured cell (the tooltip gives the count). The ramp starts at one ticket;
+// a cell without tickets is out of range and takes surface-2, so it never reads as the loudest step of the ramp.
 export function arrivals(cells, c, motion = true) {
   const data = cells.map((v, k) => [k % 24, Math.floor(k / 24), v]);
   const hour = (h) => `${String(h).padStart(2, '0')}:00`;
@@ -105,7 +106,7 @@ export function arrivals(cells, c, motion = true) {
     xAxis: { type: 'category', data: Array.from({ length: 24 }, (_, h) => String(h).padStart(2, '0')) },
     yAxis: { type: 'category', inverse: true, data: WEEKDAYS },
     visualMap: {
-      min: 0,
+      min: 1,
       max: Math.max(1, ...cells),
       calculable: false,
       orient: 'horizontal',
@@ -114,6 +115,7 @@ export function arrivals(cells, c, motion = true) {
       itemHeight: 120,
       itemWidth: 10,
       inRange: { color: c.seq },
+      outOfRange: { color: c.surface2 },
       textStyle: { color: c.muted },
       formatter: (v) => fmt.int(v),
     },
@@ -180,7 +182,7 @@ export function pctMonths(months, names, c, motion = true) {
     legend,
     grid: withLegend,
     tooltip: { trigger: 'axis', confine: true, formatter: axisTooltip((v) => fmt.pct(v)) },
-    xAxis: { type: 'category', data: monthLabels(months.map((r) => r[0])), boundaryGap: false },
+    xAxis: { type: 'category', data: monthLabels(months.map((r) => r[0])), boundaryGap: true },
     yAxis: valueAxis((v) => fmt.pct(v, 0), { max: 1, min: (v) => Math.max(0, Math.floor(v.min * 10) / 10) }),
     series: names.map((name, k) => ({
       name,

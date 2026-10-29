@@ -54,6 +54,8 @@ test('arrivals: 7 x 24 cells without labels on the sequential ramp', () => {
   assert.equal(option.series[0].label, undefined);
   assert.deepEqual(option.visualMap.inRange.color, C.seq);
   assert.equal(option.visualMap.max, Math.max(...view.heatmap));
+  assert.equal(option.visualMap.min, 1); // a cell without tickets is out of range ...
+  assert.equal(option.visualMap.outOfRange.color, C.surface2); // ... and takes surface-2, never a step of the ramp
   assert.deepEqual(option.yAxis.data, ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
 });
 
@@ -70,6 +72,7 @@ test('SLA: priority bars on a 0 to 100 % axis, the matrix from danger to surface
   assert.equal(matrix.series[0].label, undefined);
   const lines = charts.pctMonths(view.months, ['First response', 'Resolution'], C);
   assert.deepEqual(lines.series.map((s) => s.lineStyle.color), [C.chart[0], C.chart[1]]);
+  assert.equal(lines.xAxis.boundaryGap, true); // the last month label keeps room at the right edge
 });
 
 test('teams: ranked bars use the scale of the measure, one line per team, CSAT in status colours', () => {
