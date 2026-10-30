@@ -22,7 +22,7 @@ Quillstack Software is a fictional company. Every ticket, customer account, pers
 In scope:
 
 - the generator and the committed export (7 quarterly ticket files, 7 quarterly event files, five reference files);
-- the Power BI project (PBIP): a TMDL model with a star schema, business-hour durations computed in Power Query, a time-intelligence calculation group, a field parameter and dynamic row-level security; a PBIR report with eight pages (a drill-through page, a tooltip page, a reset bookmark per page, a hidden reconciliation page); the theme `Quillstack Dark`;
+- the Power BI project (PBIP): a TMDL model with a star schema, business-hour durations computed in Power Query, a time-intelligence calculation group, a field parameter and dynamic row-level security; a PBIR report with eight pages (a drill-through page, a tooltip page, a reset bookmark on each of the four pages with slicers, a hidden reconciliation page); the theme `Quillstack Dark`;
 - an independent computation of every headline number in Python (`tools/reference.py`) and the reconciliation table;
 - the HTML replica on GitHub Pages, built from the same reference;
 - tests, CI, documentation, decision records and one validation session in Power BI Desktop;

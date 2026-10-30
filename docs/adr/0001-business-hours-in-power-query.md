@@ -14,7 +14,7 @@ Power Query computes the durations at refresh with one documented M function, `f
 
 - Measures stay fast and simple: no iterator walks a calendar at query time, and the medians and percentiles read one column.
 - The rule is testable twice: in Python by pytest and hypothesis, in M by the 18 cases at every refresh (R30 of the reconciliation).
-- Each refresh evaluates about 120,000 function calls, each linear in the calendar days of its interval; on the 25,000 tickets of the demo that is a matter of seconds.
+- Each refresh evaluates about 120,000 function calls, each linear in the calendar days of its interval; the refresh time is recorded after the Desktop session.
 - A change of the business hours or of the holidays needs a refresh; durations are not recomputed per query. A new holiday is one row in `data/holidays.csv` ([handover](../handover.md)).
 
 ## Alternatives considered
