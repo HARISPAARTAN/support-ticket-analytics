@@ -4,7 +4,7 @@
 [![Pages](https://github.com/HARISPAARTAN/support-ticket-analytics/actions/workflows/pages.yml/badge.svg)](https://github.com/HARISPAARTAN/support-ticket-analytics/actions/workflows/pages.yml)
 [![Release](https://img.shields.io/github/v/release/HARISPAARTAN/support-ticket-analytics?sort=semver)](https://github.com/HARISPAARTAN/support-ticket-analytics/releases)
 
-Power BI report on a help-desk export: SLA compliance in business hours, backlog and ageing, team performance and CSAT for a fictional B2B software company, with business-hour durations computed in Power Query and tested against a Python twin, 31 headline checks computed independently in pandas for the reconciliation, and a live HTML replica.
+Power BI report on a help-desk export: SLA compliance in business hours, backlog and ageing, team performance and CSAT for a fictional B2B software company, with business-hour durations computed in Power Query with a Python twin on the same 18 cases, 31 headline checks computed independently in pandas for the reconciliation, and a live HTML replica.
 
 Deutsch: [README.de.md](README.de.md)
 
@@ -29,7 +29,7 @@ The replica is a static page with four of the report pages as tabs (Overview, SL
 
 ## What it does
 
-Eight report pages with the theme Quillstack Dark: seven on a 1280 × 720 canvas (Reconciliation among them, hidden in view mode) and the SLA tooltip page on 320 × 240, which is not on the canvas but opens over four visuals. Every page has a header with the data date and page buttons. The four reading pages with slicers (Overview, SLA compliance, Teams and agents, Backlog and ageing) have a slicer row (Date, on Backlog and ageing a snapshot date instead, Team, Priority, Channel, Reset) synced across them, a row of KPI tiles (on Overview with the change against the previous year), and the charts below.
+Eight report pages with the theme Quillstack Dark: seven on a 1280 × 720 canvas (Reconciliation among them, hidden in view mode) and the SLA tooltip page on 320 × 240, which is not on the canvas but opens over four visuals. Every page except the tooltip page has a header with the data date and page buttons. The four reading pages with slicers (Overview, SLA compliance, Teams and agents, Backlog and ageing) have a slicer row (Date, on Backlog and ageing a snapshot date instead, Team, Priority, Channel, Reset) synced across them, a row of KPI tiles (on Overview with the change against the previous year), and the charts below.
 
 - **Overview**: created, resolved, backlog, median first response, SLA resolution met % and CSAT; created and resolved per month; the backlog at month end against last year; created by category and tier; created as current, YTD, PYTD and R12; arrivals by weekday and hour.
 - **SLA compliance**: first response and resolution met %, breaches, open breaches, median and P90 resolution; met % by priority and per month; a team × priority matrix that shows the Integrations team's P1 gap; current against PY; the breach list.
@@ -44,11 +44,11 @@ Team leads see only their team: the role `Team lead` filters by the sign-in addr
 
 ![Two branches from the same files: Power Query, the TMDL model and the PBIR report on one side, the pandas reference, the replica data and the HTML replica on the other; they meet in the reconciliation table](docs/architecture.svg)
 
-The seeded generator writes the help desk's export: seven quarterly ticket files, seven quarterly event files and five reference files. Power Query combines the folders, computes the business minutes of every status interval with one M function and groups them per ticket, so the measures stay plain medians, averages and counts ([ADR 0001](docs/adr/0001-business-hours-in-power-query.md)); the same definition lives in `tools/bizhours.py`, and both pass the same 18 cases. Independently, `tools/reference.py` computes every measure with pandas; the two meet in [the reconciliation](docs/reconciliation.md), where 31 headline numbers from Python and from Power BI Desktop must match. The same reference builds the replica's data. More in [docs/architecture.md](docs/architecture.md).
+The seeded generator writes the help desk's export: seven quarterly ticket files, seven quarterly event files and five reference files. Power Query combines the folders, computes the business minutes of every status interval with one M function and groups them per ticket, so the measures stay plain medians, averages and counts ([ADR 0001](docs/adr/0001-business-hours-in-power-query.md)); the same definition lives in `tools/bizhours.py`, and both are written for the same 18 cases: Python passes them in pytest, Power Query runs them at every refresh (the Desktop session is pending, see Status). Independently, `tools/reference.py` computes the 31 headline checks with pandas; the two meet in [the reconciliation](docs/reconciliation.md), where 31 headline numbers from Python and from Power BI Desktop must match. The same reference builds the replica's data. More in [docs/architecture.md](docs/architecture.md).
 
 ## Data model
 
-A star schema: `FactTickets` (one row per ticket with its durations and SLA outcomes) and `FactTicketEvents` (one row per status change) with `DimDate`, `DimPriority` (the SLA targets), `DimTeam`, `DimAgent`, `DimCategory`, `DimChannel`, `DimCustomer` and `DimStatus`; the age buckets, the export facts and the business-hours test cases in small tables of their own; 49 measures in `_Measures`; the calculation group `Time intelligence` (Current, PY, YoY, YoY %, YTD, PYTD, R12); the field parameter `Rank agents by`; the hidden table `Security` for the role. Tables, columns and the generator rules are in [docs/data-model.md](docs/data-model.md), every measure with its DAX in [docs/measures.md](docs/measures.md), the business hours in [docs/business-hours.md](docs/business-hours.md).
+A star schema: `FactTickets` (one row per ticket with its durations and SLA outcomes) and `FactTicketEvents` (one row per status change) with `DimDate`, `DimPriority` (the SLA targets), `DimTeam`, `DimAgent`, `DimCategory`, `DimChannel`, `DimCustomer` and `DimStatus`; the age buckets, the export facts and the business-hours test cases in small tables of their own; 49 measures in `_Measures`; the calculation group `Time intelligence` (Current, PY, YoY, YoY %, YTD, PYTD, R12); the field parameter `Rank agents by`; the hidden table `Security` for the role. Tables, columns and the generator rules are in [docs/data-model.md](docs/data-model.md), each measure with its DAX in [docs/measures.md](docs/measures.md), the business hours in [docs/business-hours.md](docs/business-hours.md).
 
 ## Getting started
 
@@ -90,12 +90,14 @@ docs/                brief, data model, business hours, measures, architecture, 
 This rebuild adds:
 
 - a written brief with users, scope and acceptance criteria, and a documented data model with the status machine;
-- the business-hours function documented and tested twice, in Power Query and in Python, on the same 18 cases;
+- the business-hours function documented and implemented twice, in Power Query and in Python, against the same 18 cases;
 - the model and the report as reviewable text (TMDL and PBIR) with offline lint tests and schema checks;
 - 31 headline checks computed by an independent pandas reference for the reconciliation, one of them under the role for a team lead;
 - a parity test that proves the replica's default numbers equal the reference;
 - handover notes for refreshing, a new quarter's export, holidays, team leads and a failing check;
 - CI on Ubuntu and Windows with `uv sync --locked` and pinned actions, and a live replica with tested filter code.
+
+The original client's real ticket export, the production use and the client's acceptance are not carried over, and the Desktop validation is still to run (see Status).
 
 ## Licence and data note
 

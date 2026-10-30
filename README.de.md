@@ -4,7 +4,7 @@
 [![Pages](https://github.com/HARISPAARTAN/support-ticket-analytics/actions/workflows/pages.yml/badge.svg)](https://github.com/HARISPAARTAN/support-ticket-analytics/actions/workflows/pages.yml)
 [![Release](https://img.shields.io/github/v/release/HARISPAARTAN/support-ticket-analytics?sort=semver)](https://github.com/HARISPAARTAN/support-ticket-analytics/releases)
 
-Power-BI-Bericht auf dem Export eines Helpdesks: SLA-Einhaltung in Geschäftszeiten, Rückstand und Alter offener Tickets, Teamleistung und Kundenzufriedenheit für ein fiktives B2B-Softwareunternehmen; die Dauern in Geschäftszeiten rechnet Power Query und ein Python-Zwilling prüft sie, 31 Prüfwerte berechnet eine unabhängige pandas-Referenz für den Abgleich, dazu eine HTML-Nachbildung als Live-Demo.
+Power-BI-Bericht auf dem Export eines Helpdesks: SLA-Einhaltung in Geschäftszeiten, Rückstand und Alter offener Tickets, Teamleistung und Kundenzufriedenheit für ein fiktives B2B-Softwareunternehmen; die Dauern in Geschäftszeiten rechnet Power Query, ein Python-Zwilling rechnet dieselben 18 Fälle, 31 Prüfwerte berechnet eine unabhängige pandas-Referenz für den Abgleich, dazu eine HTML-Nachbildung als Live-Demo.
 
 English: [README.md](README.md)
 
@@ -29,7 +29,7 @@ Die Nachbildung ist eine statische Seite mit vier der Berichtsseiten als Reitern
 
 ## Was es kann
 
-Acht Berichtsseiten im Design Quillstack Dark: sieben auf einer Fläche von 1280 × 720 (darunter Reconciliation, in der Leseansicht ausgeblendet) und die Tooltip-Seite SLA tooltip auf 320 × 240, die nicht auf der Fläche liegt, sondern sich über vier Visuals öffnet. Jede Seite hat eine Kopfzeile mit dem Datenstand und Seitenschaltflächen. Die vier Leseseiten mit Slicern (Overview, SLA compliance, Teams and agents, Backlog and ageing) haben eine Slicer-Zeile (Date, auf Backlog and ageing stattdessen ein Stichtag, Team, Priority, Channel, Reset), die über diese Seiten synchronisiert ist, eine Reihe Kennzahlkacheln (auf Overview mit der Veränderung zum Vorjahr) und darunter die Diagramme.
+Acht Berichtsseiten im Design Quillstack Dark: sieben auf einer Fläche von 1280 × 720 (darunter Reconciliation, in der Leseansicht ausgeblendet) und die Tooltip-Seite SLA tooltip auf 320 × 240, die nicht auf der Fläche liegt, sondern sich über vier Visuals öffnet. Jede Seite außer der Tooltip-Seite hat eine Kopfzeile mit dem Datenstand und Seitenschaltflächen. Die vier Leseseiten mit Slicern (Overview, SLA compliance, Teams and agents, Backlog and ageing) haben eine Slicer-Zeile (Date, auf Backlog and ageing stattdessen ein Stichtag, Team, Priority, Channel, Reset), die über diese Seiten synchronisiert ist, eine Reihe Kennzahlkacheln (auf Overview mit der Veränderung zum Vorjahr) und darunter die Diagramme.
 
 - **Overview**: erstellte und gelöste Tickets, Rückstand, Median der ersten Antwortzeit, SLA-Lösungsquote und CSAT; erstellt und gelöst je Monat; der Rückstand am Monatsende gegenüber dem Vorjahr; erstellt nach Kategorie und Kundenstufe; erstellt als Current, YTD, PYTD und R12; Eingänge nach Wochentag und Stunde.
 - **SLA compliance**: Quoten für erste Antwort und Lösung, Verstöße, offene Verstöße, Median und P90 der Lösungszeit; Quoten nach Priorität und je Monat; eine Matrix Team × Priorität, die die Lücke des Teams Integrations bei P1 zeigt; Current gegenüber PY; die Liste der Verstöße.
@@ -44,7 +44,7 @@ Teamleitungen sehen nur ihr Team: Die Rolle `Team lead` filtert über die Anmeld
 
 ![Zwei Zweige aus denselben Dateien: Power Query, das TMDL-Modell und der PBIR-Bericht auf der einen Seite, die pandas-Referenz, die Daten der Nachbildung und die HTML-Nachbildung auf der anderen; sie treffen sich in der Abgleichstabelle](docs/architecture.svg)
 
-Der Generator mit festem Startwert schreibt den Export des Helpdesks: sieben Quartalsdateien mit Tickets, sieben mit Ereignissen und fünf Referenzdateien. Power Query kombiniert die Ordner, berechnet die Geschäftsminuten jedes Statusintervalls mit einer M-Funktion und fasst sie je Ticket zusammen, sodass die Kennzahlen einfache Mediane, Mittelwerte und Zählungen bleiben ([ADR 0001](docs/adr/0001-business-hours-in-power-query.md)); dieselbe Definition steht in `tools/bizhours.py`, und beide bestehen dieselben 18 Fälle. Unabhängig davon berechnet `tools/reference.py` jede Kennzahl mit pandas; beide treffen sich im [Abgleich](docs/reconciliation.md), in dem 31 Kennzahlen aus Python und aus Power BI Desktop übereinstimmen müssen. Dieselbe Referenz erzeugt die Daten der Nachbildung. Mehr in [docs/architecture.md](docs/architecture.md).
+Der Generator mit festem Startwert schreibt den Export des Helpdesks: sieben Quartalsdateien mit Tickets, sieben mit Ereignissen und fünf Referenzdateien. Power Query kombiniert die Ordner, berechnet die Geschäftsminuten jedes Statusintervalls mit einer M-Funktion und fasst sie je Ticket zusammen, sodass die Kennzahlen einfache Mediane, Mittelwerte und Zählungen bleiben ([ADR 0001](docs/adr/0001-business-hours-in-power-query.md)); dieselbe Definition steht in `tools/bizhours.py`, und beide sind für dieselben 18 Fälle geschrieben: Python besteht sie in pytest, Power Query führt sie bei jeder Aktualisierung aus (die Desktop-Sitzung steht noch aus, siehe Status). Unabhängig davon berechnet `tools/reference.py` die 31 Prüfwerte mit pandas; beide treffen sich im [Abgleich](docs/reconciliation.md), in dem 31 Kennzahlen aus Python und aus Power BI Desktop übereinstimmen müssen. Dieselbe Referenz erzeugt die Daten der Nachbildung. Mehr in [docs/architecture.md](docs/architecture.md).
 
 ## Datenmodell
 
@@ -92,12 +92,14 @@ Die Entscheidungsdokumente sind auf Englisch.
 Dieser Nachbau ergänzt:
 
 - einen schriftlichen Auftrag mit Nutzenden, Umfang und Abnahmekriterien sowie ein dokumentiertes Datenmodell mit dem Statusablauf;
-- die Geschäftszeitenfunktion, zweimal dokumentiert und geprüft, in Power Query und in Python, mit denselben 18 Fällen;
+- die Geschäftszeitenfunktion, dokumentiert und zweimal umgesetzt, in Power Query und in Python, gegen dieselben 18 Fälle;
 - Modell und Bericht als prüfbaren Text (TMDL und PBIR) mit Offline-Lint-Tests und Schemaprüfungen;
 - 31 Prüfwerte aus einer unabhängigen pandas-Referenz für den Abgleich, einer davon unter der Rolle für eine Teamleitung;
 - einen Paritätstest, der zeigt, dass die Standardwerte der Nachbildung der Referenz entsprechen;
 - Übergabenotizen zum Aktualisieren, zum Export eines neuen Quartals, zu Feiertagen, Teamleitungen und einem fehlschlagenden Prüfwert;
 - CI unter Ubuntu und Windows mit `uv sync --locked` und festgelegten Actions sowie eine Live-Nachbildung mit getestetem Filtercode.
+
+Der echte Ticketexport des ursprünglichen Kundenunternehmens, der Produktivbetrieb und die Abnahme durch das Kundenunternehmen sind nicht übernommen, und die Prüfung in Power BI Desktop steht noch aus (siehe Status).
 
 ## Lizenz und Hinweis zu den Daten
 

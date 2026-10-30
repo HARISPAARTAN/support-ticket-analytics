@@ -3,6 +3,7 @@ Python blocks and the cases in docs/business-hours.md, the tables and columns in
 records, the Desktop checklist and the architecture diagram."""
 
 import csv
+import json
 import re
 from pathlib import Path
 
@@ -14,6 +15,7 @@ from tmdl import load_model
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 MODEL = ROOT / PROJECT["folder"] / f"{PROJECT['name']}.SemanticModel" / "definition"
+PAGES = ROOT / "tools" / "pbi" / "pages.json"
 FOOTER = "Rebuilt from memory as a demo. The original client's name and data are not used."
 FENCE = "`" * 3
 README_EN = [
@@ -108,6 +110,105 @@ def test_readme_states_the_canvas_and_the_replica_scope_exactly():
     assert "It leaves out" in text
     assert "every number" not in text.lower()
     assert "31 headline checks" in text
+
+
+def reading_pages() -> tuple[dict, list[dict], list[dict]]:
+    """The report definition, its canvas pages, and the canvas pages that carry slicers."""
+    report = json.loads(read(PAGES))
+    canvas = [p for p in report["pages"] if p.get("type") != "Tooltip"]
+    return report, canvas, [p for p in canvas if p["slicers"]]
+
+
+def reconciliation_rows() -> int:
+    return len(re.findall(r"^\| R\d+ \|", read(DOCS / "reconciliation.md"), flags=re.MULTILINE))
+
+
+def test_readme_facts_match_the_project(model):
+    text = read(ROOT / "README.md")
+    report, canvas, slicer_pages = reading_pages()
+    tooltip = [p for p in report["pages"] if p.get("type") == "Tooltip"]
+    assert len(report["pages"]) == 8 and len(tooltip) == 1 and len(canvas) == 7
+    assert "Eight report pages with the theme Quillstack Dark" in text
+    # the header: every page but the tooltip page
+    assert [p["id"] for p in report["pages"] if p.get("header") is False] == [tooltip[0]["id"]]
+    assert "Every page except the tooltip page has a header with the data date and page buttons." in text
+    # the slicers: which pages, which fields, where the snapshot date replaces the date range
+    names = [p["displayName"] for p in slicer_pages]
+    assert names == ["Overview", "SLA compliance", "Teams and agents", "Backlog and ageing"]
+    assert f"The four reading pages with slicers ({', '.join(names)}) have a slicer row" in text
+    assert {tuple(p["slicers"]) for p in slicer_pages if p["id"] != "backlog"} == {
+        ("Date", "Team", "Priority", "Channel")
+    }
+    assert [p["slicers"] for p in slicer_pages if p["id"] == "backlog"] == [
+        ["Snapshot date", "Team", "Priority", "Channel"]
+    ]
+    assert "(Date, on Backlog and ageing a snapshot date instead, Team, Priority, Channel, Reset)" in text
+    # the tiles: a row on each reading page, the change against the previous year on Overview only
+    tile_row = report["tiles"]["y"]
+    assert [
+        p["displayName"] for p in canvas if any(v["type"] == "card" and v["y"] == tile_row for v in p["visuals"])
+    ] == names
+    delta = [p["displayName"] for p in canvas if any(v.get("title", "").endswith(" vs PY") for v in p["visuals"])]
+    assert delta == ["Overview"]
+    assert "a row of KPI tiles (on Overview with the change against the previous year)" in text
+    # the counts
+    assert f"{len(model.tables['_Measures'].measures)} measures in `_Measures`" in text
+    checks = reconciliation_rows()
+    assert checks == 31
+    assert f"{checks} headline checks computed independently in pandas for the reconciliation" in text
+    assert f"computes the {checks} headline checks with pandas" in text
+    # what the replica leaves out
+    live = text.split("## Live demo", 1)[1].split("\n## ", 1)[0]
+    assert "It leaves out" in live
+    for left_out in (
+        "the Ticket explorer's status history and time in status",
+        "the backlog by status over time",
+        "the tier split of created by category",
+        "the previous-year backlog line",
+        "P90 times and CSAT satisfied %",
+        "the YTD, PYTD and R12 matrix and the current, PY and YoY matrix",
+        "day-level dates",
+        "the role `Team lead`",
+        "the SLA tooltip page",
+        "the bookmarks (a Reset button instead)",
+        "the Info and Reconciliation pages",
+    ):
+        assert left_out in live, left_out
+    for phrase in ("every number", "every measure", "both pass", "that is checked"):
+        assert phrase not in text.lower(), phrase
+
+
+def test_german_readme_states_the_same_facts(model):
+    text = read(ROOT / "README.de.md")
+    _, _, slicer_pages = reading_pages()
+    names = [p["displayName"] for p in slicer_pages]
+    assert "Acht Berichtsseiten im Design Quillstack Dark" in text
+    assert "Jede Seite außer der Tooltip-Seite hat eine Kopfzeile mit dem Datenstand und Seitenschaltflächen." in text
+    assert f"Die vier Leseseiten mit Slicern ({', '.join(names)}) haben eine Slicer-Zeile" in text
+    assert "(Date, auf Backlog and ageing stattdessen ein Stichtag, Team, Priority, Channel, Reset)" in text
+    assert "(auf Overview mit der Veränderung zum Vorjahr)" in text
+    assert f"{len(model.tables['_Measures'].measures)} Kennzahlen in `_Measures`" in text
+    checks = reconciliation_rows()
+    assert f"{checks} Prüfwerte berechnet eine unabhängige pandas-Referenz für den Abgleich" in text
+    assert f"berechnet `tools/reference.py` die {checks} Prüfwerte mit pandas" in text
+    live = text.split("## Live-Demo", 1)[1].split("\n## ", 1)[0]
+    assert "Nicht enthalten sind" in live
+    for left_out in (
+        "der Statusverlauf und die Zeit je Status aus dem Ticket explorer",
+        "der Rückstand nach Status im Zeitverlauf",
+        "die Aufteilung nach Kundenstufe bei den Tickets je Kategorie",
+        "die Vorjahreslinie des Rückstands",
+        "P90-Zeiten und CSAT satisfied %",
+        "die Matrix mit YTD, PYTD und R12 und die Matrix mit Current, PY und YoY",
+        "Tagesdaten",
+        "die Rolle `Team lead`",
+        "die Tooltip-Seite SLA tooltip",
+        "die Lesezeichen (stattdessen eine Schaltfläche Reset)",
+        "die Seiten Info und Reconciliation",
+    ):
+        assert left_out in live, left_out
+    for phrase in ("jede kennzahl mit pandas", "beide bestehen", "zweimal dokumentiert und geprüft"):
+        assert phrase not in text.lower(), phrase
 
 
 def test_brief_is_the_same_in_the_readme_and_the_brief():

@@ -8,7 +8,7 @@ For start ≤ end, the business minutes are the sum over every date d from the d
 
 The export writes minute-precision Lisbon wall-clock times without an offset. The daylight-saving changes fall on Sunday nights, outside business hours, so they never change a result (case 16).
 
-The definition exists twice and both copies pass the same 18 cases: in Power Query as the function `fnBusinessMinutes` (`expressions.tmdl`, used for every event interval at refresh, [ADR 0001](adr/0001-business-hours-in-power-query.md)) and in Python as `tools/bizhours.py` (used by the generator and the reference). `tests/test_docs.py` checks that both blocks below equal the code.
+The definition exists twice and both copies are written for the same 18 cases: in Power Query as the function `fnBusinessMinutes` (`expressions.tmdl`, used for every event interval at refresh, [ADR 0001](adr/0001-business-hours-in-power-query.md)) and in Python as `tools/bizhours.py` (used by the generator and the reference). Python passes the cases in pytest; Power Query runs them at every refresh. `tests/test_docs.py` checks that both blocks below equal the code.
 
 ## Power Query
 
