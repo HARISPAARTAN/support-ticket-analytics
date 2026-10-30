@@ -29,14 +29,14 @@ The replica is a static page with four of the report pages as tabs (Overview, SL
 
 ## What it does
 
-Eight report pages with the theme Quillstack Dark: seven on a 1280 × 720 canvas (Reconciliation among them, hidden in view mode) and the SLA tooltip page on 320 × 240, which is not on the canvas but opens over four visuals. The reading pages have a header with the data date and page buttons, a slicer row (Date, on Backlog and ageing a snapshot date instead, Team, Priority, Channel, Reset) synced across the pages, a row of KPI tiles with the change against the previous year, and the charts below.
+Eight report pages with the theme Quillstack Dark: seven on a 1280 × 720 canvas (Reconciliation among them, hidden in view mode) and the SLA tooltip page on 320 × 240, which is not on the canvas but opens over four visuals. Every page has a header with the data date and page buttons. The four reading pages with slicers (Overview, SLA compliance, Teams and agents, Backlog and ageing) have a slicer row (Date, on Backlog and ageing a snapshot date instead, Team, Priority, Channel, Reset) synced across them, a row of KPI tiles (on Overview with the change against the previous year), and the charts below.
 
 - **Overview**: created, resolved, backlog, median first response, SLA resolution met % and CSAT; created and resolved per month; the backlog at month end against last year; created by category and tier; created as current, YTD, PYTD and R12; arrivals by weekday and hour.
 - **SLA compliance**: first response and resolution met %, breaches, open breaches, median and P90 resolution; met % by priority and per month; a team × priority matrix that shows the Integrations team's P1 gap; current against PY; the breach list.
 - **Teams and agents**: agents ranked by the measure picked in `Rank agents by` (resolved, either SLA met % or CSAT, at least 20 tickets), an agent scorecard, tickets per agent per month and the CSAT scores.
 - **Backlog and ageing**: a snapshot date ("on or before"), the backlog, its change in 30 days, tickets open over 7 days and the oldest one; the backlog by status per day, age buckets, a team × age matrix and the oldest open tickets.
 - **Ticket explorer**: a drill-through from any table with a ticket number: the ticket, its times and its status history with the business hours in each status.
-- **Info**: what the demo is, the data and its definitions, and the business-hours test cases passed in Power Query.
+- **Info**: what the demo is, the data and its definitions, and the result of the business-hours test cases in Power Query.
 
 Team leads see only their team: the role `Team lead` filters by the sign-in address through the table `Security`, built from the lead rows of `data/agents.csv`, so a new lead is a data change, not a model change.
 

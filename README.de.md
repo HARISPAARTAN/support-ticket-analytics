@@ -29,14 +29,14 @@ Die Nachbildung ist eine statische Seite mit vier der Berichtsseiten als Reitern
 
 ## Was es kann
 
-Acht Berichtsseiten im Design Quillstack Dark: sieben auf einer Fläche von 1280 × 720 (darunter Reconciliation, in der Leseansicht ausgeblendet) und die Tooltip-Seite SLA tooltip auf 320 × 240, die nicht auf der Fläche liegt, sondern sich über vier Visuals öffnet. Die Leseseiten haben eine Kopfzeile mit dem Datenstand und Seitenschaltflächen, eine Slicer-Zeile (Date, auf Backlog and ageing stattdessen ein Stichtag, Team, Priority, Channel, Reset), die über die Seiten synchronisiert ist, eine Reihe Kennzahlkacheln mit der Veränderung zum Vorjahr und darunter die Diagramme.
+Acht Berichtsseiten im Design Quillstack Dark: sieben auf einer Fläche von 1280 × 720 (darunter Reconciliation, in der Leseansicht ausgeblendet) und die Tooltip-Seite SLA tooltip auf 320 × 240, die nicht auf der Fläche liegt, sondern sich über vier Visuals öffnet. Jede Seite hat eine Kopfzeile mit dem Datenstand und Seitenschaltflächen. Die vier Leseseiten mit Slicern (Overview, SLA compliance, Teams and agents, Backlog and ageing) haben eine Slicer-Zeile (Date, auf Backlog and ageing stattdessen ein Stichtag, Team, Priority, Channel, Reset), die über diese Seiten synchronisiert ist, eine Reihe Kennzahlkacheln (auf Overview mit der Veränderung zum Vorjahr) und darunter die Diagramme.
 
 - **Overview**: erstellte und gelöste Tickets, Rückstand, Median der ersten Antwortzeit, SLA-Lösungsquote und CSAT; erstellt und gelöst je Monat; der Rückstand am Monatsende gegenüber dem Vorjahr; erstellt nach Kategorie und Kundenstufe; erstellt als Current, YTD, PYTD und R12; Eingänge nach Wochentag und Stunde.
 - **SLA compliance**: Quoten für erste Antwort und Lösung, Verstöße, offene Verstöße, Median und P90 der Lösungszeit; Quoten nach Priorität und je Monat; eine Matrix Team × Priorität, die die Lücke des Teams Integrations bei P1 zeigt; Current gegenüber PY; die Liste der Verstöße.
 - **Teams and agents**: Mitarbeitende, gereiht nach der in `Rank agents by` gewählten Kennzahl (gelöste Tickets, eine der SLA-Quoten oder CSAT, ab 20 Tickets), eine Übersicht je Person, Tickets je Person und Monat sowie die CSAT-Bewertungen.
 - **Backlog and ageing**: ein Stichtag („am oder vor“), der Rückstand, seine Veränderung in 30 Tagen, Tickets, die länger als 7 Tage offen sind, und das älteste; der Rückstand nach Status je Tag, Altersklassen, eine Matrix Team × Alter und die ältesten offenen Tickets.
 - **Ticket explorer**: ein Drill-through aus jeder Tabelle mit Ticketnummer: das Ticket, seine Zeiten und sein Statusverlauf mit den Geschäftsstunden je Status.
-- **Info**: was die Demo ist, die Daten und ihre Definitionen sowie die in Power Query bestandenen Geschäftszeiten-Testfälle.
+- **Info**: was die Demo ist, die Daten und ihre Definitionen sowie das Ergebnis der Geschäftszeiten-Testfälle in Power Query.
 
 Teamleitungen sehen nur ihr Team: Die Rolle `Team lead` filtert über die Anmeldeadresse und die Tabelle `Security`, die aus den Leitungszeilen von `data/agents.csv` entsteht; eine neue Teamleitung ist eine Datenänderung, keine Modelländerung.
 
