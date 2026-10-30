@@ -14,6 +14,7 @@ import pytest
 import reference as ref
 
 DOC = Path(__file__).resolve().parents[1] / "docs" / "reconciliation.md"
+CHECKLIST = Path(__file__).resolve().parents[1] / "docs" / "desktop-session.md"
 KINDS = "count|hours|percent|csat|decimal"
 ROW = re.compile(rf"^\| (R\d+) \| ([^|]+?) \| ([^|]+?) \| ({KINDS}) \| ([^|]+?) \| ([^|]*?) *\| ([^|]+?) \|$", re.M)
 SESSION = re.compile(r"^Desktop session: (.+)$", re.M)
@@ -108,3 +109,59 @@ def test_r31_is_the_integrations_slice(model):
     assert ref.measure(model, "Created", ref.Context(teams=frozenset({ref.INTEGRATIONS}))) == int(
         (model.tickets["team_id"] == ref.INTEGRATIONS).sum()
     )
+
+
+def checklist() -> str:
+    return CHECKLIST.read_text(encoding="utf-8")
+
+
+def test_checklist_quotes_the_calculation_items_on_the_sla_matrix(model):
+    text = checklist()
+    sla = "SLA resolution met %"
+    for year_number, month_number in ((2025, 9), (2025, 3)):
+        ctx = ref.month(year_number, month_number)
+        cur, py, yoy = (ref.item(model, sla, calc, ctx) for calc in ("Current", "PY", "YoY"))
+        assert f"row {year_number}-{month_number:02d} reads `{cur * 100:.1f}%`, `{py * 100:.1f}%`" in text
+        assert f"and `{yoy * 100:+.1f} pp`" in text
+    for month_number in range(1, 13):  # the first year has no previous year: PY and YoY are blank
+        ctx = ref.month(2024, month_number)
+        assert ref.item(model, sla, "PY", ctx) is None and ref.item(model, sla, "YoY", ctx) is None
+    assert "the rows of 2024 are blank in PY and YoY" in text
+
+
+def test_checklist_quotes_the_overview_tiles_of_2025(model):
+    text = checklist()
+    ctx = ref.Context(date(2025, 1, 1), date(2025, 9, 30))
+    for name in ("Created", "Resolved", "Backlog"):
+        t = ref.tile(model, name, ctx)
+        assert f"{name} `{t['value']:,}` with `vs PY: {t['delta'] * 100:+.1f}%`" in text, name
+    t = ref.tile(model, "Median first response (h)", ctx)
+    assert f"`{t['value']:.2f} h` with `vs PY: {t['delta']:+.2f} h`" in text
+    t = ref.tile(model, "SLA resolution met %", ctx)
+    assert f"`{t['value'] * 100:.1f}%` with `vs PY: {t['delta'] * 100:+.1f} pp`" in text
+    t = ref.tile(model, "CSAT average", ctx)
+    assert f"`{t['value']:.2f}` with `vs PY: {t['delta']:+.2f}`" in text
+
+
+def test_checklist_quotes_the_role_values_of_the_integrations_lead(model):
+    text = checklist()
+    lead = ref.Context(teams=frozenset({ref.INTEGRATIONS}))
+    values = {name: ref.measure(model, name, lead) for name in ("Created", "Resolved", "Backlog", "Active agents")}
+    per_agent = ref.measure(model, "Tickets per agent", lead)
+    assert values == {"Created": 3210, "Resolved": 3183, "Backlog": 27, "Active agents": 5}
+    assert (
+        f"Created `{values['Created']:,}`, Resolved `{values['Resolved']:,}` and Backlog `{values['Backlog']}`" in text
+    )
+    assert f"Active agents `{values['Active agents']}` and Tickets per agent `{per_agent:.1f}`" in text
+
+
+def test_agent_ranks_run_over_all_teams(model):
+    """The scorecard shows 24 agents in four teams; Agent rank counts across the teams, so 1 to 24 without a tie."""
+    rows = [r for r in ref.agent_rows(model, ref.ALL, "Resolved") if r["rank"] is not None]
+    assert sorted(r["rank"] for r in rows) == list(range(1, 25))
+    names = dict(zip(model.agents["agent_id"], model.agents["agent_name"], strict=True))
+    rank = {names[r["agent_id"]]: r["rank"] for r in rows}
+    assert len({tid for tid in model.agents["team_id"]}) == 4
+    for name, number in (("Larissa Pacheco", 1), ("Ben Hutchinson", 6), ("Encarnita Meléndez", 24)):
+        assert rank[name] == number
+        assert f"{name} `{number}`" in checklist()

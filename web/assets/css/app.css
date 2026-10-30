@@ -177,6 +177,11 @@
   --min: 220px;
 }
 
+/* A two-line tile label breaks in the middle ("SLA RESOLUTION" / "MET %"), never before a lone "%" or "d". */
+.pf-kpi__label {
+  text-wrap: balance;
+}
+
 .snapshot {
   margin-top: var(--space-4);
   color: var(--muted);

@@ -8,7 +8,7 @@ The portfolio's rule limits every generated file to 2 MB. One ticket file for 21
 
 ## Decision
 
-The export is split by the creation quarter of the ticket: `data/tickets/tickets_2024-Q1.csv` to `tickets_2025-Q3.csv` and `data/ticket_events/ticket_events_2024-Q1.csv` to `ticket_events_2025-Q3.csv`, seven files each. A ticket's events sit in the file of its creation quarter, even when they happen later. Power Query reads each folder with `Folder.Files`, keeps the `.csv` files in name order and combines them (`TicketFiles`, `EventFiles`); the reference does the same with `sorted(glob(...))`.
+The export is split by the creation quarter of the ticket: `data/tickets/tickets_2024-Q1.csv` to `tickets_2025-Q3.csv` and `data/ticket_events/ticket_events_2024-Q1.csv` to `ticket_events_2025-Q3.csv`, seven files each. A ticket's events sit in the file of its creation quarter, even when they happen later. Power Query reads each folder with `Folder.Files` and keeps the `.csv` files in name order (the staging queries `src_Tickets` and `src_Events`), and combines them (`TicketFiles`, `EventFiles`); the reference does the same with `sorted(glob(...))`.
 
 ## Consequences
 

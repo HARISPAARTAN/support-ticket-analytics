@@ -69,9 +69,7 @@ table DimPriority
 		mode: import
 		source =
 				let
-				    Source = Csv.Document(File.Contents(DataFolder & "\priorities.csv"), [Delimiter = ",", Columns = 7, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
-				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
-				    Typed = Table.TransformColumnTypes(Promoted, {{"priority", type text}, {"priority_name", type text}, {"sort_order", Int64.Type},
+				    Typed = Table.TransformColumnTypes(src_Priorities, {{"priority", type text}, {"priority_name", type text}, {"sort_order", Int64.Type},
 				        {"fr_target_bmin", Int64.Type}, {"res_target_bmin", Int64.Type}, {"fr_target_label", type text}, {"res_target_label", type text}},
 				        "en-US"),
 				    Renamed = Table.RenameColumns(Typed, {{"priority", "Priority"}, {"priority_name", "Priority name"}, {"sort_order", "Priority sort"},

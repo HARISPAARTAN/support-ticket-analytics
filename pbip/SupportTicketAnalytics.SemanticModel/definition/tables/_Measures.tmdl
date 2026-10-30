@@ -307,7 +307,7 @@ table _Measures
 	measure 'Agent rank' =
 			IF(
 			    HASONEVALUE(DimAgent[Agent name]) && NOT ISBLANK([Ranking value]),
-			    RANKX(FILTER(ALLSELECTED(DimAgent[Agent name]), NOT ISBLANK([Ranking value])), [Ranking value], , DESC, DENSE)
+			    RANKX(FILTER(ALLSELECTED(DimAgent[Agent name], DimAgent[Team name]), NOT ISBLANK([Ranking value])), [Ranking value], , DESC, DENSE)
 			)
 		formatString: 0
 		displayFolder: Agents

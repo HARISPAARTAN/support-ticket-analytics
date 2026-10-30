@@ -502,9 +502,11 @@ Folder `Agents` · format `0`.
 ```dax
 IF(
     HASONEVALUE(DimAgent[Agent name]) && NOT ISBLANK([Ranking value]),
-    RANKX(FILTER(ALLSELECTED(DimAgent[Agent name]), NOT ISBLANK([Ranking value])), [Ranking value], , DESC, DENSE)
+    RANKX(FILTER(ALLSELECTED(DimAgent[Agent name], DimAgent[Team name]), NOT ISBLANK([Ranking value])), [Ranking value], , DESC, DENSE)
 )
 ```
+
+The scorecard groups by `Agent name` and `Team name`, so each row filters both columns; `ALLSELECTED` restores both, which makes the rank run over all agents shown. With the name column alone the row's team filter would stay and the rank would restart in every team.
 
 ## KPI deltas
 

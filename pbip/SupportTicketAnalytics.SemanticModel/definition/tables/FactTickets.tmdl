@@ -303,7 +303,7 @@ table FactTickets
 				        {"clock_bmin", each List.Sum({0} & Table.SelectRows(_, each [clock_running])[interval_bmin]), Int64.Type},
 				        {"pending_bmin", each List.Sum({0} & Table.SelectRows(_, each [to_status] = "Pending")[interval_bmin]), Int64.Type},
 				        {"ever_resolved", each List.Contains([to_status], "Resolved"), type logical}}),
-				    Priorities = Table.TransformColumns(Table.PromoteHeaders(Csv.Document(File.Contents(DataFolder & "\priorities.csv"), [Delimiter = ",", Columns = 7, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]), [PromoteAllScalars = true]),
+				    Priorities = Table.TransformColumns(src_Priorities,
 				        {{"fr_target_bmin", each Number.FromText(_, "en-US"), Int64.Type}, {"res_target_bmin", each Number.FromText(_, "en-US"), Int64.Type}}),
 				    Joined = Table.ExpandTableColumn(Table.NestedJoin(TicketFiles, {"ticket_id"}, PerTicket, {"ticket_id"}, "Intervals",
 				        JoinKind.LeftOuter), "Intervals", {"events", "new_bmin", "clock_bmin", "pending_bmin", "ever_resolved"}),

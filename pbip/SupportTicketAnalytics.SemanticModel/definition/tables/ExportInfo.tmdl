@@ -34,10 +34,8 @@ table ExportInfo
 		mode: import
 		source =
 				let
-				    Count = (folder as text) as number =>
-				        Table.RowCount(Table.SelectRows(Folder.Files(DataFolder & "\" & folder), each [Extension] = ".csv")),
 				    Source = #table(type table [#"As of" = datetime, #"Ticket files" = Int64.Type, #"Event files" = Int64.Type],
-				        {{AsOf, Count("tickets"), Count("ticket_events")}})
+				        {{AsOf, Table.RowCount(src_Tickets), Table.RowCount(src_Events)}})
 				in
 				    Source
 

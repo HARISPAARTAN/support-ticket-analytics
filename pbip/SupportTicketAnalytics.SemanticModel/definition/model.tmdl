@@ -9,7 +9,7 @@ model Model
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBI_QueryOrder = ["DataFolder","StartDate","EndDate","AsOf","Holidays","HolidayList","fnBusinessMinutes","TicketFiles","EventFiles","EventIntervals","DimDate","DimPriority","DimTeam","DimAgent","DimCategory","DimChannel","DimCustomer","DimStatus","DimAgeBucket","FactTickets","FactTicketEvents","Security","ExportInfo","TestBusinessHours"]
+annotation PBI_QueryOrder = ["DataFolder","StartDate","EndDate","AsOf","src_Holidays","src_Tickets","src_Events","src_Agents","src_Teams","src_Priorities","src_BusinessHoursCases","Holidays","HolidayList","fnBusinessMinutes","TicketFiles","EventFiles","EventIntervals","DimDate","DimPriority","DimTeam","DimAgent","DimCategory","DimChannel","DimCustomer","DimStatus","DimAgeBucket","FactTickets","FactTicketEvents","Security","ExportInfo","TestBusinessHours"]
 
 annotation PBI_ProTooling = ["DevMode"]
 

@@ -22,12 +22,93 @@ expression AsOf = #datetime(2025, 9, 30, 18, 0, 0) meta [IsParameterQuery = true
 
 	annotation PBI_ResultType = DateTime
 
-/// Public holidays of Lisbon (data/holidays.csv); not loaded.
-expression Holidays =
+/// Staging, not loaded: data/holidays.csv as text with the header promoted.
+expression src_Holidays =
 		let
 		    Source = Csv.Document(File.Contents(DataFolder & "\holidays.csv"), [Delimiter = ",", Columns = 3, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
-		    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
-		    Typed = Table.TransformColumns(Promoted, {{"date", each Date.FromText(_, [Format = "yyyy-MM-dd", Culture = "en-US"]), type date}}),
+		    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true])
+		in
+		    Promoted
+	lineageTag: 4c173891-9be9-57f4-a575-41776c91c0c9
+
+	annotation PBI_ResultType = Table
+
+/// Staging, not loaded: the quarterly ticket files of data/tickets, .csv only in name order; one row per file, its rows as text with the header promoted.
+expression src_Tickets =
+		let
+		    Source = Folder.Files(DataFolder & "\tickets"),
+		    CsvFiles = Table.Sort(Table.SelectRows(Source, each [Extension] = ".csv"), {{"Name", Order.Ascending}}),
+		    Parsed = Table.AddColumn(CsvFiles, "Rows", each Table.PromoteHeaders(Csv.Document([Content], [Delimiter = ",", Columns = 17,
+		        Encoding = 65001, QuoteStyle = QuoteStyle.Csv]), [PromoteAllScalars = true])),
+		    Result = Table.SelectColumns(Parsed, {"Name", "Rows"})
+		in
+		    Result
+	lineageTag: d4acec3a-6f96-55df-9364-85c82d8e4f3e
+
+	annotation PBI_ResultType = Table
+
+/// Staging, not loaded: the quarterly event files of data/ticket_events, .csv only in name order; one row per file, its rows as text with the header promoted.
+expression src_Events =
+		let
+		    Source = Folder.Files(DataFolder & "\ticket_events"),
+		    CsvFiles = Table.Sort(Table.SelectRows(Source, each [Extension] = ".csv"), {{"Name", Order.Ascending}}),
+		    Parsed = Table.AddColumn(CsvFiles, "Rows", each Table.PromoteHeaders(Csv.Document([Content], [Delimiter = ",", Columns = 8,
+		        Encoding = 65001, QuoteStyle = QuoteStyle.Csv]), [PromoteAllScalars = true])),
+		    Result = Table.SelectColumns(Parsed, {"Name", "Rows"})
+		in
+		    Result
+	lineageTag: 28edfb90-3579-5795-996e-3eafbe5be97b
+
+	annotation PBI_ResultType = Table
+
+/// Staging, not loaded: data/agents.csv as text with the header promoted.
+expression src_Agents =
+		let
+		    Source = Csv.Document(File.Contents(DataFolder & "\agents.csv"), [Delimiter = ",", Columns = 7, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+		    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true])
+		in
+		    Promoted
+	lineageTag: 6b7bb87a-7683-54b3-ae1b-63489f09ce50
+
+	annotation PBI_ResultType = Table
+
+/// Staging, not loaded: data/teams.csv as text with the header promoted.
+expression src_Teams =
+		let
+		    Source = Csv.Document(File.Contents(DataFolder & "\teams.csv"), [Delimiter = ",", Columns = 3, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+		    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true])
+		in
+		    Promoted
+	lineageTag: 77f72733-982b-56ad-a950-8b65a689c310
+
+	annotation PBI_ResultType = Table
+
+/// Staging, not loaded: data/priorities.csv as text with the header promoted.
+expression src_Priorities =
+		let
+		    Source = Csv.Document(File.Contents(DataFolder & "\priorities.csv"), [Delimiter = ",", Columns = 7, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+		    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true])
+		in
+		    Promoted
+	lineageTag: 8a3c7995-4744-5f79-865c-a9077aa479df
+
+	annotation PBI_ResultType = Table
+
+/// Staging, not loaded: data/business_hours_cases.csv as text with the header promoted.
+expression src_BusinessHoursCases =
+		let
+		    Source = Csv.Document(File.Contents(DataFolder & "\business_hours_cases.csv"), [Delimiter = ",", Columns = 5, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+		    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true])
+		in
+		    Promoted
+	lineageTag: 5fcfc1c4-e5cb-509d-99d1-7f33ac06aa0b
+
+	annotation PBI_ResultType = Table
+
+/// Public holidays of Lisbon (src_Holidays typed); not loaded.
+expression Holidays =
+		let
+		    Typed = Table.TransformColumns(src_Holidays, {{"date", each Date.FromText(_, [Format = "yyyy-MM-dd", Culture = "en-US"]), type date}}),
 		    Renamed = Table.RenameColumns(Typed, {{"date", "Date"}, {"name", "Holiday"}, {"scope", "Scope"}})
 		in
 		    Renamed
@@ -56,17 +137,13 @@ expression fnBusinessMinutes =
 
 	annotation PBI_ResultType = Function
 
-/// The quarterly ticket files of data/tickets combined and typed; not loaded.
+/// The quarterly ticket files of src_Tickets combined and typed; not loaded.
 expression TicketFiles =
 		let
 		    Stamp = (x as nullable text) as nullable datetime =>
 		        if x = null or x = "" then null else DateTime.FromText(x, [Format = "yyyy-MM-dd HH:mm", Culture = "en-US"]),
 		    Whole = (x as nullable text) as nullable number => if x = null or x = "" then null else Number.FromText(x, "en-US"),
-		    Source = Folder.Files(DataFolder & "\tickets"),
-		    CsvFiles = Table.Sort(Table.SelectRows(Source, each [Extension] = ".csv"), {{"Name", Order.Ascending}}),
-		    Parsed = Table.AddColumn(CsvFiles, "Rows", each Table.PromoteHeaders(Csv.Document([Content], [Delimiter = ",", Columns = 17,
-		        Encoding = 65001, QuoteStyle = QuoteStyle.Csv]), [PromoteAllScalars = true])),
-		    Combined = Table.Combine(Parsed[Rows]),
+		    Combined = Table.Combine(src_Tickets[Rows]),
 		    Typed = Table.TransformColumns(Combined, {{"ticket_id", Whole, Int64.Type}, {"created_at", Stamp, type datetime},
 		        {"team_id", Whole, Int64.Type}, {"agent_id", Whole, Int64.Type}, {"first_response_at", Stamp, type nullable datetime},
 		        {"resolved_at", Stamp, type nullable datetime}, {"closed_at", Stamp, type nullable datetime},
@@ -77,17 +154,13 @@ expression TicketFiles =
 
 	annotation PBI_ResultType = Table
 
-/// The quarterly event files of data/ticket_events combined and typed; not loaded.
+/// The quarterly event files of src_Events combined and typed; not loaded.
 expression EventFiles =
 		let
 		    Stamp = (x as nullable text) as nullable datetime =>
 		        if x = null or x = "" then null else DateTime.FromText(x, [Format = "yyyy-MM-dd HH:mm", Culture = "en-US"]),
 		    Whole = (x as nullable text) as nullable number => if x = null or x = "" then null else Number.FromText(x, "en-US"),
-		    Source = Folder.Files(DataFolder & "\ticket_events"),
-		    CsvFiles = Table.Sort(Table.SelectRows(Source, each [Extension] = ".csv"), {{"Name", Order.Ascending}}),
-		    Parsed = Table.AddColumn(CsvFiles, "Rows", each Table.PromoteHeaders(Csv.Document([Content], [Delimiter = ",", Columns = 8,
-		        Encoding = 65001, QuoteStyle = QuoteStyle.Csv]), [PromoteAllScalars = true])),
-		    Combined = Table.Combine(Parsed[Rows]),
+		    Combined = Table.Combine(src_Events[Rows]),
 		    Typed = Table.TransformColumns(Combined, {{"event_id", Whole, Int64.Type}, {"ticket_id", Whole, Int64.Type},
 		        {"event_seq", Whole, Int64.Type}, {"event_at", Stamp, type datetime},
 		        {"from_status", each if _ = "" then null else _, type nullable text}, {"agent_id", Whole, Int64.Type}})
@@ -118,8 +191,7 @@ expression EventIntervals =
 		    WithCreated = Table.ExpandTableColumn(Table.NestedJoin(EventDate, {"ticket_id"}, Created, {"ticket_id"}, "Ticket",
 		        JoinKind.LeftOuter), "Ticket", {"created_at"}, {"ticket_created_at"}),
 		    CreatedDate = Table.AddColumn(WithCreated, "ticket_created_date", each DateTime.Date([ticket_created_at]), type date),
-		    Agents = Table.TransformColumns(Table.PromoteHeaders(Csv.Document(File.Contents(DataFolder & "\agents.csv"), [Delimiter = ",", Columns = 7, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]), [PromoteAllScalars = true]),
-		        {{"agent_id", each Number.FromText(_, "en-US"), Int64.Type}}),
+		    Agents = Table.TransformColumns(src_Agents, {{"agent_id", each Number.FromText(_, "en-US"), Int64.Type}}),
 		    WithAgent = Table.ExpandTableColumn(Table.NestedJoin(CreatedDate, {"agent_id"}, Agents, {"agent_id"}, "Agent",
 		        JoinKind.LeftOuter), "Agent", {"agent_name"}),
 		    ActorName = Table.AddColumn(WithAgent, "actor_name", each if [actor] = "Agent" then [agent_name] else [actor], type text),

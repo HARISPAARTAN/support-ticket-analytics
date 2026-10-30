@@ -34,10 +34,9 @@ table DimTeam
 		mode: import
 		source =
 				let
-				    Teams = Table.TransformColumnTypes(Table.PromoteHeaders(Csv.Document(File.Contents(DataFolder & "\teams.csv"), [Delimiter = ",", Columns = 3, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]), [PromoteAllScalars = true]),
+				    Teams = Table.TransformColumnTypes(src_Teams,
 				        {{"team_id", Int64.Type}, {"team_name", type text}, {"lead_agent_id", Int64.Type}}, "en-US"),
-				    Agents = Table.TransformColumnTypes(Table.PromoteHeaders(Csv.Document(File.Contents(DataFolder & "\agents.csv"), [Delimiter = ",", Columns = 7, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]), [PromoteAllScalars = true]),
-				        {{"agent_id", Int64.Type}, {"agent_name", type text}}, "en-US"),
+				    Agents = Table.TransformColumnTypes(src_Agents, {{"agent_id", Int64.Type}, {"agent_name", type text}}, "en-US"),
 				    WithLead = Table.ExpandTableColumn(Table.NestedJoin(Teams, {"lead_agent_id"}, Agents, {"agent_id"}, "Lead", JoinKind.LeftOuter),
 				        "Lead", {"agent_name"}),
 				    Selected = Table.SelectColumns(WithLead, {"team_id", "team_name", "agent_name"}),

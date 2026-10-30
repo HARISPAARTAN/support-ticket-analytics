@@ -1,7 +1,9 @@
 // WCAG 2.x contrast of the replica's colours in both themes (adapted from the portfolio's contrast check to read
 // web/kit/tokens.css). Text pairs need 4.5:1; chart and status colours on the card surface need 3:1; the text of a
 // data bar needs 4.5:1 on the mix the page draws (the share in app.css; color-mix in srgb mixes the encoded
-// channels). The heatmap cells carry no text (charts.js), so their colours are checked as data colours only.
+// channels). The arrivals cells carry no text (charts.js), so their colours are checked as data colours only; the SLA
+// matrix prints each value in the card colour on the danger-warn-ok ramp (its ends and its two midpoints) and, on a
+// dimmed cell, in the text colour on a third of the ramp colour over the card.
 // Usage (from the repository root): node tools/checks/contrast.mjs
 import fs from 'node:fs';
 
@@ -46,6 +48,8 @@ const TEXT = [
 ];
 const DATA = ['chart-1', 'chart-2', 'chart-3', 'chart-4', 'chart-5', 'chart-6', 'chart-7', 'chart-8', 'ok', 'warn', 'danger', 'muted', 'accent'];
 
+const DIMMED_SHARE = 35; // the opacity of an unselected matrix cell in charts.js (0.35)
+
 let checked = 0;
 let failed = 0;
 function check(mode, label, fg, bg, min) {
@@ -60,6 +64,12 @@ for (const [mode, t] of Object.entries(themes)) {
   for (const [fg, bg] of TEXT) check(mode, `--${fg} on --${bg}`, t[fg], t[bg], 4.5);
   for (const name of DATA) check(mode, `--${name} on --surface (data)`, t[name], t.surface, 3);
   check(mode, `--text on ${BAR_SHARE} % --accent data bar`, t.text, mix(t.accent, t.surface, BAR_SHARE), 4.5);
+  for (const name of ['danger', 'warn', 'ok']) {
+    check(mode, `--surface on --${name} (matrix cell)`, t.surface, t[name], 4.5);
+    check(mode, `--text on dimmed --${name} cell`, t.text, mix(t[name], t.surface, DIMMED_SHARE), 4.5);
+  }
+  check(mode, '--surface on danger-warn midpoint', t.surface, mix(t.danger, t.warn, 50), 4.5);
+  check(mode, '--surface on warn-ok midpoint', t.surface, mix(t.warn, t.ok, 50), 4.5);
 }
 console.log(failed ? `contrast: ${failed} of ${checked} pairs below the minimum` : `contrast: ${checked} pairs ok`);
 process.exit(failed ? 1 : 0);

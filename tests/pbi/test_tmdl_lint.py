@@ -291,7 +291,27 @@ YOY_FORMAT = (
 LEAD = "IN CALCULATETABLE(VALUES(Security[Team ID]), Security[User e-mail] = LOWER(USERPRINCIPALNAME()))"
 REF = re.compile(r"(?:'([^']+)'|(?<![\w\]'])([A-Za-z_][A-Za-z0-9_]*))\[([^\]]+)\]")
 UNQUALIFIED = re.compile(r"(?<![\w'\]])\[([^\]]+)\]")
-HELPERS = ("Holidays", "HolidayList", "fnBusinessMinutes", "TicketFiles", "EventFiles", "EventIntervals")
+STAGING = (  # each reads exactly one file or folder through DataFolder and nothing else (ADR 0001)
+    "src_Holidays",
+    "src_Tickets",
+    "src_Events",
+    "src_Agents",
+    "src_Teams",
+    "src_Priorities",
+    "src_BusinessHoursCases",
+)
+HELPERS = (*STAGING, "Holidays", "HolidayList", "fnBusinessMinutes", "TicketFiles", "EventFiles", "EventIntervals")
+CONSUMERS = {  # staging query -> the queries and partitions that reference it
+    "src_Holidays": {"Holidays"},
+    "src_Tickets": {"TicketFiles", "ExportInfo"},
+    "src_Events": {"EventFiles", "ExportInfo"},
+    "src_Agents": {"EventIntervals", "DimAgent", "DimTeam", "Security"},
+    "src_Teams": {"DimAgent", "DimTeam"},
+    "src_Priorities": {"DimPriority", "FactTickets"},
+    "src_BusinessHoursCases": {"TestBusinessHours"},
+}
+SOURCE_CALL = re.compile(r"\b(?:File\.Contents|Folder\.Files|Csv\.Document)\b")
+M_NOISE = re.compile(r'"(?:[^"]|"")*"|//[^\n]*|/\*.*?\*/', re.DOTALL)  # string literals and comments
 
 
 def flat(dax: str) -> str:
@@ -312,6 +332,37 @@ def literal_rows(source: str) -> list[tuple]:
         tuple(cell(t) for t in re.findall(r'"(?:[^"]|"")*"|[^,]+', row))
         for row in re.findall(r"\{(\"[^{}]*)\}", source)
     ]
+
+
+def m_code(source: str) -> str:
+    """M with the string literals and comments blanked, so that a name inside a text is not read as a reference."""
+    return M_NOISE.sub(" ", source)
+
+
+def references(source: str, name: str) -> bool:
+    """Whether the M `source` uses the query `name`; a step of the same name in the query shadows it."""
+    code = m_code(source)
+    if name in re.findall(r"(?m)^\s*(?:let\s+)?([A-Za-z_]\w*)\s*=(?!=)", code):
+        return False
+    return re.search(rf"(?<![\w.\[#\"]){re.escape(name)}(?!\w)", code) is not None
+
+
+def firewall_violations(queries: dict[str, str], parameters: set[str]) -> list[str]:
+    """The queries that call File.Contents, Folder.Files or Csv.Document and also reference another query or table.
+    Power Query's privacy firewall refuses the pair ("references other queries or steps, so it may not directly access
+    a data source") under the default privacy setting; the parameters are exempt."""
+    others = set(queries) - parameters
+    return sorted(
+        name
+        for name, source in queries.items()
+        if SOURCE_CALL.search(m_code(source)) and any(references(source, other) for other in others - {name})
+    )
+
+
+def m_queries(model) -> dict[str, str]:
+    """Every M query of the model: the expressions and the partitions of the M tables, by name."""
+    queries = {name: e.expression for name, e in model.expressions.items()}
+    return queries | {name: t.partition_source or "" for name, t in model.tables.items() if t.partition_kind == "m"}
 
 
 @pytest.fixture(scope="module")
@@ -403,10 +454,14 @@ def test_power_query_reads_the_data_folder_with_fixed_formats(model):
         for parse in re.findall(r"(?:DateTime|Date)\.FromText\([^)]*\)", source):
             assert 'Culture = "en-US"' in parse, (where, parse)
         assert "Sql.Database" not in source, where
+    for name, folder in (("src_Tickets", "tickets"), ("src_Events", "ticket_events")):
+        staged = flat(model.expressions[name].expression)
+        assert f'Folder.Files(DataFolder & "\\{folder}")' in staged and 'each [Extension] = ".csv"' in staged, name
+        assert "Table.Sort(" in staged and '{{"Name", Order.Ascending}}' in staged, name
     ticket_files = flat(model.expressions["TicketFiles"].expression)
-    assert 'Folder.Files(DataFolder & "\\tickets")' in ticket_files and 'each [Extension] = ".csv"' in ticket_files
+    assert "Table.Combine(src_Tickets[Rows])" in ticket_files
     assert 'DateTime.FromText(x, [Format = "yyyy-MM-dd HH:mm", Culture = "en-US"])' in ticket_files
-    assert 'Folder.Files(DataFolder & "\\ticket_events")' in model.expressions["EventFiles"].expression
+    assert "Table.Combine(src_Events[Rows])" in flat(model.expressions["EventFiles"].expression)
     intervals = flat(model.expressions["EventIntervals"].expression)
     assert 'Table.NestedJoin(Keyed, {"ticket_id", "next_seq"}, Following, {"ticket_id", "event_seq"}' in intervals
     assert 'else if [to_status] = "Closed" then null else AsOf' in intervals
@@ -416,6 +471,70 @@ def test_power_query_reads_the_data_folder_with_fixed_formats(model):
     facts = flat(model.tables["FactTickets"].partition_source or "")
     assert "Table.Group(EventIntervals" in facts and "if [events] > 1 then [new_bmin] else null" in facts
     assert flat(model.expressions["HolidayList"].expression) == "List.Buffer(Holidays[Date])"
+
+
+def test_no_query_reads_a_file_and_references_another_query(model):
+    """A partition may access a data source or reference other queries, not both (privacy firewall)."""
+    queries = m_queries(model)
+    parameters = {n for n, e in model.expressions.items() if "IsParameterQuery = true" in e.expression}
+    assert firewall_violations(queries, parameters) == []
+
+
+def test_only_the_staging_queries_read_files_and_every_file_is_read_once(model):
+    queries = m_queries(model)
+    readers = {name for name, source in queries.items() if SOURCE_CALL.search(m_code(source))}
+    assert readers == set(STAGING)
+    reads = [
+        re.findall(r"(?:File\.Contents|Folder\.Files)\(DataFolder & \"([^\"]+)\"\)", s)
+        for s in map(queries.get, STAGING)
+    ]
+    assert all(len(r) == 1 for r in reads), reads
+    assert len({r[0] for r in reads}) == len(STAGING)  # one expression per file or folder
+    for name in STAGING:
+        assert model.expressions[name].description.startswith("Staging, not loaded: "), name
+        assert model.expressions[name].annotations.get("PBI_ResultType") == "Table", name
+    for staging, consumers in CONSUMERS.items():
+        used = {name for name, source in queries.items() if name != staging and references(source, staging)}
+        assert used == consumers, staging
+
+
+def test_staging_queries_are_listed_in_the_query_order(model):
+    order = re.findall(r'"([^"]+)"', model.annotations["PBI_QueryOrder"])
+    assert order[:4] == ["DataFolder", "StartDate", "EndDate", "AsOf"]
+    assert list(STAGING) == order[4 : 4 + len(STAGING)]
+    assert set(order) == set(model.expressions) | {n for n, t in model.tables.items() if t.partition_kind == "m"}
+
+
+def test_mutation_a_file_read_next_to_a_reference_is_caught():
+    parameters = {"DataFolder", "AsOf"}
+    reader = 'let Source = Csv.Document(File.Contents(DataFolder & "\\priorities.csv"), [Delimiter = ","]) in Source'
+    queries = {
+        "DataFolder": '"C:\\data" meta [IsParameterQuery = true]',
+        "AsOf": "#datetime(2025, 9, 30, 18, 0, 0) meta [IsParameterQuery = true]",
+        "EventIntervals": "let Source = 1 in Source",
+        "src_Priorities": reader,
+        "FactTickets": reader.replace("in Source", 'in Table.NestedJoin(Source, {}, EventIntervals, {}, "X")'),
+        "ExportInfo": 'let Source = #table({}, {{AsOf, Folder.Files(DataFolder & "\\tickets")}}) in Source',
+        "DimTeam": 'let T = Folder.Files(DataFolder & "\\x"), Joined = Table.Join(T, {}, DimAgent, {}) in Joined',
+        "DimAgent": "let Source = src_Priorities in Source",
+    }
+    assert firewall_violations(queries, parameters) == ["DimTeam", "FactTickets"]
+
+
+def test_mutation_names_in_texts_comments_and_steps_are_not_references():
+    parameters = {"DataFolder"}
+    read = 'File.Contents(DataFolder & "\\a.csv")'
+    queries = {
+        "DataFolder": '"C:\\data" meta [IsParameterQuery = true]',
+        "EventIntervals": "let Source = 1 in Source",
+        "Holidays": "let Source = 1 in Source",
+        "InText": f'let Source = {read}, Note = "EventIntervals" in Source',
+        "InComment": f"let Source = {read} // EventIntervals\n in Source",
+        "InBlockComment": f"let Source = {read} /* EventIntervals */ in Source",
+        "Shadowed": f"let Source = {read},\n    Holidays = Table.RowCount(Source) in Holidays",
+        "AsField": f"let Source = {read}, Column = Source[Holidays] in Column",
+    }
+    assert firewall_violations(queries, parameters) == []
 
 
 def test_49_measures_with_description_folder_and_format(model):
@@ -448,9 +567,10 @@ def test_measure_definitions_of_section_7(model):
         "IF([Created] >= 20, SWITCH(c, 0, [Resolved], 1, [SLA resolution met %], 2, [SLA first response met %], "
         "3, [CSAT average]))"
     )
+    # the scorecard groups by agent and team, so the rank restores both columns and runs over all agents shown
     assert (
-        "RANKX(FILTER(ALLSELECTED(DimAgent[Agent name]), NOT ISBLANK([Ranking value])), [Ranking value], , DESC, DENSE)"
-        in (m["Agent rank"])
+        "RANKX(FILTER(ALLSELECTED(DimAgent[Agent name], DimAgent[Team name]), NOT ISBLANK([Ranking value])), "
+        "[Ranking value], , DESC, DENSE)" in (m["Agent rank"])
     )
     for name in [n for n in MEASURES if n.startswith("Δ PY ")]:
         assert "'Time intelligence'[Time calculation] = \"PY\"" in m[name], name

@@ -72,9 +72,7 @@ table TestBusinessHours
 				    Stamp = (x as nullable text) as nullable datetime =>
 				        if x = null or x = "" then null else DateTime.FromText(x, [Format = "yyyy-MM-dd HH:mm", Culture = "en-US"]),
 				    Whole = (x as nullable text) as nullable number => if x = null or x = "" then null else Number.FromText(x, "en-US"),
-				    Source = Csv.Document(File.Contents(DataFolder & "\business_hours_cases.csv"), [Delimiter = ",", Columns = 5, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
-				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
-				    Typed = Table.TransformColumns(Promoted, {{"case_id", Whole, Int64.Type}, {"start", Stamp, type datetime},
+				    Typed = Table.TransformColumns(src_BusinessHoursCases, {{"case_id", Whole, Int64.Type}, {"start", Stamp, type datetime},
 				        {"end", Stamp, type datetime}, {"expected_minutes", Whole, Int64.Type}}),
 				    Actual = Table.AddColumn(Typed, "actual_minutes", each fnBusinessMinutes([start], [end]), Int64.Type),
 				    Pass = Table.AddColumn(Actual, "pass", each [actual_minutes] = [expected_minutes], type logical),

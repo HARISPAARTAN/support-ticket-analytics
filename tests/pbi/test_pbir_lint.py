@@ -338,7 +338,8 @@ def test_colours_come_from_the_theme(report):
     tokens = dark_tokens((ROOT / PROJECT["theme"]["tokens"]).read_text(encoding="utf-8"))
     assert not colour_problems(report, set(tokens.values()))
     palette = re.search(
-        r"\[\s*('#[0-9A-F]{6}'(?:,\s*'#[0-9A-F]{6}'){7})\s*\]", (ROOT / "web/kit/echarts-theme.js").read_text()
+        r"\[\s*('#[0-9A-F]{6}'(?:,\s*'#[0-9A-F]{6}'){7})\s*\]",
+        (ROOT / "web/kit/echarts-theme.js").read_text(encoding="utf-8"),
     )
     assert data["dataColors"] == [c.strip("'") for c in palette.group(1).split(", ")]
 

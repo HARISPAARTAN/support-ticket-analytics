@@ -57,7 +57,17 @@ def test_tom_parses_and_validates_the_model(database):
     result = database.Model.Validate()
     errors = [str(e.Message) for e in result.Errors] if result.ContainsErrors else []
     assert errors == []
-    assert {e.Name for e in database.Model.Expressions} >= {"DataFolder", "AsOf", "fnBusinessMinutes", "EventIntervals"}
+    expressions = {e.Name for e in database.Model.Expressions}
+    assert expressions >= {"DataFolder", "AsOf", "fnBusinessMinutes", "EventIntervals"}
+    assert {n for n in expressions if n.startswith("src_")} == {
+        "src_Holidays",
+        "src_Tickets",
+        "src_Events",
+        "src_Agents",
+        "src_Teams",
+        "src_Priorities",
+        "src_BusinessHoursCases",
+    }
 
 
 def test_tom_reads_measures_relationships_calculation_group_and_role(database):

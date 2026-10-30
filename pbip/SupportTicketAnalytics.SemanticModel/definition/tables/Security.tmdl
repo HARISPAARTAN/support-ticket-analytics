@@ -24,9 +24,7 @@ table Security
 		mode: import
 		source =
 				let
-				    Source = Csv.Document(File.Contents(DataFolder & "\agents.csv"), [Delimiter = ",", Columns = 7, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
-				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
-				    Leads = Table.SelectRows(Promoted, each [role] = "Team lead"),
+				    Leads = Table.SelectRows(src_Agents, each [role] = "Team lead"),
 				    Lower = Table.AddColumn(Leads, "User e-mail", each Text.Lower([email]), type text),
 				    Team = Table.AddColumn(Lower, "Team ID", each Number.FromText([team_id], "en-US"), Int64.Type),
 				    Selected = Table.SelectColumns(Team, {"User e-mail", "Team ID"})

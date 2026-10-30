@@ -140,8 +140,12 @@ export function priorityBars(rows, c, { selected = null, motion = true } = {}) {
   };
 }
 
-// SLA: resolution met % per team and priority ([team, priority, value]), danger at 75 % and below, warn at 85 %,
-// surface-2 from 95 %. As in the arrivals chart the cells carry no labels; the tooltip gives the value.
+// SLA: resolution met % per team and priority ([team, priority, value]) on a ramp from danger at 75 % and below over
+// warn at 85 % to ok from 95 %, so the best cells stay visible on the card in both themes. Each cell prints its value:
+// in the card colour on the ramp (dark text on the bright dark-theme cells, white on the dark light-theme ones), in the
+// text colour on a dimmed cell (35 % of the ramp over the card). The legend ends in "≤ 75 %" and "≥ 95 %".
+const SLA_RANGE = [0.75, 0.95];
+
 export function slaMatrix(matrix, c, { selected = null, motion = true } = {}) {
   const teams = [...new Set(matrix.map((r) => r[0]))];
   const priorities = [...new Set(matrix.map((r) => r[1]))];
@@ -149,6 +153,7 @@ export function slaMatrix(matrix, c, { selected = null, motion = true } = {}) {
   const data = matrix.map(([t, p, v]) => ({
     value: [priorities.indexOf(p), teams.indexOf(t), v === null ? '-' : v],
     itemStyle: { opacity: on(t, p) ? 1 : 0.35 },
+    label: { color: on(t, p) ? c.surface : c.text },
   }));
   const value = (p) => fmt.pct(p.value[2] === '-' ? null : p.value[2]);
   return {
@@ -159,19 +164,28 @@ export function slaMatrix(matrix, c, { selected = null, motion = true } = {}) {
     yAxis: { type: 'category', inverse: true, data: teams },
     visualMap: {
       type: 'continuous',
-      min: 0.75,
-      max: 0.95,
+      min: SLA_RANGE[0],
+      max: SLA_RANGE[1],
       calculable: false,
       orient: 'horizontal',
       left: 'center',
       bottom: 0,
       itemHeight: 120,
       itemWidth: 10,
-      inRange: { color: [c.danger, c.warn, c.surface2] },
+      inRange: { color: [c.danger, c.warn, c.ok] },
+      text: [`≥ ${fmt.pct(SLA_RANGE[1], 0)}`, `≤ ${fmt.pct(SLA_RANGE[0], 0)}`],
       textStyle: { color: c.muted },
-      formatter: (v) => fmt.pct(v, 0),
     },
-    series: [{ name: 'Resolution SLA met', type: 'heatmap', cursor: 'pointer', data, itemStyle: { borderColor: c.surface, borderWidth: 2, borderRadius: 4 } }],
+    series: [
+      {
+        name: 'Resolution SLA met',
+        type: 'heatmap',
+        cursor: 'pointer',
+        data,
+        itemStyle: { borderColor: c.surface, borderWidth: 2, borderRadius: 4 },
+        label: { show: true, fontFamily: MONO, fontSize: 11, formatter: (p) => (p.value[2] === '-' ? '' : fmt.pct(p.value[2])) },
+      },
+    ],
   };
 }
 

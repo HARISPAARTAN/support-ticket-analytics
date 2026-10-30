@@ -1,5 +1,5 @@
-// The chart options of web/assets/js/charts.js: series colours of the spec, axes, the selection dimming, unlabelled
-// heatmap cells and the kit's number formats (never Intl compact notation).
+// The chart options of web/assets/js/charts.js: series colours of the spec, axes, the selection dimming, the heatmaps
+// (arrivals unlabelled, the SLA matrix with its values printed) and the kit's number formats (never Intl compact notation).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -59,17 +59,27 @@ test('arrivals: 7 x 24 cells without labels on the sequential ramp', () => {
   assert.deepEqual(option.yAxis.data, ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
 });
 
-test('SLA: priority bars on a 0 to 100 % axis, the matrix from danger to surface-2', () => {
+test('SLA: priority bars on a 0 to 100 % axis, the matrix from danger over warn to ok with labelled cells', () => {
   const view = model.view(state, 'sla');
   const bars = charts.priorityBars(view.priorities, C, { selected: 'P1' });
   assert.deepEqual([bars.yAxis.min, bars.yAxis.max], [0, 1]);
   assert.deepEqual(bars.series[0].data.map((d) => d.itemStyle.opacity), [1, 0.35, 0.35, 0.35]);
   const matrix = charts.slaMatrix(view.matrix, C, { selected: { team: 'Integrations', priority: 'P1' } });
   assert.equal(matrix.series[0].data.length, 16);
-  assert.deepEqual(matrix.visualMap.inRange.color, [C.danger, C.warn, C.surface2]);
+  assert.deepEqual(matrix.visualMap.inRange.color, [C.danger, C.warn, C.ok]); // the best cells never take the card colour
+  assert.ok(!matrix.visualMap.inRange.color.some((colour) => [C.surface, C.surface2].includes(colour)));
   assert.deepEqual([matrix.visualMap.min, matrix.visualMap.max], [0.75, 0.95]);
+  assert.deepEqual(matrix.visualMap.text.map((t) => t.replace(/\s/g, ' ')), ['≥ 95 %', '≤ 75 %']); // fmt.pct: no-break space
   assert.equal(matrix.series[0].data.filter((d) => d.itemStyle.opacity === 1).length, 1);
-  assert.equal(matrix.series[0].label, undefined);
+  assert.equal(matrix.series[0].label.show, true);
+  const label = matrix.series[0].label.formatter;
+  assert.equal(label({ value: [0, 3, 0.74118] }).replace(/\s/, ' '), '74.1 %'); // the kit's fmt.pct
+  assert.equal(label({ value: [1, 0, '-'] }), ''); // a team without tickets in that priority stays empty
+  const cells = matrix.series[0].data.map((d) => [d.itemStyle.opacity, d.label.color]);
+  assert.deepEqual(cells.filter(([opacity]) => opacity === 1), [[1, C.surface]]); // the selected cell, in the card colour
+  assert.ok(cells.filter(([opacity]) => opacity < 1).every(([, colour]) => colour === C.text)); // dimmed cells, text colour
+  const plain = charts.slaMatrix(view.matrix, C);
+  assert.ok(plain.series[0].data.every((d) => d.itemStyle.opacity === 1 && d.label.color === C.surface));
   const lines = charts.pctMonths(view.months, ['First response', 'Resolution'], C);
   assert.deepEqual(lines.series.map((s) => s.lineStyle.color), [C.chart[0], C.chart[1]]);
   assert.equal(lines.xAxis.boundaryGap, true); // the last month label keeps room at the right edge

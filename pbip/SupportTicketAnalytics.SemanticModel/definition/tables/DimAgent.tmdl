@@ -85,14 +85,11 @@ table DimAgent
 		mode: import
 		source =
 				let
-				    Source = Csv.Document(File.Contents(DataFolder & "\agents.csv"), [Delimiter = ",", Columns = 7, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
-				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
-				    Typed = Table.TransformColumns(Promoted, {{"agent_id", each Number.FromText(_, "en-US"), Int64.Type},
+				    Typed = Table.TransformColumns(src_Agents, {{"agent_id", each Number.FromText(_, "en-US"), Int64.Type},
 				        {"team_id", each Number.FromText(_, "en-US"), Int64.Type},
 				        {"active_from", each Date.FromText(_, [Format = "yyyy-MM-dd", Culture = "en-US"]), type date},
 				        {"active_to", each if _ = "" then null else Date.FromText(_, [Format = "yyyy-MM-dd", Culture = "en-US"]), type nullable date}}),
-				    Teams = Table.TransformColumnTypes(Table.PromoteHeaders(Csv.Document(File.Contents(DataFolder & "\teams.csv"), [Delimiter = ",", Columns = 3, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]), [PromoteAllScalars = true]),
-				        {{"team_id", Int64.Type}, {"team_name", type text}}, "en-US"),
+				    Teams = Table.TransformColumnTypes(src_Teams, {{"team_id", Int64.Type}, {"team_name", type text}}, "en-US"),
 				    WithTeam = Table.ExpandTableColumn(Table.NestedJoin(Typed, {"team_id"}, Teams, {"team_id"}, "Team", JoinKind.LeftOuter),
 				        "Team", {"team_name"}),
 				    Unassigned = Table.InsertRows(WithTeam, 0, {[agent_id = 0, agent_name = "Unassigned", email = null, team_id = null, role = "None",

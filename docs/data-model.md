@@ -144,11 +144,13 @@ The model lives in `pbip/SupportTicketAnalytics.SemanticModel/definition/` (TMDL
 | `DimStatus` | status; M literal table | `Status` (sorted by `Status sort`), `Status sort` h, `Is open`, `Clock running` |
 | `DimAgeBucket` | age bucket; M literal table, no relationship | `Bucket` (sorted by `Bucket sort`), `Min days`, `Max days`, `Bucket sort` h |
 | `Security` | team lead; the lead rows of `agents.csv`; hidden, no relationship | `User e-mail`, `Team ID` |
-| `ExportInfo` | one row; the parameter `AsOf` and the folder listings; hidden | `As of`, `Ticket files`, `Event files` |
+| `ExportInfo` | one row; the parameter `AsOf` and the file counts of `src_Tickets` and `src_Events`; hidden | `As of`, `Ticket files`, `Event files` |
 | `TestBusinessHours` | test case; `business_hours_cases.csv` with `fnBusinessMinutes`; hidden | `Case ID`, `Start`, `End`, `Expected minutes`, `Actual minutes`, `Pass`, `Note` |
 | `_Measures` | the 49 measures ([measures](measures.md)); one hidden anchor column | `Anchor` h |
 | `Time intelligence` | calculation group, precedence 1 | `Time calculation` (sorted by `Ordinal`), `Ordinal` h |
 | `Rank agents by` | field parameter | `Rank agents by` (sorted by `Rank agents by Order`), `Rank agents by Fields` h (sorted by `Rank agents by Order`), `Rank agents by Order` h |
+
+Every file is read by its own staging query, not loaded: `src_Holidays`, `src_Agents`, `src_Teams`, `src_Priorities`, `src_BusinessHoursCases`, and `src_Tickets` and `src_Events` for the two folders (one row per `.csv` file in name order, its rows as text). A staging query calls `File.Contents` or `Folder.Files` through `DataFolder` and does nothing else; `Holidays`, `TicketFiles`, `EventFiles`, `EventIntervals` and every table reference staging queries and other queries only, because under Power BI's default privacy setting a query may read a source or reference other queries, not both ([ADR 0001](adr/0001-business-hours-in-power-query.md)). A lint test forbids the pair.
 
 `EventIntervals` (not loaded) sorts the events by ticket and sequence and merges each event with the next one: the interval ends at the next event, or at `AsOf` for the last event of an open ticket. `Interval bmin` is `fnBusinessMinutes(event at, interval end)`. `FactTickets` groups the intervals per ticket: `First response bmin` is the interval of sequence 1 when a second event exists; `Clock bmin` is the sum of the running intervals; `Pending bmin` the sum of the pending ones; `Resolution bmin` equals `Clock bmin` when the ticket is Resolved or Closed. The SLA statuses follow [ADR 0002](adr/0002-sla-outcome-per-ticket-by-creation-date.md).
 
