@@ -95,8 +95,8 @@ async function shot(page, where, name, options = {}) {
   // A full-page capture is taken from the top: after a scroll the fixed banner and the sticky filter bar would be drawn mid-page.
   if (options.fullPage !== false) {
     await page.evaluate(() => window.scrollTo(0, 0));
-    const top = await page.evaluate(() => document.querySelector('.pf-banner')?.getBoundingClientRect().top);
-    if (top === undefined || Math.abs(top) > 0.5) problems.push(`${where}: ${name}: the banner is at y = ${top} before the capture, not at the top`);
+    const scrolled = await page.evaluate(() => window.scrollY);
+    if (scrolled > 0.5) problems.push(`${where}: ${name}: the page is scrolled by ${scrolled} px before the capture, not at the top`);
   }
   await page.screenshot({ path: path.join(OUT, `${name}.png`), fullPage: true, ...options });
   shots += 1;
