@@ -8,7 +8,7 @@ The help desk's export holds timestamps only: when a ticket was created and when
 
 ## Decision
 
-Power Query computes the durations at refresh with one documented M function, `fnBusinessMinutes` ([business hours](../business-hours.md)): `EventIntervals` gives every event the business minutes to the next event (or to `AsOf` for an open ticket), and `FactTickets` sums them per ticket into `First response bmin`, `Clock bmin`, `Pending bmin` and `Resolution bmin`. The measures are plain aggregations of these stored integer columns (`MEDIAN`, `AVERAGE`, `PERCENTILEX.INC`, `COUNTROWS`). The same definition is written in Python (`tools/bizhours.py`); both pass the 18 cases of `data/business_hours_cases.csv`, and the hidden table `TestBusinessHours` shows the M results in Desktop.
+Power Query computes the durations at refresh with one documented M function, `fnBusinessMinutes` ([business hours](../business-hours.md)): `EventIntervals` gives every event the business minutes to the next event (or to `AsOf` for an open ticket), and `FactTickets` sums them per ticket into `First response bmin`, `Clock bmin`, `Pending bmin` and `Resolution bmin`. The measures are plain aggregations of these stored integer columns (`MEDIAN`, `AVERAGE`, `PERCENTILEX.INC`, `COUNTROWS`). The same definition is written in Python (`tools/bizhours.py`); both are written for the 18 cases of `data/business_hours_cases.csv`, and the hidden table `TestBusinessHours` shows the M results in Desktop.
 
 ## Consequences
 
