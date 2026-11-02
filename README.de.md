@@ -10,7 +10,8 @@ English: [README.md](README.md)
 
 ## Status
 
-- Die Datendateien entsprechen einem frischen Lauf von `tools/make_data.py`, alle Bänder des Generators halten, und die Offline-Prüfungen von Modell und Bericht bestehen (`uv run pytest`).
+- CI am 2026-11-02 für Commit `6f57c00` unter Ubuntu und Windows bestanden: ruff, die Python-Tests mit den Bändern des Generators, die Prüfungen, dass Daten, Nachbildungsdaten und Theme einem frischen Lauf entsprechen, der Scrub, die Filter- und Diagrammtests der Nachbildung, die Werte der Nachbildung, Kontrast, Seitengewicht, die Links und der Kit-Abgleich mit portfolio-kit v0.1.0 ([Lauf](https://github.com/HARISPAARTAN/support-ticket-analytics/actions/runs/41547281040)).
+- Die Nachbildung auf GitHub Pages hat am 2026-11-03 die Browserprüfung von `tools/checks/shots.mjs` bestanden: vier Reiter bei 1440 und 390 px in beiden Themes, der Kreuzfilter nach Kategorie, Rank by, die Ticketsuche und Reset, keine Anfrage außerhalb der Seite, kein Konsolenfehler und kein seitliches Scrollen.
 - Die Geschäftszeitenfunktion besteht ihre 18 Fälle in Python und bei jeder Aktualisierung in Power Query (die Seite Info zeigt 18 von 18).
 - Am 2026-11-03 in Power BI Desktop 2.159.883.0 geprüft: Das Modell lädt die Dateien aus `data/`, alle acht Seiten werden ohne Fehler angezeigt, und alle 31 Abgleichsprüfungen stimmen mit der pandas-Referenz überein, eine davon unter der Rolle `Team lead` ([Abgleich](docs/reconciliation.md)).
 - Noch kein Release.
