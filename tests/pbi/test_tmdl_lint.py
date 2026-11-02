@@ -282,7 +282,8 @@ ITEMS = {  # spec section 5.5, on one line
     "DIVIDE(cur - py, py))",
     "YTD": "CALCULATE(SELECTEDMEASURE(), DATESYTD(DimDate[Date]))",
     "PYTD": "CALCULATE(SELECTEDMEASURE(), SAMEPERIODLASTYEAR(DATESYTD(DimDate[Date])))",
-    "R12": "IF(NOT ISBLANK(MAX(DimDate[Date])), CALCULATE(SELECTEDMEASURE(), DATESINPERIOD(DimDate[Date], MAX(DimDate[Date]), -12, MONTH)))",
+    "R12": "IF(NOT ISBLANK(MAX(DimDate[Date])), "
+    "CALCULATE(SELECTEDMEASURE(), DATESINPERIOD(DimDate[Date], MAX(DimDate[Date]), -12, MONTH)))",
 }
 YOY_FORMAT = (
     'IF(CONTAINSSTRING(SELECTEDMEASURENAME(), "%"), "\'" & FORMAT(SELECTEDMEASURE() * 100, "+0.0;-0.0;0.0") & " pp\'", '

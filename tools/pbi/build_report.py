@@ -110,7 +110,10 @@ def _series(spec: dict, colours: Colours) -> dict:
         for value in spec.get("dashed", [])
     ]
     if dashed:
-        out["lineStyles"] = [{"properties": {"strokeWidth": _lit("2D"), "showMarker": _lit("false"), "lineChartType": _lit("'linear'")}}, *dashed]
+        out["lineStyles"] = [
+            {"properties": {"strokeWidth": _lit("2D"), "showMarker": _lit("false"), "lineChartType": _lit("'linear'")}},
+            *dashed,
+        ]
     return out
 
 
@@ -230,7 +233,9 @@ def _formatting(spec: dict, colours: Colours) -> dict:
         objects["legend"] = [{"properties": {"show": _lit("true" if many else "false"), "position": _lit("'Top'")}}]
         objects["labels"] = [{"properties": {"show": _lit("false")}}]
     if kind in LINE_CHARTS:
-        objects["lineStyles"] = [{"properties": {"strokeWidth": _lit("2D"), "showMarker": _lit("false"), "lineChartType": _lit("'linear'")}}]
+        objects["lineStyles"] = [
+            {"properties": {"strokeWidth": _lit("2D"), "showMarker": _lit("false"), "lineChartType": _lit("'linear'")}}
+        ]
     if "series" in spec:
         objects.update(_series(spec["series"], colours))
     if "secondary_axis" in spec:

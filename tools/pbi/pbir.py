@@ -36,8 +36,15 @@ ROLES = {
 }
 ALT_PREFIX = {k: v for k, v in PROJECT["alt_prefix"].items() if k != "*"}  # visual type -> alt-text prefix
 ALT_DEFAULT = PROJECT["alt_prefix"]["*"]  # every other type
-THEME_OWNED_CONTAINER = ("background", "border", "dropShadow")  # styled by the theme; a template's own entries would override it
-THEME_OWNED_CARD_FONT = ("fontFamily", "bold")  # a card's value is drawn in the theme's callout class; these would override it
+THEME_OWNED_CONTAINER = (
+    "background",
+    "border",
+    "dropShadow",
+)  # styled by the theme; a template's own entries would override it
+THEME_OWNED_CARD_FONT = (
+    "fontFamily",
+    "bold",
+)  # a card's value is drawn in the theme's callout class; these would override it
 URL = re.compile(r"https?://[^\s<>\"]*[^\s<>\".,;:)\]]")  # a link run in a text box; trailing punctuation stays outside
 
 
@@ -119,7 +126,7 @@ def _text_runs(text: str, style: dict, url: str | None, link_style: dict) -> lis
     runs, pos = [], 0
     for match in URL.finditer(text):
         if match.start() > pos:
-            runs.append({"value": text[pos:match.start()], "textStyle": dict(style)})
+            runs.append({"value": text[pos : match.start()], "textStyle": dict(style)})
         runs.append({"value": match.group(), "url": match.group(), "textStyle": dict(link)})
         pos = match.end()
     if pos < len(text) or not runs:
@@ -179,8 +186,12 @@ def _is_literal_solid(value: dict) -> bool:
 def _field_parameter_role(parameter: tuple[str, str], default: tuple[str, str, str]) -> dict:
     """A role bound to a field parameter in the shape of the schema's `fieldParameters`: the parameter column, the
     position and length in the well, and the projection of the parameter's default measure that Desktop resolves it to."""
-    return {"projections": [projection(*default)],
-            "fieldParameters": [{"parameterExpr": field_ref(parameter[0], parameter[1], "Column"), "index": 0, "length": 1}]}
+    return {
+        "projections": [projection(*default)],
+        "fieldParameters": [
+            {"parameterExpr": field_ref(parameter[0], parameter[1], "Column"), "index": 0, "length": 1}
+        ],
+    }
 
 
 COMPARISONS = {"=": 0, ">": 1, ">=": 2, "<": 3, "<=": 4}  # PBIR ComparisonKind codes
@@ -197,12 +208,18 @@ def _comparison_filter(name: str, spec: dict, alias: str = "f") -> dict:
         raise ValueError(f"a comparison filter is on a Column or a Measure, not {kind!r}")
     value = f"{int(spec['value'])}L" if kind == "Column" else f"{float(spec['value']):.15g}D"
     left = {kind: {"Expression": {"SourceRef": {"Source": alias}}, "Property": prop}}
-    condition = {"Comparison": {"ComparisonKind": COMPARISONS[spec["op"]], "Left": left, "Right": {"Literal": {"Value": value}}}}
+    condition = {
+        "Comparison": {"ComparisonKind": COMPARISONS[spec["op"]], "Left": left, "Right": {"Literal": {"Value": value}}}
+    }
     return {
         "name": name,
         "field": field_ref(entity, prop, kind),
         "type": "Advanced",
-        "filter": {"Version": 2, "From": [{"Name": alias, "Entity": entity, "Type": 0}], "Where": [{"Condition": condition}]},
+        "filter": {
+            "Version": 2,
+            "From": [{"Name": alias, "Entity": entity, "Type": 0}],
+            "Where": [{"Condition": condition}],
+        },
     }
 
 
@@ -217,8 +234,11 @@ def _in_filter(name: str, spec: dict, alias: str = "f") -> dict:
         "name": name,
         "field": field_ref(entity, prop, "Column"),
         "type": "Categorical",
-        "filter": {"Version": 2, "From": [{"Name": alias, "Entity": entity, "Type": 0}],
-                   "Where": [{"Condition": {"In": {"Expressions": [column], "Values": values}}}]},
+        "filter": {
+            "Version": 2,
+            "From": [{"Name": alias, "Entity": entity, "Type": 0}],
+            "Where": [{"Condition": {"In": {"Expressions": [column], "Values": values}}}],
+        },
     }
 
 
@@ -258,18 +278,29 @@ def _top_n_filter(name: str, spec: dict) -> dict:
         tables.append({"Name": "m", "Entity": by_entity, "Type": 0})
         rank = {"Measure": {"Expression": {"SourceRef": {"Source": "m"}}, "Property": by_prop}}
     else:
-        rank = {"Aggregation": {"Expression": {"Column": {"Expression": {"SourceRef": {"Source": "p"}}, "Property": by_prop}},
-                                "Function": AGGREGATIONS[by_kind]}}
-    sub = {"Version": 2, "From": tables, "Select": [dict(item, Name="field")],
-           "OrderBy": [{"Direction": 2, "Expression": rank}], "Top": spec["n"]}
+        rank = {
+            "Aggregation": {
+                "Expression": {"Column": {"Expression": {"SourceRef": {"Source": "p"}}, "Property": by_prop}},
+                "Function": AGGREGATIONS[by_kind],
+            }
+        }
+    sub = {
+        "Version": 2,
+        "From": tables,
+        "Select": [dict(item, Name="field")],
+        "OrderBy": [{"Direction": 2, "Expression": rank}],
+        "Top": spec["n"],
+    }
     return {
         "name": name,
         "field": field_ref(entity, prop, "Column"),
         "type": "TopN",
         "filter": {
             "Version": 2,
-            "From": [{"Name": "subquery", "Expression": {"Subquery": {"Query": sub}}, "Type": 2},
-                     {"Name": "p", "Entity": entity, "Type": 0}],
+            "From": [
+                {"Name": "subquery", "Expression": {"Subquery": {"Query": sub}}, "Type": 2},
+                {"Name": "p", "Entity": entity, "Type": 0},
+            ],
             "Where": [{"Condition": {"In": {"Expressions": [item], "Table": {"SourceRef": {"Source": "subquery"}}}}}],
         },
     }
@@ -279,13 +310,30 @@ class Visual:
     """Builds a visual.json from a captured template by replacing position, title and query projections."""
 
     @staticmethod
-    def from_template(visual_type: str, name: str, x: float, y: float, w: float, h: float, title: str | None,
-                      roles: dict[str, list[tuple[str, str, str]]], z: int = 0, extra_objects: dict | None = None,
-                      alt: str | None = None, sort: dict | None = None, top_n: dict | None = None,
-                      field_parameters: dict[str, dict] | None = None, subtitle: str | None = None,
-                      title_hidden: bool = False, container: dict | None = None, filters: list[dict] | None = None,
-                      tooltip_page: str | None = None, sync_group: str | None = None, selection: dict | None = None,
-                      expand: str | None = None) -> dict:
+    def from_template(
+        visual_type: str,
+        name: str,
+        x: float,
+        y: float,
+        w: float,
+        h: float,
+        title: str | None,
+        roles: dict[str, list[tuple[str, str, str]]],
+        z: int = 0,
+        extra_objects: dict | None = None,
+        alt: str | None = None,
+        sort: dict | None = None,
+        top_n: dict | None = None,
+        field_parameters: dict[str, dict] | None = None,
+        subtitle: str | None = None,
+        title_hidden: bool = False,
+        container: dict | None = None,
+        filters: list[dict] | None = None,
+        tooltip_page: str | None = None,
+        sync_group: str | None = None,
+        selection: dict | None = None,
+        expand: str | None = None,
+    ) -> dict:
         """alt: alt text (None derives one from the title, prefix from project.json; "" leaves none); sort: {"field": [e, p, kind],
         "direction": "Descending"}; top_n: {"field": [e, p], "by": [e, p, aggregation], "n": 10};
         field_parameters: {role: {"parameter": (entity, column), "default": (entity, measure, "Measure")}};
@@ -318,8 +366,12 @@ class Visual:
             state.clear()
             for role, fields in roles.items():
                 active = role in ("Category", "Rows", "Columns") or visual_type == "slicer"
-                state[role] = {"projections": [projection(f[0], f[1], f[2], active and f[2] == "Column", f[3] if len(f) > 3 else None)
-                                               for f in fields]}
+                state[role] = {
+                    "projections": [
+                        projection(f[0], f[1], f[2], active and f[2] == "Column", f[3] if len(f) > 3 else None)
+                        for f in fields
+                    ]
+                }
             for role, fp in (field_parameters or {}).items():
                 state[role] = _field_parameter_role(fp["parameter"], fp["default"])
         container_objects = v["visual"].setdefault("visualContainerObjects", {})
@@ -330,10 +382,14 @@ class Visual:
         _set_alt_text(v, default_alt_text(visual_type, title) if alt is None else alt)
         if sort:
             e, p, k = sort["field"]
-            v["visual"]["query"]["sortDefinition"] = {"sort": [{"field": field_ref(e, p, k), "direction": sort["direction"]}]}
+            v["visual"]["query"]["sortDefinition"] = {
+                "sort": [{"field": field_ref(e, p, k), "direction": sort["direction"]}]
+            }
         visual_filters = [_top_n_filter(stable_name(name, "topn"), top_n)] if top_n else []
-        visual_filters += [(_in_filter if "in" in f else _comparison_filter)(stable_name(name, "filter", str(i)), f, f"f{i}")
-                           for i, f in enumerate(filters or [])]
+        visual_filters += [
+            (_in_filter if "in" in f else _comparison_filter)(stable_name(name, "filter", str(i)), f, f"f{i}")
+            for i, f in enumerate(filters or [])
+        ]
         if visual_filters:
             v["filterConfig"] = {"filters": visual_filters}
         if extra_objects:
@@ -345,36 +401,75 @@ class Visual:
                 else:
                     objects[key] = items
         if tooltip_page:
-            container_objects["visualTooltip"] = [{"properties": {
-                "show": _literal("true"), "type": _literal("'Canvas'"), "section": _text(tooltip_page)}}]
+            container_objects["visualTooltip"] = [
+                {"properties": {"show": _literal("true"), "type": _literal("'Canvas'"), "section": _text(tooltip_page)}}
+            ]
         if sync_group:
             v["visual"]["syncGroup"] = {"groupName": sync_group, "fieldChanges": True, "filterChanges": True}
         if selection:
             general = v["visual"].setdefault("objects", {}).setdefault("general", [{"properties": {}}])
-            general[0].setdefault("properties", {})["filter"] = slicer_selection(*selection["field"], selection["values"])
+            general[0].setdefault("properties", {})["filter"] = slicer_selection(
+                *selection["field"], selection["values"]
+            )
         if expand:
             refs = [p["queryRef"] for p in v["visual"]["query"]["queryState"][expand]["projections"]]
-            v["visual"]["expansionStates"] = [{
-                "roles": [expand],
-                "levels": [{"queryRefs": [ref], "isCollapsed": False, "isPinned": True} for ref in refs[:-1]]
-                + [{"queryRefs": [refs[-1]], "isPinned": True}],
-                "root": {"isToggled": True},
-            }]
+            v["visual"]["expansionStates"] = [
+                {
+                    "roles": [expand],
+                    "levels": [{"queryRefs": [ref], "isCollapsed": False, "isPinned": True} for ref in refs[:-1]]
+                    + [{"queryRefs": [refs[-1]], "isPinned": True}],
+                    "root": {"isToggled": True},
+                }
+            ]
         v["visual"]["drillFilterOtherVisuals"] = True
         return v
 
     @staticmethod
-    def bookmark_button(name: str, x: float, y: float, w: float, h: float, label: str, bookmark: str,
-                        container: dict | None = None, objects: dict | None = None) -> dict:
+    def bookmark_button(
+        name: str,
+        x: float,
+        y: float,
+        w: float,
+        h: float,
+        label: str,
+        bookmark: str,
+        container: dict | None = None,
+        objects: dict | None = None,
+    ) -> dict:
         """An action button that applies a bookmark (a Reset button): blank shape, the label as button text."""
-        link = {"show": _literal("true"), "showDefaultTooltip": _literal("false"), "type": _literal("'Bookmark'"),
-                "bookmark": _text(bookmark)}
-        return Visual.from_template("actionButton", name, x, y, w, h, label, {}, title_hidden=True, extra_objects=objects,
-                                    container={"visualLink": [{"properties": link}], **(container or {})})
+        link = {
+            "show": _literal("true"),
+            "showDefaultTooltip": _literal("false"),
+            "type": _literal("'Bookmark'"),
+            "bookmark": _text(bookmark),
+        }
+        return Visual.from_template(
+            "actionButton",
+            name,
+            x,
+            y,
+            w,
+            h,
+            label,
+            {},
+            title_hidden=True,
+            extra_objects=objects,
+            container={"visualLink": [{"properties": link}], **(container or {})},
+        )
 
     @staticmethod
-    def textbox(name: str, x: float, y: float, w: float, h: float, paragraphs: list[str | dict], font_size: float = 12,
-                container: dict | None = None, link_colour: str | None = None, alt: str | None = None) -> dict:
+    def textbox(
+        name: str,
+        x: float,
+        y: float,
+        w: float,
+        h: float,
+        paragraphs: list[str | dict],
+        font_size: float = 12,
+        container: dict | None = None,
+        link_colour: str | None = None,
+        alt: str | None = None,
+    ) -> dict:
         """paragraphs: strings (font_size pt) or {"text", "size", "bold", "colour" (hex), "url"}; a URL in the text becomes a
         link run, underlined and in `link_colour` (a hex colour; None keeps the paragraph's colour).
         container: container objects (background, border, dropShadow) added next to the hidden title;
@@ -387,7 +482,8 @@ class Visual:
         _set_alt_text(v, None)
         link_style = {"textDecoration": "underline", **({"color": link_colour} if link_colour else {})}
         v["visual"]["objects"]["general"] = [
-            {"properties": {"paragraphs": [_paragraph(p, font_size, link_style) for p in paragraphs]}}]
+            {"properties": {"paragraphs": [_paragraph(p, font_size, link_style) for p in paragraphs]}}
+        ]
         v["visual"]["visualContainerObjects"] = {"title": _title(None), **(container or {})}
         _set_alt_text(v, alt)
         return v
@@ -403,7 +499,10 @@ def iter_fields(node, aliases: dict[str, str] | None = None):
     if isinstance(node, dict):
         sources = node.get("From")
         if isinstance(sources, list):
-            aliases = {**aliases, **{s["Name"]: s["Entity"] for s in sources if isinstance(s, dict) and "Name" in s and "Entity" in s}}
+            aliases = {
+                **aliases,
+                **{s["Name"]: s["Entity"] for s in sources if isinstance(s, dict) and "Name" in s and "Entity" in s},
+            }
         level = node.get("HierarchyLevel")
         if isinstance(level, dict) and "Level" in level:
             hierarchy = level.get("Expression", {}).get("Hierarchy", {})
@@ -438,13 +537,17 @@ class LintVisual:
 
     @property
     def title(self) -> str | None:
-        props = (self.raw.get("visual", {}).get("visualContainerObjects", {}).get("title") or [{}])[0].get("properties", {})
+        props = (self.raw.get("visual", {}).get("visualContainerObjects", {}).get("title") or [{}])[0].get(
+            "properties", {}
+        )
         value = props.get("text", {}).get("expr", {}).get("Literal", {}).get("Value")
         return value[1:-1].replace("''", "'") if value else None
 
     @property
     def alt_text(self) -> str | None:
-        props = (self.raw.get("visual", {}).get("visualContainerObjects", {}).get("general") or [{}])[0].get("properties", {})
+        props = (self.raw.get("visual", {}).get("visualContainerObjects", {}).get("general") or [{}])[0].get(
+            "properties", {}
+        )
         value = props.get("altText", {}).get("expr", {}).get("Literal", {}).get("Value")
         return value[1:-1].replace("''", "'") if value else None
 
@@ -467,7 +570,9 @@ class Report:
     pages: list[Page]
     bookmarks: list[dict]
     theme_name: str | None
-    bookmark_items: list[str] = field(default_factory=list)  # bookmark names in bookmarks/bookmarks.json, groups unfolded
+    bookmark_items: list[str] = field(
+        default_factory=list
+    )  # bookmark names in bookmarks/bookmarks.json, groups unfolded
     bookmark_groups: dict[str, list[str]] = field(default_factory=dict)  # group display name -> bookmark names
     settings: dict = field(default_factory=dict)  # report.json settings
 
@@ -478,8 +583,15 @@ def load_report(definition_dir: Path) -> Report:
     pages = []
     for pid in order:
         pj = json.loads((d / "pages" / pid / "page.json").read_text(encoding="utf-8-sig"))
-        page = Page(pid, pj["displayName"], int(pj["width"]), int(pj["height"]), raw=pj, page_type=pj.get("type"),
-                    visibility=pj.get("visibility"))
+        page = Page(
+            pid,
+            pj["displayName"],
+            int(pj["width"]),
+            int(pj["height"]),
+            raw=pj,
+            page_type=pj.get("type"),
+            visibility=pj.get("visibility"),
+        )
         binding = pj.get("pageBinding") or {}
         if binding.get("type") == "Drillthrough":
             for param in binding.get("parameters", []):
