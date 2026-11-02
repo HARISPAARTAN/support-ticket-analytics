@@ -203,8 +203,8 @@ def drillthrough_problems(report):
 def tooltip_problems(report):
     out = []
     tip = page(report, "SLA tooltip")
-    if (tip.page_type, tip.visibility, tip.width, tip.height) != ("Tooltip", "HiddenInViewMode", 320, 240):
-        out.append("the tooltip page is not a hidden 320 x 240 tooltip page")
+    if (tip.page_type, tip.visibility, tip.width, tip.height) != ("Tooltip", "HiddenInViewMode", 320, 296):
+        out.append("the tooltip page is not a hidden 320 x 296 tooltip page")
     if (tip.raw.get("pageBinding") or {}).get("type") != "Tooltip":
         out.append("the tooltip page has no tooltip binding")
     for page_name, title in (
@@ -215,7 +215,7 @@ def tooltip_problems(report):
     ):
         v = visual(report, page_name, title)
         props = v.raw["visual"]["visualContainerObjects"].get("visualTooltip", [{}])[0].get("properties", {})
-        if props.get("type", {}).get("expr", {}).get("Literal", {}).get("Value") != "'ReportPage'" or (
+        if props.get("type", {}).get("expr", {}).get("Literal", {}).get("Value") != "'Canvas'" or (
             lit(props["section"]).strip("'") != tip.name
         ):
             out.append(f"{title}: no report-page tooltip {tip.name!r}")
@@ -263,7 +263,7 @@ def test_eight_pages_in_order_types_and_sizes(report):
     assert [p.display_name for p in report.pages] == PAGES
     assert [p.name for p in report.pages] == [p["id"] for p in SPEC["pages"]]
     for pg in report.pages:
-        size = (320, 240) if pg.display_name == "SLA tooltip" else (1280, 720)
+        size = (320, 296) if pg.display_name == "SLA tooltip" else (1280, 720)
         assert (pg.width, pg.height) == size, pg.display_name
         assert pg.page_type == TYPES.get(pg.display_name), pg.display_name
         assert pg.visibility == ("HiddenInViewMode" if pg.display_name in HIDDEN else None), pg.display_name
@@ -463,7 +463,7 @@ def test_mutation_unknown_field_is_caught(report, model):
     raw = copy.deepcopy(visual(report, "SLA compliance", "Breach list").raw)
     assert not field_problems(raw, model)
     text = json.dumps(raw).replace('"Property": "Ticket number"', '"Property": "Ticket no"')
-    assert len(field_problems(json.loads(text), model)) == 1
+    assert len(field_problems(json.loads(text), model)) == 2  # the column and the filter card Desktop saves for it
     text = json.dumps(raw).replace('"Property": "Any SLA breach"', '"Property": "Any breach"')
     assert len(field_problems(json.loads(text), model)) == 2  # the filter's field and its condition
 

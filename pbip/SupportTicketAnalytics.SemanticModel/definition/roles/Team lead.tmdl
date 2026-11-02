@@ -7,3 +7,6 @@ role 'Team lead'
 	tablePermission DimAgent = DimAgent[Agent ID] = 0 || DimAgent[Team ID] IN CALCULATETABLE(VALUES(Security[Team ID]), Security[User e-mail] = LOWER(USERPRINCIPALNAME()))
 
 	tablePermission Security = Security[User e-mail] = LOWER(USERPRINCIPALNAME())
+
+	annotation PBI_Id = 437dc00f011b461b8879170e46212fbb
+

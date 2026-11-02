@@ -185,7 +185,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Card: R11 Backlog in age bucket (> 30 d, 2024-06-30)'"
+                  "Value": "'Card: R11 Backlog > 30 d (2024-06-30)'"
                 }
               }
             }
@@ -205,7 +205,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'R11 Backlog in age bucket (> 30 d, 2024-06-30)'"
+                  "Value": "'R11 Backlog > 30 d (2024-06-30)'"
                 }
               }
             }

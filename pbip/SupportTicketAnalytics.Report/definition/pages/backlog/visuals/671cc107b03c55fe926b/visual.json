@@ -1,23 +1,21 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "671cc107b03c55fe926b",
   "position": {
-    "height": 244,
-    "tabOrder": 18,
-    "width": 520,
     "x": 16,
-    "y": 460,
-    "z": 18
+    "y": 474,
+    "z": 18,
+    "height": 230,
+    "width": 520,
+    "tabOrder": 18
   },
   "visual": {
-    "drillFilterOtherVisuals": true,
-    "objects": {},
+    "visualType": "pivotTable",
     "query": {
       "queryState": {
         "Columns": {
           "projections": [
             {
-              "active": true,
               "field": {
                 "Column": {
                   "Expression": {
@@ -28,15 +26,15 @@
                   "Property": "Bucket"
                 }
               },
+              "queryRef": "DimAgeBucket.Bucket",
               "nativeQueryRef": "Bucket",
-              "queryRef": "DimAgeBucket.Bucket"
+              "active": true
             }
           ]
         },
         "Rows": {
           "projections": [
             {
-              "active": true,
               "field": {
                 "Column": {
                   "Expression": {
@@ -47,15 +45,15 @@
                   "Property": "Team name"
                 }
               },
+              "queryRef": "DimTeam.Team name",
               "nativeQueryRef": "Team name",
-              "queryRef": "DimTeam.Team name"
+              "active": true
             }
           ]
         },
         "Values": {
           "projections": [
             {
-              "displayName": "Open tickets",
               "field": {
                 "Measure": {
                   "Expression": {
@@ -66,8 +64,9 @@
                   "Property": "Backlog in age bucket"
                 }
               },
+              "queryRef": "_Measures.Backlog in age bucket",
               "nativeQueryRef": "Backlog in age bucket",
-              "queryRef": "_Measures.Backlog in age bucket"
+              "displayName": "Open tickets"
             }
           ]
         }
@@ -108,6 +107,6 @@
         }
       ]
     },
-    "visualType": "pivotTable"
+    "drillFilterOtherVisuals": true
   }
 }

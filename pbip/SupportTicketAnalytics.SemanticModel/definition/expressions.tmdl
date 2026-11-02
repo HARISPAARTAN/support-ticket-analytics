@@ -8,13 +8,13 @@ expression DataFolder = "E:\GITGUB\support-ticket-analytics\data" meta [IsParame
 expression StartDate = #date(2024, 1, 1) meta [IsParameterQuery = true, Type = "Date", IsParameterQueryRequired = true]
 	lineageTag: 4abda67e-574f-5f66-a30b-4c4f4cb58844
 
-	annotation PBI_ResultType = Date
+	annotation PBI_ResultType = Exception
 
 /// Last day of DimDate: the day of the export.
 expression EndDate = #date(2025, 9, 30) meta [IsParameterQuery = true, Type = "Date", IsParameterQueryRequired = true]
 	lineageTag: 2399ab18-4193-565a-b065-f97d9978c604
 
-	annotation PBI_ResultType = Date
+	annotation PBI_ResultType = Exception
 
 /// Moment of the export: open intervals end here (tools/reference.py AS_OF).
 expression AsOf = #datetime(2025, 9, 30, 18, 0, 0) meta [IsParameterQuery = true, Type = "DateTime", IsParameterQueryRequired = true]
@@ -117,8 +117,7 @@ expression Holidays =
 	annotation PBI_ResultType = Table
 
 /// The holiday dates as a buffered list for fnBusinessMinutes.
-expression HolidayList =
-		List.Buffer(Holidays[Date])
+expression HolidayList = List.Buffer(Holidays[Date])
 	lineageTag: ac613075-55f5-59a3-bfcb-8ea7b9f6c289
 
 	annotation PBI_ResultType = List
@@ -201,3 +200,4 @@ expression EventIntervals =
 	lineageTag: fb2d0cde-6a47-5fd4-944d-9f35c8087a9e
 
 	annotation PBI_ResultType = Table
+

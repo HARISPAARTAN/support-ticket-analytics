@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "757f71e052ee56aebbc8",
   "position": {
-    "height": 236,
+    "height": 230,
     "tabOrder": 20,
     "width": 424,
     "x": 840,
-    "y": 212,
+    "y": 236,
     "z": 20
   },
   "visual": {
@@ -48,6 +48,13 @@
       "lineStyles": [
         {
           "properties": {
+            "lineChartType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'linear'"
+                }
+              }
+            },
             "showMarker": {
               "expr": {
                 "Literal": {
@@ -246,7 +253,7 @@
             "type": {
               "expr": {
                 "Literal": {
-                  "Value": "'ReportPage'"
+                  "Value": "'Canvas'"
                 }
               }
             }

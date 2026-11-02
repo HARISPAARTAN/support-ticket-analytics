@@ -32,7 +32,7 @@ table DimDate
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Year-quarter'
+	column Year-quarter
 		dataType: string
 		lineageTag: fc07ccda-64fe-5454-9b6d-68219d96548a
 		summarizeBy: none
@@ -58,7 +58,7 @@ table DimDate
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Year-month'
+	column Year-month
 		dataType: string
 		lineageTag: fc65d8bd-0098-5ce1-906f-318eaf26f72c
 		summarizeBy: none
@@ -152,3 +152,4 @@ table DimDate
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Table
+

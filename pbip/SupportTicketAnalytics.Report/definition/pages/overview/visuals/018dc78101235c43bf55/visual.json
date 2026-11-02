@@ -1,8 +1,117 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "018dc78101235c43bf55",
+  "position": {
+    "x": 368,
+    "y": 482,
+    "z": 27,
+    "height": 222,
+    "width": 376,
+    "tabOrder": 27
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Columns": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Time intelligence"
+                    }
+                  },
+                  "Property": "Time calculation"
+                }
+              },
+              "queryRef": "Time intelligence.Time calculation",
+              "nativeQueryRef": "Time calculation",
+              "active": true
+            }
+          ]
+        },
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimDate"
+                    }
+                  },
+                  "Property": "Year-month"
+                }
+              },
+              "queryRef": "DimDate.Year-month",
+              "nativeQueryRef": "Year-month",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Created"
+                }
+              },
+              "queryRef": "_Measures.Created",
+              "nativeQueryRef": "Created"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Matrix: Created: current, YTD, PYTD, R12'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Created: current, YTD, PYTD, R12'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
   "filterConfig": {
     "filters": [
       {
+        "name": "1f005ced84785886ab1d",
         "field": {
           "Column": {
             "Expression": {
@@ -13,15 +122,16 @@
             "Property": "Time calculation"
           }
         },
+        "type": "Categorical",
         "filter": {
+          "Version": 2,
           "From": [
             {
-              "Entity": "Time intelligence",
               "Name": "f0",
+              "Entity": "Time intelligence",
               "Type": 0
             }
           ],
-          "Version": 2,
           "Where": [
             {
               "Condition": {
@@ -72,119 +182,8 @@
               }
             }
           ]
-        },
-        "name": "1f005ced84785886ab1d",
-        "type": "Categorical"
+        }
       }
     ]
-  },
-  "name": "018dc78101235c43bf55",
-  "position": {
-    "height": 244,
-    "tabOrder": 27,
-    "width": 300,
-    "x": 328,
-    "y": 460,
-    "z": 27
-  },
-  "visual": {
-    "drillFilterOtherVisuals": true,
-    "objects": {},
-    "query": {
-      "queryState": {
-        "Columns": {
-          "projections": [
-            {
-              "active": true,
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Time intelligence"
-                    }
-                  },
-                  "Property": "Time calculation"
-                }
-              },
-              "nativeQueryRef": "Time calculation",
-              "queryRef": "Time intelligence.Time calculation"
-            }
-          ]
-        },
-        "Rows": {
-          "projections": [
-            {
-              "active": true,
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "DimDate"
-                    }
-                  },
-                  "Property": "Year-month"
-                }
-              },
-              "nativeQueryRef": "Year-month",
-              "queryRef": "DimDate.Year-month"
-            }
-          ]
-        },
-        "Values": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Created"
-                }
-              },
-              "nativeQueryRef": "Created",
-              "queryRef": "_Measures.Created"
-            }
-          ]
-        }
-      }
-    },
-    "visualContainerObjects": {
-      "general": [
-        {
-          "properties": {
-            "altText": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Matrix: Created: current, YTD, PYTD, R12'"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "title": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Created: current, YTD, PYTD, R12'"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    "visualType": "pivotTable"
   }
 }

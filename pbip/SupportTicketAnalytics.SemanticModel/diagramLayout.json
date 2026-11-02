@@ -10,7 +10,7 @@
       "nodes": [
         {
           "location": {
-            "x": 294.0,
+            "x": 294,
             "y": 0
           },
           "nodeIndex": "DimDate",
@@ -23,7 +23,7 @@
         },
         {
           "location": {
-            "x": 588.0,
+            "x": 588,
             "y": 0
           },
           "nodeIndex": "DimPriority",
@@ -36,7 +36,7 @@
         },
         {
           "location": {
-            "x": 882.0,
+            "x": 882,
             "y": 0
           },
           "nodeIndex": "DimTeam",
@@ -49,7 +49,7 @@
         },
         {
           "location": {
-            "x": 1176.0,
+            "x": 1176,
             "y": 0
           },
           "nodeIndex": "DimAgent",
@@ -62,7 +62,7 @@
         },
         {
           "location": {
-            "x": 1470.0,
+            "x": 1470,
             "y": 0
           },
           "nodeIndex": "DimCustomer",
@@ -75,7 +75,7 @@
         },
         {
           "location": {
-            "x": 294.0,
+            "x": 294,
             "y": 430
           },
           "nodeIndex": "DimCategory",
@@ -88,7 +88,7 @@
         },
         {
           "location": {
-            "x": 588.0,
+            "x": 588,
             "y": 430
           },
           "nodeIndex": "DimChannel",
@@ -101,7 +101,7 @@
         },
         {
           "location": {
-            "x": 882.0,
+            "x": 882,
             "y": 430
           },
           "nodeIndex": "FactTickets",
@@ -114,7 +114,7 @@
         },
         {
           "location": {
-            "x": 1176.0,
+            "x": 1176,
             "y": 430
           },
           "nodeIndex": "FactTicketEvents",
@@ -127,7 +127,7 @@
         },
         {
           "location": {
-            "x": 1470.0,
+            "x": 1470,
             "y": 430
           },
           "nodeIndex": "DimStatus",
@@ -140,7 +140,7 @@
         },
         {
           "location": {
-            "x": 0.0,
+            "x": 0,
             "y": 860
           },
           "nodeIndex": "Security",
@@ -153,7 +153,7 @@
         },
         {
           "location": {
-            "x": 294.0,
+            "x": 294,
             "y": 860
           },
           "nodeIndex": "DimAgeBucket",
@@ -166,7 +166,7 @@
         },
         {
           "location": {
-            "x": 588.0,
+            "x": 588,
             "y": 860
           },
           "nodeIndex": "ExportInfo",
@@ -179,7 +179,7 @@
         },
         {
           "location": {
-            "x": 882.0,
+            "x": 882,
             "y": 860
           },
           "nodeIndex": "TestBusinessHours",
@@ -192,7 +192,7 @@
         },
         {
           "location": {
-            "x": 1176.0,
+            "x": 1176,
             "y": 860
           },
           "nodeIndex": "_Measures",
@@ -205,7 +205,7 @@
         },
         {
           "location": {
-            "x": 1470.0,
+            "x": 1470,
             "y": 860
           },
           "nodeIndex": "Time intelligence",
@@ -218,7 +218,7 @@
         },
         {
           "location": {
-            "x": 1764.0,
+            "x": 1764,
             "y": 860
           },
           "nodeIndex": "Rank agents by",

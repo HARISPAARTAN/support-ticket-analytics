@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "SupportTicketAnalytics"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "d788355c-906c-4750-a9d9-c31c5b747243"
+  }
+}

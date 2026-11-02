@@ -34,7 +34,7 @@ The one validation session in Power BI Desktop, as a checklist. The person in De
 
 ## What to check on the pages
 
-Expected tiles on Overview in the default state (all dates): Created `25,066`, Resolved `24,926`, Backlog `140` with `vs PY: +17.6%`, Median first response (h) `3.43 h`, SLA resolution met % `88.6%`, CSAT average `3.98`; the other five second lines read `vs PY: n/a`, because the previous year of the whole range starts before the data. No visual may show "Can't display the visual" or a red error icon; otherwise choose "See details" and copy the text into the session notes.
+Expected tiles on Overview in the default state (all dates): Created `25,066`, Resolved `24,926`, Backlog `140` with `vs PY: +17.6%`, Median first response `3.43 h`, SLA resolution met % `88.6%`, CSAT average `3.98`; the other five second lines read `vs PY: n/a`, because the previous year of the whole range starts before the data. No visual may show "Can't display the visual" or a red error icon; otherwise choose "See details" and copy the text into the session notes.
 
 The calculation items also apply to measures built from other measures (`SLA resolution met %` is `Res SLA met` over `Created`), which only Desktop can show:
 

@@ -1,16 +1,92 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "e0ac2196e85554429e7d",
   "position": {
-    "height": 244,
-    "tabOrder": 26,
-    "width": 300,
     "x": 16,
-    "y": 460,
-    "z": 26
+    "y": 482,
+    "z": 26,
+    "height": 222,
+    "width": 340,
+    "tabOrder": 26
   },
   "visual": {
-    "drillFilterOtherVisuals": true,
+    "visualType": "columnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimCategory"
+                    }
+                  },
+                  "Property": "Category"
+                }
+              },
+              "queryRef": "DimCategory.Category",
+              "nativeQueryRef": "Category",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimCustomer"
+                    }
+                  },
+                  "Property": "Tier"
+                }
+              },
+              "queryRef": "DimCustomer.Tier",
+              "nativeQueryRef": "Tier"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Created"
+                }
+              },
+              "queryRef": "_Measures.Created",
+              "nativeQueryRef": "Created"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "DimCategory"
+                  }
+                },
+                "Property": "Category"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
     "objects": {
       "general": [
         {
@@ -51,82 +127,6 @@
         }
       ]
     },
-    "query": {
-      "queryState": {
-        "Category": {
-          "projections": [
-            {
-              "active": true,
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "DimCategory"
-                    }
-                  },
-                  "Property": "Category"
-                }
-              },
-              "nativeQueryRef": "Category",
-              "queryRef": "DimCategory.Category"
-            }
-          ]
-        },
-        "Series": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "DimCustomer"
-                    }
-                  },
-                  "Property": "Tier"
-                }
-              },
-              "nativeQueryRef": "Tier",
-              "queryRef": "DimCustomer.Tier"
-            }
-          ]
-        },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Created"
-                }
-              },
-              "nativeQueryRef": "Created",
-              "queryRef": "_Measures.Created"
-            }
-          ]
-        }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "direction": "Ascending",
-            "field": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "DimCategory"
-                  }
-                },
-                "Property": "Category"
-              }
-            }
-          }
-        ]
-      }
-    },
     "visualContainerObjects": {
       "general": [
         {
@@ -162,6 +162,52 @@
         }
       ]
     },
-    "visualType": "columnChart"
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "b55cb3ea1797eb1e8a30",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimCategory"
+              }
+            },
+            "Property": "Category"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "138bd3856acc099c1c1b",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimCustomer"
+              }
+            },
+            "Property": "Tier"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "483e6a53c08404e10965",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Created"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

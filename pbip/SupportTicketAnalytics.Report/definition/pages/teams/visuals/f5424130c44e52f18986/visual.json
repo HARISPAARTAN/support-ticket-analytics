@@ -1,16 +1,39 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "f5424130c44e52f18986",
   "position": {
-    "height": 56,
-    "tabOrder": 18,
-    "width": 400,
     "x": 16,
-    "y": 212,
-    "z": 18
+    "y": 236,
+    "z": 18,
+    "height": 100,
+    "width": 400,
+    "tabOrder": 18
   },
   "visual": {
-    "drillFilterOtherVisuals": true,
+    "visualType": "slicer",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Rank agents by"
+                    }
+                  },
+                  "Property": "Rank agents by"
+                }
+              },
+              "queryRef": "Rank agents by.Rank agents by",
+              "nativeQueryRef": "Rank agents by",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
     "objects": {
       "data": [
         {
@@ -28,47 +51,6 @@
       "general": [
         {
           "properties": {
-            "filter": {
-              "filter": {
-                "From": [
-                  {
-                    "Entity": "Rank agents by",
-                    "Name": "s",
-                    "Type": 0
-                  }
-                ],
-                "Version": 2,
-                "Where": [
-                  {
-                    "Condition": {
-                      "In": {
-                        "Expressions": [
-                          {
-                            "Column": {
-                              "Expression": {
-                                "SourceRef": {
-                                  "Source": "s"
-                                }
-                              },
-                              "Property": "Rank agents by"
-                            }
-                          }
-                        ],
-                        "Values": [
-                          [
-                            {
-                              "Literal": {
-                                "Value": "'Resolved'"
-                              }
-                            }
-                          ]
-                        ]
-                      }
-                    }
-                  }
-                ]
-              }
-            },
             "orientation": {
               "expr": {
                 "Literal": {
@@ -81,6 +63,97 @@
                 "Literal": {
                   "Value": "false"
                 }
+              }
+            },
+            "filter": {
+              "filter": {
+                "Version": 2,
+                "From": [
+                  {
+                    "Name": "r",
+                    "Entity": "Rank agents by",
+                    "Type": 0
+                  }
+                ],
+                "Where": [
+                  {
+                    "Condition": {
+                      "In": {
+                        "Expressions": [
+                          {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Source": "r"
+                                }
+                              },
+                              "Property": "Rank agents by Fields"
+                            }
+                          }
+                        ],
+                        "Values": [
+                          [
+                            {
+                              "Literal": {
+                                "Value": "'''_Measures''[Resolved]'"
+                              }
+                            }
+                          ]
+                        ]
+                      }
+                    },
+                    "Annotations": {
+                      "filterExpressionMetadata": {
+                        "expressions": [
+                          {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Entity": "Rank agents by"
+                                }
+                              },
+                              "Property": "Rank agents by"
+                            }
+                          }
+                        ],
+                        "decomposedIdentities": {
+                          "values": [
+                            [
+                              {
+                                "0": [
+                                  {
+                                    "Literal": {
+                                      "Value": "'''_Measures''[Resolved]'"
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          ],
+                          "columns": [
+                            {
+                              "value": {
+                                "Column": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "Rank agents by"
+                                    }
+                                  },
+                                  "Property": "Rank agents by Fields"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "valueMap": [
+                          {
+                            "0": "Resolved"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
               }
             }
           }
@@ -127,29 +200,6 @@
         }
       ]
     },
-    "query": {
-      "queryState": {
-        "Values": {
-          "projections": [
-            {
-              "active": true,
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Rank agents by"
-                    }
-                  },
-                  "Property": "Rank agents by"
-                }
-              },
-              "nativeQueryRef": "Rank agents by",
-              "queryRef": "Rank agents by.Rank agents by"
-            }
-          ]
-        }
-      }
-    },
     "visualContainerObjects": {
       "general": [
         {
@@ -185,6 +235,24 @@
         }
       ]
     },
-    "visualType": "slicer"
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "735f5346007322e6a327",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Rank agents by"
+              }
+            },
+            "Property": "Rank agents by"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

@@ -54,11 +54,11 @@
   },
   "name": "639cee1608b852edb5fe",
   "position": {
-    "height": 244,
+    "height": 230,
     "tabOrder": 19,
     "width": 716,
     "x": 548,
-    "y": 460,
+    "y": 474,
     "z": 19
   },
   "visual": {
@@ -67,6 +67,19 @@
       "columnHeaders": [
         {
           "properties": {}
+        }
+      ],
+      "total": [
+        {
+          "properties": {
+            "totals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
         }
       ]
     },

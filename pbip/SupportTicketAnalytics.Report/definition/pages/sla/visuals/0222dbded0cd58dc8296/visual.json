@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "0222dbded0cd58dc8296",
   "position": {
-    "height": 236,
+    "height": 230,
     "tabOrder": 18,
-    "width": 400,
+    "width": 360,
     "x": 16,
-    "y": 212,
+    "y": 236,
     "z": 18
   },
   "visual": {
@@ -511,7 +511,7 @@
             "type": {
               "expr": {
                 "Literal": {
-                  "Value": "'ReportPage'"
+                  "Value": "'Canvas'"
                 }
               }
             }

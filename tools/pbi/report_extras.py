@@ -61,7 +61,7 @@ def navigation_buttons(page_id: str, spec: dict, colours: Colours) -> list[dict]
         x = nav["x"] + i * (nav["w"] + nav["gap"])
         link = {"type": _lit("'PageNavigation'"), "navigationSection": _text(target)}
         name = stable_name(page_id, "nav", target)
-        out.append(_button(name, x, nav["y"], nav["w"], nav["h"], names[target], link, colours))
+        out.append(_button(name, x, nav["y"], nav["w"], nav["h"], nav.get("labels", {}).get(target, names[target]), link, colours))
     return out
 
 

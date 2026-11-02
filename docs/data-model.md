@@ -142,7 +142,7 @@ The model lives in `pbip/SupportTicketAnalytics.SemanticModel/definition/` (TMDL
 | `DimChannel` | channel; M literal table | `Channel` (sorted by `Channel sort`), `Channel sort` h |
 | `DimCustomer` | customer account; the distinct customer columns of `TicketFiles` | `Customer ID` h, `Customer name`, `Tier` (sorted by `Tier sort`), `Tier sort` h |
 | `DimStatus` | status; M literal table | `Status` (sorted by `Status sort`), `Status sort` h, `Is open`, `Clock running` |
-| `DimAgeBucket` | age bucket; M literal table, no relationship | `Bucket` (sorted by `Bucket sort`), `Min days`, `Max days`, `Bucket sort` h |
+| `DimAgeBucket` | age bucket; M literal table, no relationship | `Bucket` (sorted by `Bucket sort`), `Min days`, `Max days`, `Bucket sort` h (the key: with the key on `Bucket`, Power BI Desktop 2.159 sorted the chart axis alphabetically) |
 | `Security` | team lead; the lead rows of `agents.csv`; hidden, no relationship | `User e-mail`, `Team ID` |
 | `ExportInfo` | one row; the parameter `AsOf` and the file counts of `src_Tickets` and `src_Events`; hidden | `As of`, `Ticket files`, `Event files` |
 | `TestBusinessHours` | test case; `business_hours_cases.csv` with `fnBusinessMinutes`; hidden | `Case ID`, `Start`, `End`, `Expected minutes`, `Actual minutes`, `Pass`, `Note` |

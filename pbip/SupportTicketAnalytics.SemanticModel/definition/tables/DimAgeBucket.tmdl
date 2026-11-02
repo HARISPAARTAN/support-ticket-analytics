@@ -4,7 +4,6 @@ table DimAgeBucket
 
 	column Bucket
 		dataType: string
-		isKey
 		lineageTag: be6be125-0aeb-592f-8cb7-a9ca11a4b2a4
 		summarizeBy: none
 		sourceColumn: Bucket
@@ -33,6 +32,7 @@ table DimAgeBucket
 	column 'Bucket sort'
 		dataType: int64
 		isHidden
+		isKey
 		formatString: 0
 		lineageTag: 3259860a-cf84-5bb6-9f6c-8e7be2b7ab84
 		summarizeBy: none
@@ -61,3 +61,4 @@ table DimAgeBucket
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Table
+

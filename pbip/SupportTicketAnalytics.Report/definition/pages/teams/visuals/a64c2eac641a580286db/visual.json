@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "a64c2eac641a580286db",
   "position": {
-    "height": 244,
+    "height": 230,
     "tabOrder": 21,
     "width": 416,
     "x": 428,
-    "y": 460,
+    "y": 474,
     "z": 21
   },
   "visual": {
@@ -214,6 +214,13 @@
       "lineStyles": [
         {
           "properties": {
+            "lineChartType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'linear'"
+                }
+              }
+            },
             "showMarker": {
               "expr": {
                 "Literal": {

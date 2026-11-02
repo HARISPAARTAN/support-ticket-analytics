@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "0d1e199fe7625365ac38",
   "position": {
-    "height": 48,
+    "height": 88,
     "tabOrder": 18,
     "width": 198,
     "x": 646,
-    "y": 116,
+    "y": 140,
     "z": 18
   },
   "visual": {
@@ -31,7 +31,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "20D"
+                  "Value": "16D"
                 }
               }
             },
@@ -75,7 +75,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Card: Median first response (h)'"
+                  "Value": "'Card: Median first response'"
                 }
               }
             }
@@ -95,7 +95,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Median first response (h)'"
+                  "Value": "'Median first response'"
                 }
               }
             }

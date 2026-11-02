@@ -39,7 +39,7 @@ table 'Time intelligence'
 		calculationItem PYTD = CALCULATE(SELECTEDMEASURE(), SAMEPERIODLASTYEAR(DATESYTD(DimDate[Date])))
 
 		/// The twelve months up to the last selected day.
-		calculationItem R12 = CALCULATE(SELECTEDMEASURE(), DATESINPERIOD(DimDate[Date], MAX(DimDate[Date]), -12, MONTH))
+		calculationItem R12 = IF(NOT ISBLANK(MAX(DimDate[Date])), CALCULATE(SELECTEDMEASURE(), DATESINPERIOD(DimDate[Date], MAX(DimDate[Date]), -12, MONTH)))
 
 	column 'Time calculation'
 		dataType: string
@@ -59,3 +59,4 @@ table 'Time intelligence'
 		sourceColumn: Ordinal
 
 		annotation SummarizationSetBy = Automatic
+

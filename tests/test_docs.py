@@ -106,7 +106,7 @@ def test_readme_follows_the_umbrella_outline(name, outline):
 def test_readme_states_the_canvas_and_the_replica_scope_exactly():
     text = read(ROOT / "README.md")
     assert "seven on a 1280 × 720 canvas" in text
-    assert "the SLA tooltip page on 320 × 240, which is not on the canvas" in text
+    assert "the SLA tooltip page on 320 × 296, which is not on the canvas" in text
     assert "It leaves out" in text
     assert "every number" not in text.lower()
     assert "31 headline checks" in text

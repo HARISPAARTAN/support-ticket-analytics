@@ -1,16 +1,14 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
-  "annotations": [
-    {
-      "name": "sta:generated",
-      "value": "tools/pbi/pages.json"
-    }
-  ],
+  "name": "ticket-explorer",
   "displayName": "Ticket explorer",
   "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
   "filterConfig": {
     "filters": [
       {
+        "name": "422a7c065c1855e48bb4",
         "field": {
           "Column": {
             "Expression": {
@@ -21,18 +19,56 @@
             "Property": "Ticket number"
           }
         },
-        "howCreated": "Drillthrough",
-        "name": "422a7c065c1855e48bb4",
-        "type": "Categorical"
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "f",
+              "Entity": "FactTickets",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "f"
+                          }
+                        },
+                        "Property": "Ticket number"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'QS-125028'"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "Drillthrough"
       }
     ]
   },
-  "height": 720,
-  "name": "ticket-explorer",
   "pageBinding": {
     "name": "03a65b27424657158dee",
+    "type": "Drillthrough",
     "parameters": [
       {
+        "name": "95971eb671455fc8b38b",
         "boundFilter": "422a7c065c1855e48bb4",
         "fieldExpr": {
           "Column": {
@@ -43,12 +79,15 @@
             },
             "Property": "Ticket number"
           }
-        },
-        "name": "95971eb671455fc8b38b"
+        }
       }
-    ],
-    "type": "Drillthrough"
+    ]
   },
   "type": "Drillthrough",
-  "width": 1280
+  "annotations": [
+    {
+      "name": "sta:generated",
+      "value": "tools/pbi/pages.json"
+    }
+  ]
 }

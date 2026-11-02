@@ -1,16 +1,39 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "ef39393931885869aaa6",
   "position": {
-    "height": 48,
-    "tabOrder": 9,
-    "width": 280,
     "x": 540,
-    "y": 56,
-    "z": 9
+    "y": 52,
+    "z": 9,
+    "height": 80,
+    "width": 280,
+    "tabOrder": 9
   },
   "visual": {
-    "drillFilterOtherVisuals": true,
+    "visualType": "slicer",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimPriority"
+                    }
+                  },
+                  "Property": "Priority"
+                }
+              },
+              "queryRef": "DimPriority.Priority",
+              "nativeQueryRef": "Priority",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
     "objects": {
       "data": [
         {
@@ -86,34 +109,6 @@
         }
       ]
     },
-    "query": {
-      "queryState": {
-        "Values": {
-          "projections": [
-            {
-              "active": true,
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "DimPriority"
-                    }
-                  },
-                  "Property": "Priority"
-                }
-              },
-              "nativeQueryRef": "Priority",
-              "queryRef": "DimPriority.Priority"
-            }
-          ]
-        }
-      }
-    },
-    "syncGroup": {
-      "fieldChanges": true,
-      "filterChanges": true,
-      "groupName": "Priority"
-    },
     "visualContainerObjects": {
       "general": [
         {
@@ -149,6 +144,29 @@
         }
       ]
     },
-    "visualType": "slicer"
+    "syncGroup": {
+      "groupName": "Priority",
+      "fieldChanges": true,
+      "filterChanges": true
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "d6a6fe40b574c2b38822",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimPriority"
+              }
+            },
+            "Property": "Priority"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

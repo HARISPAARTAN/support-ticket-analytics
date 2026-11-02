@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "c45a8a529efa5df9b13e",
   "position": {
-    "height": 68,
+    "height": 88,
     "tabOrder": 3,
     "width": 148,
     "x": 164,
-    "y": 84,
+    "y": 104,
     "z": 3
   },
   "visual": {
@@ -75,7 +75,7 @@
             "altText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Card: Median resolution'"
+                  "Value": "'Card: Median res'"
                 }
               }
             }
@@ -95,7 +95,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Median resolution'"
+                  "Value": "'Median res'"
                 }
               }
             }

@@ -1,80 +1,16 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
-  "filterConfig": {
-    "filters": [
-      {
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "FactTickets"
-              }
-            },
-            "Property": "Any SLA breach"
-          }
-        },
-        "filter": {
-          "From": [
-            {
-              "Entity": "FactTickets",
-              "Name": "f0",
-              "Type": 0
-            }
-          ],
-          "Version": 2,
-          "Where": [
-            {
-              "Condition": {
-                "In": {
-                  "Expressions": [
-                    {
-                      "Column": {
-                        "Expression": {
-                          "SourceRef": {
-                            "Source": "f0"
-                          }
-                        },
-                        "Property": "Any SLA breach"
-                      }
-                    }
-                  ],
-                  "Values": [
-                    [
-                      {
-                        "Literal": {
-                          "Value": "true"
-                        }
-                      }
-                    ]
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "name": "37d10a112aeb50699e93",
-        "type": "Categorical"
-      }
-    ]
-  },
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "e7323132c5ee553c9a1a",
   "position": {
-    "height": 244,
-    "tabOrder": 22,
-    "width": 836,
     "x": 428,
-    "y": 460,
-    "z": 22
+    "y": 474,
+    "z": 22,
+    "height": 230,
+    "width": 836,
+    "tabOrder": 22
   },
   "visual": {
-    "drillFilterOtherVisuals": true,
-    "objects": {
-      "columnHeaders": [
-        {
-          "properties": {}
-        }
-      ]
-    },
+    "visualType": "tableEx",
     "query": {
       "queryState": {
         "Values": {
@@ -90,8 +26,8 @@
                   "Property": "Ticket number"
                 }
               },
-              "nativeQueryRef": "Ticket number",
-              "queryRef": "FactTickets.Ticket number"
+              "queryRef": "FactTickets.Ticket number",
+              "nativeQueryRef": "Ticket number"
             },
             {
               "field": {
@@ -104,8 +40,8 @@
                   "Property": "Created at"
                 }
               },
-              "nativeQueryRef": "Created at",
-              "queryRef": "FactTickets.Created at"
+              "queryRef": "FactTickets.Created at",
+              "nativeQueryRef": "Created at"
             },
             {
               "field": {
@@ -118,8 +54,8 @@
                   "Property": "Priority"
                 }
               },
-              "nativeQueryRef": "Priority",
-              "queryRef": "DimPriority.Priority"
+              "queryRef": "DimPriority.Priority",
+              "nativeQueryRef": "Priority"
             },
             {
               "field": {
@@ -132,8 +68,8 @@
                   "Property": "Team name"
                 }
               },
-              "nativeQueryRef": "Team name",
-              "queryRef": "DimTeam.Team name"
+              "queryRef": "DimTeam.Team name",
+              "nativeQueryRef": "Team name"
             },
             {
               "field": {
@@ -146,8 +82,8 @@
                   "Property": "Agent name"
                 }
               },
-              "nativeQueryRef": "Agent name",
-              "queryRef": "DimAgent.Agent name"
+              "queryRef": "DimAgent.Agent name",
+              "nativeQueryRef": "Agent name"
             },
             {
               "field": {
@@ -160,8 +96,8 @@
                   "Property": "Category"
                 }
               },
-              "nativeQueryRef": "Category",
-              "queryRef": "DimCategory.Category"
+              "queryRef": "DimCategory.Category",
+              "nativeQueryRef": "Category"
             },
             {
               "field": {
@@ -174,8 +110,8 @@
                   "Property": "FR SLA status"
                 }
               },
-              "nativeQueryRef": "FR SLA status",
-              "queryRef": "FactTickets.FR SLA status"
+              "queryRef": "FactTickets.FR SLA status",
+              "nativeQueryRef": "FR SLA status"
             },
             {
               "field": {
@@ -188,11 +124,10 @@
                   "Property": "Res SLA status"
                 }
               },
-              "nativeQueryRef": "Res SLA status",
-              "queryRef": "FactTickets.Res SLA status"
+              "queryRef": "FactTickets.Res SLA status",
+              "nativeQueryRef": "Res SLA status"
             },
             {
-              "displayName": "Resolution (h)",
               "field": {
                 "Measure": {
                   "Expression": {
@@ -203,8 +138,9 @@
                   "Property": "Average resolution (h)"
                 }
               },
+              "queryRef": "_Measures.Average resolution (h)",
               "nativeQueryRef": "Average resolution (h)",
-              "queryRef": "_Measures.Average resolution (h)"
+              "displayName": "Resolution (h)"
             },
             {
               "field": {
@@ -217,8 +153,8 @@
                   "Property": "Current status"
                 }
               },
-              "nativeQueryRef": "Current status",
-              "queryRef": "FactTickets.Current status"
+              "queryRef": "FactTickets.Current status",
+              "nativeQueryRef": "Current status"
             }
           ]
         }
@@ -226,7 +162,6 @@
       "sortDefinition": {
         "sort": [
           {
-            "direction": "Descending",
             "field": {
               "Column": {
                 "Expression": {
@@ -236,10 +171,31 @@
                 },
                 "Property": "Created at"
               }
-            }
+            },
+            "direction": "Descending"
           }
         ]
       }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {}
+        }
+      ],
+      "total": [
+        {
+          "properties": {
+            "totals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "general": [
@@ -315,6 +271,204 @@
         }
       ]
     },
-    "visualType": "tableEx"
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "37d10a112aeb50699e93",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "FactTickets"
+              }
+            },
+            "Property": "Any SLA breach"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "f0",
+              "Entity": "FactTickets",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "f0"
+                          }
+                        },
+                        "Property": "Any SLA breach"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "true"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
+      },
+      {
+        "name": "a0cf6df4cba58d992ce1",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "FactTickets"
+              }
+            },
+            "Property": "Ticket number"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "da725dbe32ccd01ab80c",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "FactTickets"
+              }
+            },
+            "Property": "Created at"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "fe0b484bb2c34cead000",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimPriority"
+              }
+            },
+            "Property": "Priority"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "69b5641e099dc5025d3e",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimTeam"
+              }
+            },
+            "Property": "Team name"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "901e3e1d9b7981e4c09a",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimAgent"
+              }
+            },
+            "Property": "Agent name"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "b15a8377e3300d1cd743",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimCategory"
+              }
+            },
+            "Property": "Category"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "252db36a55905de03b2b",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "FactTickets"
+              }
+            },
+            "Property": "FR SLA status"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "3bff201d90a2cb74407d",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "FactTickets"
+              }
+            },
+            "Property": "Res SLA status"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "d45841906dba8dc04963",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Average resolution (h)"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "f5d59a90be0619d9cad4",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "FactTickets"
+              }
+            },
+            "Property": "Current status"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

@@ -741,7 +741,7 @@ CALCULATE(SELECTEDMEASURE(), SAMEPERIODLASTYEAR(DATESYTD(DimDate[Date])))
 The twelve months up to the last selected day.
 
 ```dax
-CALCULATE(SELECTEDMEASURE(), DATESINPERIOD(DimDate[Date], MAX(DimDate[Date]), -12, MONTH))
+IF(NOT ISBLANK(MAX(DimDate[Date])), CALCULATE(SELECTEDMEASURE(), DATESINPERIOD(DimDate[Date], MAX(DimDate[Date]), -12, MONTH)))
 ```
 
 ## Field parameter Rank agents by

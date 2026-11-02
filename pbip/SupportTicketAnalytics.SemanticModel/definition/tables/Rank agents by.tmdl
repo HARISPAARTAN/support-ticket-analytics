@@ -49,3 +49,4 @@ table 'Rank agents by'
 				    ("SLA first response met %", NAMEOF('_Measures'[SLA first response met %]), 2),
 				    ("CSAT average", NAMEOF('_Measures'[CSAT average]), 3)
 				}
+

@@ -38,3 +38,4 @@ relationship factticketevents-facttickets
 relationship factticketevents-dimstatus
 	fromColumn: FactTicketEvents.'To status'
 	toColumn: DimStatus.Status
+

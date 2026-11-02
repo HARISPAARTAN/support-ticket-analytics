@@ -1,68 +1,92 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
-  "filterConfig": {
-    "filters": [
-      {
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Measures"
-              }
-            },
-            "Property": "Created"
-          }
-        },
-        "filter": {
-          "From": [
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "6196224742ff520eb039",
+  "position": {
+    "x": 16,
+    "y": 344,
+    "z": 19,
+    "height": 360,
+    "width": 400,
+    "tabOrder": 19
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
             {
-              "Entity": "_Measures",
-              "Name": "f0",
-              "Type": 0
-            }
-          ],
-          "Version": 2,
-          "Where": [
-            {
-              "Condition": {
-                "Comparison": {
-                  "ComparisonKind": 2,
-                  "Left": {
-                    "Measure": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Source": "f0"
-                        }
-                      },
-                      "Property": "Created"
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimAgent"
                     }
                   },
-                  "Right": {
-                    "Literal": {
-                      "Value": "20D"
-                    }
-                  }
+                  "Property": "Agent name"
                 }
-              }
+              },
+              "queryRef": "DimAgent.Agent name",
+              "nativeQueryRef": "Agent name",
+              "active": true
             }
           ]
         },
-        "name": "35a0779b66dd5804ac80",
-        "type": "Advanced"
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Resolved"
+                }
+              },
+              "queryRef": "_Measures.Resolved",
+              "nativeQueryRef": "Resolved",
+              "displayName": "Resolved"
+            }
+          ],
+          "fieldParameters": [
+            {
+              "parameterExpr": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Rank agents by"
+                    }
+                  },
+                  "Property": "Rank agents by"
+                }
+              },
+              "index": 0,
+              "length": 1
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_Measures"
+                  }
+                },
+                "Property": "Resolved"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
       }
-    ]
-  },
-  "name": "6196224742ff520eb039",
-  "position": {
-    "height": 424,
-    "tabOrder": 19,
-    "width": 400,
-    "x": 16,
-    "y": 280,
-    "z": 19
-  },
-  "visual": {
-    "drillFilterOtherVisuals": true,
+    },
     "objects": {
       "categoryAxis": [
         {
@@ -173,80 +197,6 @@
         }
       ]
     },
-    "query": {
-      "queryState": {
-        "Category": {
-          "projections": [
-            {
-              "active": true,
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "DimAgent"
-                    }
-                  },
-                  "Property": "Agent name"
-                }
-              },
-              "nativeQueryRef": "Agent name",
-              "queryRef": "DimAgent.Agent name"
-            }
-          ]
-        },
-        "Y": {
-          "fieldParameters": [
-            {
-              "index": 0,
-              "length": 1,
-              "parameterExpr": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Rank agents by"
-                    }
-                  },
-                  "Property": "Rank agents by"
-                }
-              }
-            }
-          ],
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Resolved"
-                }
-              },
-              "nativeQueryRef": "Resolved",
-              "queryRef": "_Measures.Resolved"
-            }
-          ]
-        }
-      },
-      "sortDefinition": {
-        "sort": [
-          {
-            "direction": "Descending",
-            "field": {
-              "Measure": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "_Measures"
-                  }
-                },
-                "Property": "Resolved"
-              }
-            }
-          }
-        ]
-      }
-    },
     "visualContainerObjects": {
       "general": [
         {
@@ -301,7 +251,7 @@
             "type": {
               "expr": {
                 "Literal": {
-                  "Value": "'ReportPage'"
+                  "Value": "'Canvas'"
                 }
               }
             }
@@ -309,6 +259,58 @@
         }
       ]
     },
-    "visualType": "clusteredBarChart"
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "35a0779b66dd5804ac80",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Created"
+          }
+        },
+        "type": "Advanced",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "f0",
+              "Entity": "_Measures",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Comparison": {
+                  "ComparisonKind": 2,
+                  "Left": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "f0"
+                        }
+                      },
+                      "Property": "Created"
+                    }
+                  },
+                  "Right": {
+                    "Literal": {
+                      "Value": "20D"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
   }
 }
