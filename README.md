@@ -14,7 +14,7 @@ Deutsch: [README.de.md](README.de.md)
 - The replica on GitHub Pages passed the browser check of `tools/checks/shots.mjs` on 2026-11-03: four tabs at 1440 and 390 px in both themes, the category cross-filter, Rank by, the ticket search and Reset, no request outside the page, no console error and no sideways scrolling.
 - The business-hours function passes its 18 cases in Python and, at every refresh, in Power Query (the Info page shows 18 of 18).
 - Validated in Power BI Desktop 2.159.883.0 on 2026-11-03: the model refreshes from the files in `data/`, all eight pages render without an error, and all 31 reconciliation checks match the pandas reference, one of them under the role `Team lead` ([reconciliation](docs/reconciliation.md)).
-- Not released yet.
+- Release v0.1.0 (2026-11-03): [GitHub Releases](https://github.com/HARISPAARTAN/support-ticket-analytics/releases/tag/v0.1.0).
 
 ## Client brief
 

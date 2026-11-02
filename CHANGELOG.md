@@ -2,7 +2,7 @@
 
 All notable changes to this project are listed here.
 
-## Unreleased
+## v0.1.0 (2026-11-03)
 
 - Seeded generator for the help-desk export of the fictional Quillstack Software: 25,066 tickets created from January 2024 to September 2025 and their 122,069 status changes in seven quarterly files each, plus agents, teams, priorities with SLA targets, holidays and 18 business-hours test cases; `--check` compares a fresh build with the committed files.
 - Business hours (Monday to Friday 08:00 to 18:00 Lisbon time, holidays excluded) defined once in M (`fnBusinessMinutes`) and once in Python (`tools/bizhours.py`), both written for the same 18 cases.

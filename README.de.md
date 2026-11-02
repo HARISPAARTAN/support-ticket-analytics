@@ -14,7 +14,7 @@ English: [README.md](README.md)
 - Die Nachbildung auf GitHub Pages hat am 2026-11-03 die Browserprüfung von `tools/checks/shots.mjs` bestanden: vier Reiter bei 1440 und 390 px in beiden Themes, der Kreuzfilter nach Kategorie, Rank by, die Ticketsuche und Reset, keine Anfrage außerhalb der Seite, kein Konsolenfehler und kein seitliches Scrollen.
 - Die Geschäftszeitenfunktion besteht ihre 18 Fälle in Python und bei jeder Aktualisierung in Power Query (die Seite Info zeigt 18 von 18).
 - Am 2026-11-03 in Power BI Desktop 2.159.883.0 geprüft: Das Modell lädt die Dateien aus `data/`, alle acht Seiten werden ohne Fehler angezeigt, und alle 31 Abgleichsprüfungen stimmen mit der pandas-Referenz überein, eine davon unter der Rolle `Team lead` ([Abgleich](docs/reconciliation.md)).
-- Noch kein Release.
+- Release v0.1.0 (2026-11-03): [GitHub Releases](https://github.com/HARISPAARTAN/support-ticket-analytics/releases/tag/v0.1.0).
 
 ## Kundenauftrag
 
