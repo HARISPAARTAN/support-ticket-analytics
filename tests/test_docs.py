@@ -155,7 +155,7 @@ def test_readme_facts_match_the_project(model):
     assert f"{len(model.tables['_Measures'].measures)} measures in `_Measures`" in text
     checks = reconciliation_rows()
     assert checks == 31
-    assert f"{checks} headline checks computed independently in pandas for the reconciliation" in text
+    assert f"{checks} headline checks reconciled against an independent pandas reference" in text
     assert f"computes the {checks} headline checks with pandas" in text
     # what the replica leaves out
     live = text.split("## Live demo", 1)[1].split("\n## ", 1)[0]
@@ -189,7 +189,7 @@ def test_german_readme_states_the_same_facts(model):
     assert "(auf Overview mit der Veränderung zum Vorjahr)" in text
     assert f"{len(model.tables['_Measures'].measures)} Kennzahlen in `_Measures`" in text
     checks = reconciliation_rows()
-    assert f"{checks} Prüfwerte berechnet eine unabhängige pandas-Referenz für den Abgleich" in text
+    assert f"{checks} Prüfwerte, gegen eine unabhängige pandas-Referenz abgeglichen" in text
     assert f"berechnet `tools/reference.py` die {checks} Prüfwerte mit pandas" in text
     live = text.split("## Live-Demo", 1)[1].split("\n## ", 1)[0]
     assert "Nicht enthalten sind" in live
