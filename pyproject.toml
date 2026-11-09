@@ -10,7 +10,7 @@ authors = [{ name = "Harithas Harikaran" }]
 dependencies = [
   "faker==40.44.0",
   "numpy==2.5.4",
-  "pandas==3.1.0",
+  "pandas==3.1.1",
 ]
 
 [dependency-groups]
